@@ -1,4 +1,4 @@
-# Gaudi - A Builder [![Build Status](https://travis-ci.org/damphyr/gaudi.png)](https://travis-ci.org/damphyr/gaudi)
+# Gaudi - A Builder [![Build Status](https://travis-ci.org/damphyr/gaudi.png)](https://travis-ci.org/damphyr/gaudi) [![Code Climate](https://codeclimate.com/github/damphyr/gaudi.png)](https://codeclimate.com/github/damphyr/gaudi)
 
 This is not a gem nor is it a library. It's more like a bootstrap for creating a build system for C or C++ based projects using rake.
 
