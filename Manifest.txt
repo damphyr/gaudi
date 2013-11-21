@@ -1,0 +1,6 @@
+lib/gaudi.rb
+/lib/gaudi/version.rb
+/lib/gaudi/helpers/components.rb
+/lib/gaudi/helpers/configuration.rb
+/lib/gaudi/helpers/errors.rb
+/lib/gaudi/helpers/utilities.rb
