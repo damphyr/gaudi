@@ -67,6 +67,9 @@ module Gaudi
       def to_s
         "Gaudi #{Gaudi::Version::STRING} with #{@config_file}"
       end
+      def to_path
+        return config_file
+      end
       private
       #Reads a configuration file and returns a hash with the
       #configuration as key-value pairs
@@ -81,13 +84,13 @@ module Gaudi
             l.chomp!
             #ignore if it starts with a hash
             unless l=~/^#/ || l.empty?
-              if /^setenv\s+(?<envvar>.+?)\s*=\s*(?<value>.+)/ =~ l
-                environment_variable(envvar,value)
+              if /^setenv\s+(?<envvar>.+?)\s*=\s*(?<val>.+)/ =~ l
+                environment_variable(envvar,val)
               #if it starts with an import get a new config file
               elsif /^import\s+(?<path>.*)/ =~ l
                 import_config(path,cfg_dir)
-              elsif /^(?<key>.*?)\s*=\s*(?<value>.*)/ =~ l
-                cfg[key]=handle_key(key,value,cfg_dir,list_keys,path_keys)
+              elsif /^(?<key>.*?)\s*=\s*(?<v>.*)/ =~ l
+                cfg[key]=handle_key(key,v,cfg_dir,list_keys,path_keys)
               else
                 raise GaudiConfigurationError,"Configuration syntax error in #{filename}:\n'#{l}'"
               end
@@ -179,7 +182,7 @@ module Gaudi
       #The absolute basics for configuration
       module BaseConfiguration
         def self.list_keys
-            []
+          []
         end
         def self.path_keys
           ['base_dir','out_dir']
@@ -187,7 +190,7 @@ module Gaudi
         #The root path. 
         #Every path in the system can be defined relative to this
         def base_dir
-           return @config["base_dir"] 
+          return @config["base_dir"] 
         end
         #The output directory  
         def out_dir
@@ -203,6 +206,68 @@ module Gaudi
     #
     #Modules are guaranteed a @config Hash providing access to the configuration file contents
     module BuildModules
+      module ComponentConfiguration
+        def self.list_keys
+          ['deps','incs']
+        end
+        def self.path_keys
+          []
+        end
+        def prefix
+          return @config['prefix']
+        end
+        #A list of prefixes that represent dependencies to the system's
+        #internal components
+        def dependencies
+          return @config['deps']
+        end
+        #A list of paths to be used as include paths when compiling
+        #
+        #Relative paths are interpreted relative to the configuration file's location
+        def external_includes
+          return @config['incs']
+        end
+
+        alias_method :incs,:external_includes
+        alias_method :deps,:dependencies
+      end
+
+      module ProgramConfiguration
+        def self.list_keys
+          ['libs']
+        end
+        def self.path_keys
+          []
+        end
+        #A list of library files to be added when linking
+        #
+        #Relative paths are interpreted relative to the configuration file's location
+        def external_libraries
+          return @config['libs']
+        end
+
+        alias_method :libs,:external_libraries
+      end
+    end
+    #For each set of sources we identify as a unit/component/group BuildConfiguration corresponds
+    #to the configuration file that describe the dependencies to the rest of the system.
+    class BuildConfiguration<Loader
+      def initialize filename
+        super(filename)
+      end
+      def keys
+        list_keys=[]
+        path_keys=[]
+        configuration_modules=Gaudi::Configuration::BuildModules.constants
+        #include all the modules you find in the namespace
+        configuration_modules.each do |mod|
+          klass=Gaudi::Configuration::BuildModules.const_get(mod)
+          extend klass
+          list_keys+=klass.list_keys
+          path_keys+=klass.path_keys
+        end
+        return list_keys,path_keys
+      end
     end
   end
 end
