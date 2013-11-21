@@ -3,7 +3,6 @@
 This is not a gem nor is it a library. It's more like a bootstrap for creating a build system for C or C++ based projects using rake.
 
 A couple of guidelines, a bit of supporting code, a lot of assumptions and conventions with fill-in-the-blanks space for creating a works-for-me build system.  
-
 You're lucky I didn't call it yabsir (Yet Another Build System In Ruby)
 
 ## Gaudi?
