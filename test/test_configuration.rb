@@ -55,6 +55,12 @@ class TestSystemConfiguration < MiniTest::Unit::TestCase
     assert_equal(File.dirname(__FILE__), cfg.base_dir)
     assert_equal(File.join(File.dirname(__FILE__),'build'), cfg.out_dir)
   end
+
+  def test_load
+    assert_raises(GaudiConfigurationError) { Gaudi::Configuration::SystemConfiguration.load([])}
+    config=mock_configuration(['base_dir=.','out_dir=build/'])
+    cfg=Gaudi::Configuration::SystemConfiguration.load([config])
+  end
 end
 
 class TestBuildConfiguration < MiniTest::Unit::TestCase
@@ -72,5 +78,11 @@ class TestBuildConfiguration < MiniTest::Unit::TestCase
     assert_equal(['COD','MOD'],cfg.deps)
     assert_equal(['./inc'],cfg.incs)
     assert_equal(['foo.lib','bar.lib'],cfg.libs)
+  end
+
+  def test_load
+    config=mock_configuration(['prefix=TST','deps=COD,MOD','incs= ./inc','libs= foo.lib,bar.lib'])
+    assert_raises(GaudiConfigurationError) { Gaudi::Configuration::BuildConfiguration.load([])}
+    cfg=Gaudi::Configuration::BuildConfiguration.load([config])
   end
 end

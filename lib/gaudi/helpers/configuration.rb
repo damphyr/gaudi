@@ -46,6 +46,22 @@ module Gaudi
     #
     # setenv GAUDI=brilliant builder
     class Loader
+      def self.load configuration_files,klass
+        cfg=nil
+        configuration_files.each do |cfg_file|
+          if cfg
+            cfg.merge(cfg_file)
+          else
+            cfg=klass.new(cfg_file)
+          end
+        end
+        if cfg
+          return cfg
+        else
+          raise GaudiConfigurationError, "No #{klass.to_s} configuration files in #{configuration_files}"
+        end
+      end
+
       attr_reader :config,:config_file
       def initialize filename
         @config_file=File.expand_path(filename)
@@ -161,6 +177,12 @@ module Gaudi
     #The available functionality is extended through SystemModules modules
     class SystemConfiguration<Loader
       include EnvironmentOptions
+      
+      #I guess this is what you call a Factory Method?
+      def self.load configuration_files
+        super(configuration_files,self)
+      end
+
       attr_accessor :config_base,:current_dir,:timestamp
       def initialize filename
         super(filename)
@@ -255,9 +277,15 @@ module Gaudi
     #For each set of sources we identify as a unit/component/group BuildConfiguration corresponds
     #to the configuration file that describe the dependencies to the rest of the system.
     class BuildConfiguration<Loader
+      #I guess this is what you call a Factory Method?
+      def self.load configuration_files
+        super(configuration_files,self)
+      end
+
       def initialize filename
         super(filename)
       end
+      
       def keys
         load_key_modules(Gaudi::Configuration::BuildModules)
       end
