@@ -142,6 +142,19 @@ module Gaudi
       def environment_variable(envvar,value)
         ENV[envvar]=value
       end
+      def load_key_modules module_const
+        list_keys=[]
+        path_keys=[]
+        configuration_modules=module_const.constants
+        #include all the modules you find in the namespace
+        configuration_modules.each do |mod|
+          klass=module_const.const_get(mod)
+          extend klass
+          list_keys+=klass.list_keys
+          path_keys+=klass.path_keys
+        end
+        return list_keys,path_keys
+      end
     end
     #The central configuration for the system
     #
@@ -158,17 +171,7 @@ module Gaudi
       end
 
       def keys
-        list_keys=[]
-        path_keys=[]
-        configuration_modules=Gaudi::Configuration::SystemModules.constants
-        #include all the modules you find in the namespace
-        configuration_modules.each do |mod|
-          klass=Gaudi::Configuration::SystemModules.const_get(mod)
-          extend klass
-          list_keys+=klass.list_keys
-          path_keys+=klass.path_keys
-        end
-        return list_keys,path_keys
+        load_key_modules(Gaudi::Configuration::SystemModules)
       end
     end
     #Adding modules in this module allows SystemConfiguration to extend it's functionality
@@ -256,17 +259,7 @@ module Gaudi
         super(filename)
       end
       def keys
-        list_keys=[]
-        path_keys=[]
-        configuration_modules=Gaudi::Configuration::BuildModules.constants
-        #include all the modules you find in the namespace
-        configuration_modules.each do |mod|
-          klass=Gaudi::Configuration::BuildModules.const_get(mod)
-          extend klass
-          list_keys+=klass.list_keys
-          path_keys+=klass.path_keys
-        end
-        return list_keys,path_keys
+        load_key_modules(Gaudi::Configuration::BuildModules)
       end
     end
   end
