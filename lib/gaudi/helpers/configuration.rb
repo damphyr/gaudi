@@ -86,6 +86,22 @@ module Gaudi
       def to_path
         return config_file
       end
+      #Merges the parameters from cfg_file into this instance
+      def merge cfg_file
+        begin
+          cfg=read_configuration(cfg_file,*keys)
+          list_keys,path_keys=*keys
+          cfg.keys.each do |k|
+            if @config.keys.include?(k) && list_keys.include?(k)
+              @config[k]+=cfg[k]
+            else
+              @config[k]=cfg[k] #last one wins
+            end
+          end
+        rescue
+
+        end
+      end
       private
       #Reads a configuration file and returns a hash with the
       #configuration as key-value pairs
@@ -187,7 +203,8 @@ module Gaudi
       def initialize filename
         super(filename)
         @config_base=File.dirname(@config_file)
-        @base_dir=@config['base']
+        raise GaudiConfigurationError, "Setting 'base' must be defined" unless base
+        raise GaudiConfigurationError, "Setting 'out' must be defined" unless out
         @workspace=Dir.pwd
         @timestamp = Time.now  
         load_platform_configurations
