@@ -63,8 +63,9 @@ class TestSystemConfiguration < MiniTest::Unit::TestCase
   end
   def test_platforms
     config=mock_configuration(['platforms=foo','foo=./foo.cfg'])
-    File.expects(:exists?).with('./foo.cfg').returns(true)
-    File.expects(:readlines).with('./foo.cfg').returns(['bar=foo'])
+    platform_cfg=File.join(File.dirname(__FILE__),'foo.cfg')
+    File.expects(:exists?).with(platform_cfg).returns(true)
+    File.expects(:readlines).with(platform_cfg).returns(['bar=foo'])
     cfg=Gaudi::Configuration::SystemConfiguration.load([config])
     assert_equal(['foo'], cfg.platforms)
     assert_equal({"bar"=>"foo"}, cfg.platform_config('foo'))

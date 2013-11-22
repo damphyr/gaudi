@@ -202,7 +202,9 @@ module Gaudi
         @config['platform_data']={}
         @config['platforms']||=[]
         platforms.each do |platform|
-          @config['platform_data'][platform]=read_configuration(@config[platform],*keys)
+          path=@config[platform]
+          path=File.expand_path(File.join(@config_base,path)) if !Pathname.new(path).absolute?
+          @config['platform_data'][platform]=read_configuration(path,*keys)
         end
       end
     end
