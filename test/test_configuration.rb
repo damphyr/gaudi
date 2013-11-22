@@ -72,12 +72,13 @@ class TestBuildConfiguration < MiniTest::Unit::TestCase
   end
 
   def test_basic_configuration
-    config=mock_configuration(['prefix=TST','deps=COD,MOD','incs= ./inc','libs= foo.lib,bar.lib'])
+    config=mock_configuration(['prefix=TST','deps=COD,MOD','incs= ./inc','libs= foo.lib,bar.lib','options= FOO BAR'])
     cfg=Gaudi::Configuration::BuildConfiguration.new(config)
     assert_equal('TST', cfg.prefix)
     assert_equal(['COD','MOD'],cfg.deps)
     assert_equal(['./inc'],cfg.incs)
     assert_equal(['foo.lib','bar.lib'],cfg.libs)
+    assert_equal('FOO BAR', cfg.options)
   end
 
   def test_load

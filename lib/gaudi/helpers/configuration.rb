@@ -271,6 +271,10 @@ module Gaudi
           return @config['libs']
         end
 
+        def options
+          return @config['options']
+        end
+
         alias_method :libs,:external_libraries
       end
     end
