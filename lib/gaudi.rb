@@ -10,7 +10,7 @@ mass_require(Rake::FileList["#{File.join(File.dirname(__FILE__),'gaudi/helpers')
 #Reads the configuration and sets the environment up
 #
 #This is the system's entry point
-def env_setup current_dir
+def env_setup work_dir
   #Ensure that stdout and stderr output is properly ordered
   $stdout.sync=true
   $stderr.sync=true
@@ -19,8 +19,8 @@ def env_setup current_dir
   unless $configuration
     #we're looking for the configuration
     if ENV['GAUDI_CONFIG']
-      system_config=gaudi_configuration
-      system_config.current_dir=File.expand_path(current_dir)
+      system_config=Gaudi::Configuration::SystemConfiguration.load([ENV['GAUDI_CONFIG']])
+      system_config.workspace=File.expand_path(work_dir)
       $configuration=system_config
     else
       if !ARGV.empty? && ARGV.include?('T')

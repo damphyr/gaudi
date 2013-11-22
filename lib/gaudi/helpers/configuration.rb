@@ -183,17 +183,27 @@ module Gaudi
         super(configuration_files,self)
       end
 
-      attr_accessor :config_base,:current_dir,:timestamp
+      attr_accessor :config_base,:workspace,:timestamp
       def initialize filename
         super(filename)
         @config_base=File.dirname(@config_file)
-        @base_dir=@config['base_dir']
-        @current_dir=Dir.pwd
+        @base_dir=@config['base']
+        @workspace=Dir.pwd
         @timestamp = Time.now  
+        load_platform_configurations
       end
 
       def keys
         load_key_modules(Gaudi::Configuration::SystemModules)
+      end
+
+      private
+      def load_platform_configurations
+        @config['platform_data']={}
+        @config['platforms']||=[]
+        platforms.each do |platform|
+          @config['platform_data'][platform]=read_configuration(@config[platform],*keys)
+        end
       end
     end
     #Adding modules in this module allows SystemConfiguration to extend it's functionality
@@ -207,20 +217,29 @@ module Gaudi
       #The absolute basics for configuration
       module BaseConfiguration
         def self.list_keys
-          []
+          ['platforms']
         end
         def self.path_keys
-          ['base_dir','out_dir']
+          ['base','out']
         end
         #The root path. 
         #Every path in the system can be defined relative to this
-        def base_dir
-          return @config["base_dir"] 
+        def base
+          return @config["base"] 
         end
         #The output directory  
-        def out_dir
-          return @config["out_dir"]
+        def out
+          return @config["out"]
         end
+        def platforms
+          return @config['platforms']
+        end
+        #returns the platform configuration hash
+        def platform_config platform
+          return @config['platform_data'][platform]
+        end
+        alias_method :base_dir,:base
+        alias_method :out_dir,:out
       end
     end
     #Adding modules in this module allows BuildConfiguration to extend it's functionality

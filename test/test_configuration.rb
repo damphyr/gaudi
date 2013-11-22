@@ -50,7 +50,7 @@ class TestSystemConfiguration < MiniTest::Unit::TestCase
   end
 
   def test_basic_configuration
-    config=mock_configuration(['base_dir=.','out_dir=build/'])
+    config=mock_configuration(['base=.','out=build/'])
     cfg=Gaudi::Configuration::SystemConfiguration.new(config)
     assert_equal(File.dirname(__FILE__), cfg.base_dir)
     assert_equal(File.join(File.dirname(__FILE__),'build'), cfg.out_dir)
@@ -60,6 +60,14 @@ class TestSystemConfiguration < MiniTest::Unit::TestCase
     assert_raises(GaudiConfigurationError) { Gaudi::Configuration::SystemConfiguration.load([])}
     config=mock_configuration(['base_dir=.','out_dir=build/'])
     cfg=Gaudi::Configuration::SystemConfiguration.load([config])
+  end
+  def test_platforms
+    config=mock_configuration(['platforms=foo','foo=./foo.cfg'])
+    File.expects(:exists?).with('./foo.cfg').returns(true)
+    File.expects(:readlines).with('./foo.cfg').returns(['bar=foo'])
+    cfg=Gaudi::Configuration::SystemConfiguration.load([config])
+    assert_equal(['foo'], cfg.platforms)
+    assert_equal({"bar"=>"foo"}, cfg.platform_config('foo'))
   end
 end
 
