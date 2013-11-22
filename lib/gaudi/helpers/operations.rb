@@ -39,3 +39,10 @@ module PlatformOperations
     return filename.end_with?(lib)
   end
 end
+
+#Methods to enforce naming conventions for various build artifacts
+module Filenames
+  def executable component,system_config
+    File.join(system_config.out,component.platform,component.name,"#{component.name}#{ext_exe}")
+  end
+end
