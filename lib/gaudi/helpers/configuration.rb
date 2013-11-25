@@ -282,13 +282,13 @@ module Gaudi
         #A list of prefixes that represent dependencies to the system's
         #internal components
         def dependencies
-          return @config['deps']
+          return @config.fetch('deps',[])
         end
         #A list of paths to be used as include paths when compiling
         #
         #Relative paths are interpreted relative to the configuration file's location
         def external_includes
-          return @config['incs']
+          return @config.fetch('incs',[])
         end
 
         alias_method :incs,:external_includes
