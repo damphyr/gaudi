@@ -18,7 +18,7 @@ module Tasks
       deps=FileList.new
       deployment.platforms.each do |platform|
         deployment.programs(platform).each do |pgm| 
-          deps<<executable(pgm,system_config)
+          deps<<program_task(pgm,system_config)
         end
       end
       deps<<system_config.to_path
@@ -31,14 +31,21 @@ module Tasks
     def program_task_dependencies program,system_config
       ###TODO: this is still not granular enough, the headers are bundled all together and 
       #we cannot differentiate which source depends on which header
-      #Also the dependencies of the dependencies only go one layer deep and do not follow the whole dependency tree
-      #(because of the bundled headers full tree walking would result in building almost everything for every header change)
-      deps=Rake::FileList.new
+      deps=Rake::FileList[program.configuration]
       program.dependencies.each do |dep|
-        deps+=dep.sources.map{|src| Tasks.define_file_task(object_file(src,dep,system_config),[src]+dep.headers)}
+        deps+=library_task_dependencies(dep,system_config)
       end
-      deps+=[program.configuration.to_path]
       deps+=program.sources.map{|src| Tasks.define_file_task(object_file(src,program,system_config),[src]+program.headers)}
+      return deps.uniq
+    end
+    def library_task_dependencies component,system_config
+      ###TODO: here any change in a dependency's interface header will trigger a build which slows incremental builds down.
+      #The solution is to parse the code and add the dependencies per file
+      #this is one more file task chain (obj->headers_info->c). Zukunftsmusik!
+      deps=Rake::FileList[component.configuration]
+      ifaces=Rake::FileList.new
+      component.dependencies.each{|dep| ifaces+=dep.interface }
+      deps+=component.sources.map{|src| Tasks.define_file_task(object_file(src,component,system_config),[src]+component.headers+ifaces)}
       return deps.uniq
     end
   end

@@ -23,6 +23,6 @@ class TestTaskGenerators < MiniTest::Unit::TestCase
     program.stubs(:platform).returns('PC')
     program.stubs(:name).returns('foo')
     deps=program_task_dependencies(program,system_config)
-    assert_equal(4, deps.size)
+    assert_equal(5, deps.size)
   end
 end
