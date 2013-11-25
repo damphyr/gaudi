@@ -65,6 +65,7 @@ module Gaudi
     attr_reader :identifier,:platform,:configuration,:name,:directories
     def initialize name,comp_unit,system_config,platform
       extend comp_unit
+      @compilation_unit=comp_unit
       @directories = determine_directories(name,system_config.source_directories,platform)
       config_files = Rake::FileList[*directories.pathmap('%p/build.cfg')]
       @configuration = Configuration::BuildConfiguration.load(config_files)
@@ -92,11 +93,10 @@ module Gaudi
       sources+headers
     end
     def dependencies
-      configuration.dependencies.map{|dep| Component.new(dep,@system_config,platform)}
+      configuration.dependencies.map{|dep| Component.new(dep,@compilation_unit,@system_config,platform)}
     end
   end
-  #A Gaudi::Program is a collection of components linked together with the main() code
-  #and built for a specific platform.
+  #A Gaudi::Program is a collection of components built for a specific platform.
   class Program<Component
     def initialize config_file,deployment_name,system_config,platform
       @configuration=Configuration::BuildConfiguration.load([config_file])

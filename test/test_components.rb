@@ -58,5 +58,6 @@ class TestComponent< MiniTest::Unit::TestCase
     assert_equal(2, comp.directories.size)
     assert_equal(3, comp.sources.size)
     assert_equal(2, comp.headers.size)
+    assert_equal(5, comp.all.size)
   end
 end
