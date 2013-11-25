@@ -10,15 +10,18 @@ module TestHelpers
     mkdir_p("#{base}/tmp/common/Foo/inc",:verbose=>false)
     mkdir_p("#{base}/tmp/mingw/Foo/test",:verbose=>false)
     touch("#{base}/tmp/mingw/Foo/foo.c",:verbose=>false)
-    touch("#{base}/tmp/mingw/Foo/foo.cpp",:verbose=>false)
-    touch("#{base}/tmp/mingw/Foo/foo.asm",:verbose=>false)
+    touch("#{base}/tmp/mingw/Foo/foop.cpp",:verbose=>false)
+    touch("#{base}/tmp/mingw/Foo/bar.asm",:verbose=>false)
     touch("#{base}/tmp/mingw/Foo/test/f.c",:verbose=>false)
     touch("#{base}/tmp/mingw/Foo/test/f.cpp",:verbose=>false)
     touch("#{base}/tmp/mingw/Foo/foo.h",:verbose=>false)
     touch("#{base}/tmp/common/Foo/pub.c",:verbose=>false)
     touch("#{base}/tmp/common/Foo/pub.cpp",:verbose=>false)
     touch("#{base}/tmp/common/Foo/inc/pub.h",:verbose=>false)
-    File.open("#{base}/tmp/common/Foo/build.cfg","wb"){|f| f.write(['prefix=FOO','incs= ./inc','libs= foo.lib,bar.lib'].join("\n"))}
+    mkdir_p("#{base}/tmp/common/Bar",:verbose=>false)
+    touch("#{base}/tmp/common/Bar/bar.c",:verbose=>false)    
+    File.open("#{base}/tmp/common/Bar/build.cfg","wb"){|f| f.write(['prefix=BAR'].join("\n"))}
+    File.open("#{base}/tmp/common/Foo/build.cfg","wb"){|f| f.write(['prefix=FOO','deps=BAR','incs= ./inc','libs= foo.lib,bar.lib'].join("\n"))}
     return "#{base}/tmp"
   end
 end
