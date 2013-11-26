@@ -11,7 +11,7 @@ module Gaudi
     module StandardPaths
       def determine_directories name,source_directories,platform
         paths=source_directories.map{|source_dir| Rake::FileList["#{source_dir}/{#{platform},common}/#{name}"].existing}.inject(&:+)
-        raise GaudiError,"Cannot find source directories for '#{name}' in #{paths.join(',')}" if paths.empty?
+        raise GaudiError,"Cannot find source directories for '#{name}' in #{source_directories.join(',')}" if paths.empty?
         return paths
       end
       def determine_sources component_directories
