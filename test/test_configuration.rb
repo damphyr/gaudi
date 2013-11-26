@@ -63,6 +63,12 @@ class TestSystemConfiguration < MiniTest::Unit::TestCase
     assert_equal(['foo'], cfg.platforms)
     assert_equal({"bar"=>"foo"}, cfg.platform_config('foo'))
   end
+  def test_list_of_paths
+    config=mock_configuration('system.cfg',['base=.','out=out/','sources= src,tmp,../out'])
+    cfg=Gaudi::Configuration::SystemConfiguration.new(config)
+    paths=[File.join(File.dirname(config),'src'),File.join(File.dirname(config),'tmp'),File.expand_path(File.join(File.dirname(config),'..','out'))]
+    assert_equal(paths,cfg.sources)
+  end
 end
 
 class TestBuildConfiguration < MiniTest::Unit::TestCase
@@ -87,5 +93,6 @@ class TestBuildConfiguration < MiniTest::Unit::TestCase
     config=mock_configuration('build.cfg',['prefix=TST','deps=COD,MOD','incs= ./inc','libs= foo.lib,bar.lib'])
     assert_raises(GaudiConfigurationError) { Gaudi::Configuration::BuildConfiguration.load([])}
     cfg=Gaudi::Configuration::BuildConfiguration.load([config])
+    assert_equal('TST',cfg.prefix)
   end
 end

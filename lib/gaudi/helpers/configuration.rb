@@ -150,10 +150,11 @@ module Gaudi
       #This means keys in list_keys come back as an Array, keys in path_keys come back as full paths
       def handle_key key,value,cfg_dir,list_keys,path_keys
         final_value=value
-        if list_keys.include?(key)
+        if list_keys.include?(key) && path_keys.include?(key)
+          final_value=value.gsub(/\s*,\s*/,',').split(',').uniq.map{|d| absolute_path(d,cfg_dir)}
+        elsif list_keys.include?(key)
           #here we want to handle a comma separated list of entries
-          final_value=value.gsub(/\s*,\s*/,',').split(',')
-          final_value.uniq!
+          final_value=value.gsub(/\s*,\s*/,',').split(',').uniq
         elsif path_keys.include?(key)
           final_value=absolute_path(value,cfg_dir)
         end
@@ -236,10 +237,10 @@ module Gaudi
       #The absolute basics for configuration
       module BaseConfiguration
         def self.list_keys
-          ['platforms']
+          ['platforms','sources']
         end
         def self.path_keys
-          ['base','out']
+          ['base','out','sources']
         end
         #The root path. 
         #Every path in the system can be defined relative to this
@@ -253,12 +254,16 @@ module Gaudi
         def platforms
           return @config['platforms']
         end
+        def sources
+          @config["sources"].map{|d| File.expand_path(d)}
+        end
         #returns the platform configuration hash
         def platform_config platform
           return @config['platform_data'][platform]
         end
         alias_method :base_dir,:base
         alias_method :out_dir,:out
+        alias_method :source_directories,:sources
       end
     end
     #Adding modules in this module allows BuildConfiguration to extend it's functionality
