@@ -28,4 +28,33 @@ class TestTaskGenerators < MiniTest::Unit::TestCase
     assert_equal(3, d.size)
     assert_equal(5, f.size)
   end
+
+  def test_library_task
+    system_config=mock()
+    system_config.stubs(:source_directories).returns([File.join(File.dirname(__FILE__),'tmp')])
+    system_config.stubs(:out).returns('out')
+    component=Gaudi::Component.new('FOO',Gaudi::CompilationUnit::C,system_config,'mingw')
+    component.stubs(:platform).returns('PC')
+    component.stubs(:name).returns('FOO')
+    deps=library_task_dependencies(component,system_config)
+    assert_equal(6, deps.size)
+    f,d=deps.partition{|e| !File.directory?(e.to_s)}
+    assert_equal(2, d.size, "not enough include paths")
+    assert_equal(4, f.size)
+  end
+
+  def test_object_dependencies
+    system_config=mock()
+    system_config.stubs(:source_directories).returns([File.join(File.dirname(__FILE__),'tmp')])
+    system_config.stubs(:out).returns('out')
+    component=Gaudi::Component.new('FOO',Gaudi::CompilationUnit::C,system_config,'mingw')
+    component.stubs(:platform).returns('PC')
+    component.stubs(:name).returns('FOO')
+
+    deps=object_task_dependencies(component.sources[0],component,system_config)
+    assert_equal(6, deps.size)
+    assert(deps.include?(component.sources[0]))
+    f,d=deps.partition{|e| !File.directory?(e.to_s)}
+    assert_equal(3, d.size, "not enough include paths")
+  end
 end
