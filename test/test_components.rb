@@ -12,7 +12,7 @@ class TestCCompilationUnit < MiniTest::Unit::TestCase
   end
 
   def test_determines
-    dirs=determine_directories('Foo',[directory_fixture],'mingw')
+    dirs=determine_directories('FOO',[directory_fixture],'mingw')
     assert_equal(2, dirs.size)
     srcs=determine_sources(dirs)
     assert_equal(3, srcs.size)
@@ -32,7 +32,7 @@ class TestCPPCompilationUnit < MiniTest::Unit::TestCase
   end
 
   def test_determines
-    dirs=determine_directories('Foo',[directory_fixture],'mingw')
+    dirs=determine_directories('FOO',[directory_fixture],'mingw')
     assert_equal(2, dirs.size)
     srcs=determine_sources(dirs)
     assert_equal(3, srcs.size)
@@ -53,7 +53,7 @@ class TestComponent< MiniTest::Unit::TestCase
     system_config=mock()
     src_dir=directory_fixture
     system_config.expects(:source_directories).returns([src_dir])
-    comp=Gaudi::Component.new('Foo',Gaudi::CompilationUnit::C,system_config,'mingw')
+    comp=Gaudi::Component.new('FOO',Gaudi::CompilationUnit::C,system_config,'mingw')
     assert_equal('FOO', comp.name)
     assert_equal(2, comp.directories.size)
     assert_equal(3, comp.sources.size)

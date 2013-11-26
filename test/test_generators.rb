@@ -19,9 +19,9 @@ class TestTaskGenerators < MiniTest::Unit::TestCase
     system_config=mock()
     system_config.stubs(:source_directories).returns([File.join(File.dirname(__FILE__),'tmp')])
     system_config.stubs(:out).returns('out')
-    program=Gaudi::Component.new('Foo',Gaudi::CompilationUnit::C,system_config,'mingw')
+    program=Gaudi::Component.new('FOO',Gaudi::CompilationUnit::C,system_config,'mingw')
     program.stubs(:platform).returns('PC')
-    program.stubs(:name).returns('foo')
+    program.stubs(:name).returns('FOO')
     deps=program_task_dependencies(program,system_config)
     assert_equal(8, deps.size)
     f,d=deps.partition{|e| !File.directory?(e.to_s)}
