@@ -23,6 +23,9 @@ class TestTaskGenerators < MiniTest::Unit::TestCase
     program.stubs(:platform).returns('PC')
     program.stubs(:name).returns('foo')
     deps=program_task_dependencies(program,system_config)
-    assert_equal(5, deps.size)
+    assert_equal(8, deps.size)
+    f,d=deps.partition{|e| !File.directory?(e.to_s)}
+    assert_equal(3, d.size)
+    assert_equal(5, f.size)
   end
 end
