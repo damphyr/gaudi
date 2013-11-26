@@ -48,6 +48,11 @@ module Filenames
     File.join(system_config.out,component.platform,component.name,"#{component.name}#{ext_exe}")
   end
 
+  def library component,system_config
+    ext_obj,ext_lib,ext_exe = *extensions(component.platform)
+    File.join(system_config.out,component.platform,component.name,"#{component.name}#{ext_lib}")
+  end
+
   def object_file src,component,system_config
     ext_obj,ext_lib,ext_exe = *extensions(component.platform)
     src.pathmap("#{system_config.out}/#{component.platform}/%n#{ext_obj}")
