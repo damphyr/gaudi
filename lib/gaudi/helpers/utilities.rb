@@ -35,3 +35,9 @@ def switch_configuration configuration_file
     end
   end
 end
+
+#Writes a file making sure the directory is created
+def write_file filename,content
+  mkdir_p(File.dirname(filename),:verbose=>false)
+  File.open(filename, 'wb') {|f| f.write(content) }
+end
