@@ -6,6 +6,7 @@ require_relative 'helpers.rb'
 
 class TestCCompilationUnit < MiniTest::Unit::TestCase
   include TestHelpers
+  include Gaudi::StandardPaths
   include Gaudi::CompilationUnit::C
   def teardown
     rm_rf(File.join(File.dirname(__FILE__),'tmp'),:verbose=>false)
@@ -26,6 +27,7 @@ end
 
 class TestCPPCompilationUnit < MiniTest::Unit::TestCase
   include TestHelpers
+  include Gaudi::StandardPaths
   include Gaudi::CompilationUnit::CPP
   def teardown
     rm_rf(File.join(File.dirname(__FILE__),'tmp'),:verbose=>false)
@@ -53,7 +55,8 @@ class TestComponent< MiniTest::Unit::TestCase
     system_config=mock()
     src_dir=directory_fixture
     system_config.expects(:source_directories).returns([src_dir])
-    comp=Gaudi::Component.new('FOO',Gaudi::CompilationUnit::C,system_config,'mingw')
+    system_config.expects(:default_compiler_mode).returns('C')
+    comp=Gaudi::Component.new('FOO',system_config,'mingw')
     assert_equal('FOO', comp.name)
     assert_equal(2, comp.directories.size)
     assert_equal(3, comp.sources.size)

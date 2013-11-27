@@ -4,7 +4,7 @@ require "mocha/setup"
 require "gaudi"
 
 class TestPlatformOperations < MiniTest::Unit::TestCase
-  include PlatformOperations
+  include Gaudi::PlatformOperations
   def test_extensions
     ext_obj,ext_lib,ext_exe=*extensions('PC')
     assert_equal('.exe', ext_exe)

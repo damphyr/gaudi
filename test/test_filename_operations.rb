@@ -4,7 +4,7 @@ require "mocha/setup"
 require "gaudi"
 
 class TestFilenameOperations < MiniTest::Unit::TestCase
-  include Filenames
+  include Gaudi::Filenames
   def test_filenames
     component=mock()
     system_config=mock()

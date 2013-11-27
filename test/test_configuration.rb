@@ -69,6 +69,17 @@ class TestSystemConfiguration < MiniTest::Unit::TestCase
     paths=[File.join(File.dirname(config),'src'),File.join(File.dirname(config),'tmp'),File.expand_path(File.join(File.dirname(config),'..','out'))]
     assert_equal(paths,cfg.sources)
   end
+
+  def test_settings
+    config=mock_configuration('system.cfg',['base=.','out=out/','sources= src'])
+    cfg=Gaudi::Configuration::SystemConfiguration.new(config)
+    assert_equal('C', cfg.default_compiler_mode)
+    config=mock_configuration('system.cfg',['base=.','out=out/','sources= src','default_compiler_mode=CPP'])
+    cfg=Gaudi::Configuration::SystemConfiguration.new(config)
+    assert_equal('CPP', cfg.default_compiler_mode)
+    config=mock_configuration('system.cfg',['base=.','out=out/','sources= src','default_compiler_mode=FOO'])
+    assert_raises(GaudiConfigurationError) {  Gaudi::Configuration::SystemConfiguration.new(config).default_compiler_mode }
+  end
 end
 
 class TestBuildConfiguration < MiniTest::Unit::TestCase
@@ -94,5 +105,18 @@ class TestBuildConfiguration < MiniTest::Unit::TestCase
     assert_raises(GaudiConfigurationError) { Gaudi::Configuration::BuildConfiguration.load([])}
     cfg=Gaudi::Configuration::BuildConfiguration.load([config])
     assert_equal('TST',cfg.prefix)
+  end
+
+  def test_compiler_mode
+    config=mock_configuration('build.cfg',['prefix=TST','compiler_mode=C'])
+    system_config=mock()
+    system_config.stubs(:default_compiler_mode).returns('C')
+    cfg=Gaudi::Configuration::BuildConfiguration.new(config)
+    assert_equal(Gaudi::CompilationUnit::C, cfg.compiler_mode(system_config))
+    config=mock_configuration('build.cfg',['prefix=TST','compiler_mode=Cpp'])
+    cfg=Gaudi::Configuration::BuildConfiguration.new(config)
+    assert_equal(Gaudi::CompilationUnit::CPP, cfg.compiler_mode(system_config))
+    config=mock_configuration('build.cfg',['prefix=TST','compiler_mode=foo'])
+    assert_raises(GaudiConfigurationError){Gaudi::Configuration::BuildConfiguration.new(config).compiler_mode(system_config)}
   end
 end

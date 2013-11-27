@@ -151,7 +151,7 @@ module Gaudi
       def handle_key key,value,cfg_dir,list_keys,path_keys
         final_value=value
         if list_keys.include?(key) && path_keys.include?(key)
-          final_value=value.gsub(/\s*,\s*/,',').split(',').uniq.map{|d| absolute_path(d,cfg_dir)}
+          final_value=Rake::FileList[*(value.gsub(/\s*,\s*/,',').split(',').uniq.map{|d| absolute_path(d,cfg_dir)})]
         elsif list_keys.include?(key)
           #here we want to handle a comma separated list of entries
           final_value=value.gsub(/\s*,\s*/,',').split(',').uniq
@@ -265,6 +265,24 @@ module Gaudi
         alias_method :out_dir,:out
         alias_method :source_directories,:sources
       end
+
+      module Settings
+        def self.list_keys
+          []
+        end
+        def self.path_keys
+          []
+        end
+        def default_compiler_mode
+          mode=@config.fetch('default_compiler_mode','C').upcase
+          valid_modes=['C','CPP']
+          if valid_modes.include?(mode)
+            mode
+          else
+            raise GaudiConfigurationError,"Theonly two acceptable values for default_compiler_mode are: [#{valid_modes.join(',')}]"
+          end
+        end
+      end
     end
     #Adding modules in this module allows BuildConfiguration to extend it's functionality
     #
@@ -294,6 +312,17 @@ module Gaudi
         #Relative paths are interpreted relative to the configuration file's location
         def external_includes
           return @config.fetch('incs',[])
+        end
+
+        def compiler_mode(system_config)
+          case (@config.fetch('compiler_mode',system_config.default_compiler_mode).upcase)
+          when 'C'
+            return Gaudi::CompilationUnit::C 
+          when 'CPP'
+            return Gaudi::CompilationUnit::CPP
+          else
+            raise GaudiConfigurationError,"There are only two acceptable values for compiler_mode: C or CPP"
+          end
         end
 
         alias_method :incs,:external_includes

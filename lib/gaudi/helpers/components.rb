@@ -1,35 +1,35 @@
 module Gaudi
-  module CompilationUnit
-    #This is the default directory layout:
-    # src/platform
-    #         |-name/     - sources and local headers
-    #             |-inc/  - public headers
-    #             |-test/ - unit tests
-    #
-    #Code can be split in several source directories and by default we will look for the files in
-    #source_directory/platform/name and source_directory/platform/name for every source_directory
-    module StandardPaths
-      def determine_directories name,source_directories,platform
-        paths=source_directories.map{|source_dir| Rake::FileList["#{source_dir}/{#{platform},common}/#{name}"].existing}.inject(&:+)
-        raise GaudiError,"Cannot find source directories for '#{name}' in #{source_directories.join(',')}" if paths.empty?
-        return paths
-      end
-      def determine_sources component_directories
-        Rake::FileList[*component_directories.pathmap("%p/**/*{#{src},#{asm}}")].exclude(*determine_test_directories(component_directories).pathmap('%p/*'))
-      end
-      def determine_headers component_directories
-        Rake::FileList[*component_directories.pathmap("%p/**/*#{hdr}")].exclude(*determine_test_directories(component_directories).pathmap('%p/*'))
-      end
-      def determine_test_directories component_directories
-        Rake::FileList[*component_directories.pathmap('%p/test')].existing
-      end
-      def determine_interface_paths component_directories
-        Rake::FileList[*component_directories.pathmap("%p/inc")].existing
-      end
+  #This is the default directory layout:
+  # src/platform
+  #         |-name/     - sources and local headers
+  #             |-inc/  - public headers
+  #             |-test/ - unit tests
+  #
+  #Code can be split in several source directories and by default we will look for the files in
+  #source_directory/platform/name and source_directory/platform/name for every source_directory
+  module StandardPaths
+    def determine_directories name,source_directories,platform
+      paths=source_directories.map{|source_dir| Rake::FileList["#{source_dir}/{#{platform},common}/#{name}"].existing}.inject(&:+)
+      raise GaudiError,"Cannot find source directories for '#{name}' in #{source_directories.join(',')}" if paths.empty?
+      return paths
     end
+    def determine_sources component_directories
+      Rake::FileList[*component_directories.pathmap("%p/**/*{#{src},#{asm}}")].exclude(*determine_test_directories(component_directories).pathmap('%p/*'))
+    end
+    def determine_headers component_directories
+      Rake::FileList[*component_directories.pathmap("%p/**/*#{hdr}")].exclude(*determine_test_directories(component_directories).pathmap('%p/*'))
+    end
+    def determine_test_directories component_directories
+      Rake::FileList[*component_directories.pathmap('%p/test')].existing
+    end
+    def determine_interface_paths component_directories
+      Rake::FileList[*component_directories.pathmap("%p/inc")].existing
+    end
+  end
+
+  module CompilationUnit
     #Conventions, naming and helpers for C projects
     module C
-      include StandardPaths
       def src 
         '.c' 
       end
@@ -42,7 +42,6 @@ module Gaudi
     end
     #Conventions, naming and helpers for C++ projects
     module CPP
-      include StandardPaths
       def src 
         '.cpp' 
       end
@@ -62,13 +61,13 @@ module Gaudi
   #By convention we define an inc/ directory where "public" headers reside. These headers form the interface of the Component
   #and the directory is exposed by Gaudi for use in include statements.
   class Component
+    include StandardPaths
     attr_reader :identifier,:platform,:configuration,:name,:directories
-    def initialize name,comp_unit,system_config,platform
-      extend comp_unit
-      @compilation_unit=comp_unit
+    def initialize name,system_config,platform
       @directories = determine_directories(name,system_config.source_directories,platform)
       config_files = Rake::FileList[*directories.pathmap('%p/build.cfg')]
       @configuration = Configuration::BuildConfiguration.load(config_files)
+      extend @configuration.compiler_mode(system_config)
       @system_config=system_config
       @platform=platform
       @name=@identifier=configuration.prefix
@@ -93,7 +92,7 @@ module Gaudi
       sources+headers
     end
     def dependencies
-      configuration.dependencies.map{|dep| Component.new(dep,@compilation_unit,@system_config,platform)}
+      configuration.dependencies.map{|dep| Component.new(dep,@system_config,platform)}
     end
   end
   #A Gaudi::Program is a collection of components built for a specific platform.
@@ -118,6 +117,7 @@ module Gaudi
     def initialize name,system_config
       @name=name
       @directories=determine_directories(name,system_config.source_directories)
+      raise GaudiError,"Cannot find directories for #{name} " if @directories.empty?
     end
     def platforms
       Rake::FileList[*@directories.pathmap("%p/*")].existing.pathmap('%n')
@@ -128,6 +128,10 @@ module Gaudi
     end
     def to_s
       name
+    end
+    private
+    def determine_directories(name,source_directories)
+      Rake::FileList[*source_directories.pathmap("%p/deployments/#{name}")].existing
     end
   end
 end
