@@ -13,17 +13,7 @@ module Gaudi
     end
 
     module TaskDependencies
-      def program_task_dependencies program,system_config
-        ###TODO: this is still not granular enough, the headers are bundled all together and 
-        #we cannot differentiate which source depends on which header
-        deps=Rake::FileList[program.configuration.to_path]
-        program.dependencies.each do |dep|
-          deps+=library_task_dependencies(dep,system_config)
-        end
-        deps+=program.directories
-        return deps.uniq
-      end
-      def library_task_dependencies component,system_config
+      def component_task_dependencies component,system_config
         ###TODO: here any change in a dependency's interface header will trigger a build which slows incremental builds down.
         #The solution is to parse the code and add the dependencies per file
         #this is one more file task chain (obj->headers_info->c). Zukunftsmusik!
@@ -61,8 +51,11 @@ module Gaudi
         task deployment.name => deps
       end
       def program_task program,system_config
-        deps=program_task_dependencies(program,system_config)
+        deps=component_task_dependencies(program,system_config)
         deps+=program.sources.map{|src| Tasks.define_file_task(object_file(src,program,system_config),object_task_dependencies(src,program,system_config))}
+        program.dependencies.each do |dep|
+          deps+=dep.sources.map{|src| Tasks.define_file_task(object_file(src,program,system_config),object_task_dependencies(src,program,system_config))}
+        end
         deps<<commandfile_task(executable(program,system_config),program,system_config)
         Tasks.define_file_task(executable(program,system_config),deps)
       end

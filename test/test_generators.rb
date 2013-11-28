@@ -25,28 +25,16 @@ class TestTaskGenerators < MiniTest::Unit::TestCase
     system_config
   end
 
-  def test_program_dependencies
+  def test_component_dependencies
     system_config=system_configuration_mock
     program=Gaudi::Component.new('FOO',system_config,'mingw')
     program.stubs(:platform).returns('PC')
     program.stubs(:name).returns('FOO')
 
-    deps=program_task_dependencies(program,system_config)
-    assert_equal(5, deps.size)
-    f,d=deps.partition{|e| !File.directory?(e.to_s)}
-    assert_equal(3, d.size)
-    assert_equal(2, f.size)
-  end
-
-  def test_library_dependencies
-    system_config=system_configuration_mock
-    component=Gaudi::Component.new('FOO',system_config,'mingw')
-    component.stubs(:platform).returns('PC')
-    component.stubs(:name).returns('FOO')
-    deps=library_task_dependencies(component,system_config)
+    deps=component_task_dependencies(program,system_config)
     assert_equal(3, deps.size)
     f,d=deps.partition{|e| !File.directory?(e.to_s)}
-    assert_equal(2, d.size, "not enough include paths")
+    assert_equal(2, d.size)
     assert_equal(1, f.size)
   end
 
