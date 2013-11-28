@@ -90,12 +90,13 @@ module Gaudi
     end
 
     def linker_options component,system_config
+      config=system_config.platform_config(component.platform)
       options= config['linker_options'].split(' ')
-      options<< "#{config['linker_out']}\"#{executable(program,system_config)}\""
+      options<< "#{config['linker_out']}\"#{executable(component,system_config)}\""
       objects=component.sources.map{|src| object_file(src,component,system_config)}
-      libraries=component.external_libraries
+      #libraries=component.external_libraries
       options+= prefixed_objects(objects,config["linker_in"])
-      options+= prefixed_objects(libraries,config["linker_lib"])
+      #options+= prefixed_objects(libraries,config["linker_lib"])
     end
 
     def command_line cmd,options,cmdfile,prefix

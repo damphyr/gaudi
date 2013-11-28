@@ -49,6 +49,7 @@ module Gaudi
     module Build
       include StandardPaths
       include TaskDependencies
+      include ToolOperations
       def deployment_task deployment,system_config
         deps=FileList.new
         deployment.platforms.each do |platform|
