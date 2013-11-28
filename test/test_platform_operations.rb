@@ -1,8 +1,8 @@
 $:.unshift(File.join(File.dirname(__FILE__),'..','lib'))
+require_relative 'helpers'
 require "minitest/autorun"
 require "mocha/setup"
 require "gaudi"
-require_relative 'helpers'
 
 class TestPlatformOperations < MiniTest::Unit::TestCase
   include Gaudi::PlatformOperations

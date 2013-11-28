@@ -1,9 +1,9 @@
 $:.unshift(File.join(File.dirname(__FILE__),'..','lib'))
+require_relative 'helpers'
 require "minitest/autorun"
 require "mocha/setup"
 require "gaudi"
 require 'rake'
-require_relative 'helpers'
 
 class TestTaskGenerators < MiniTest::Unit::TestCase
   include TestHelpers
