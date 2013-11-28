@@ -26,6 +26,24 @@ module Gaudi
       ext_obj,ext_lib,ext_exe = *extensions(component.platform)
       src.pathmap("#{system_config.out}/#{component.platform}/%n#{ext_obj}")
     end
+
+    def command_file tgt,component,system_config
+      ext=""
+      if is_library?(tgt,component.platform)
+        ext=".archive"
+      elsif is_exe?(tgt,component.platform)
+        ext=".link"
+      elsif is_source?(tgt)
+        if is_assembly?(tgt)
+          ext='.assemble'
+        else
+          ext='.compile'
+        end
+      else
+        raise GaudiError,"Don't know how to name a command file for #{tgt}"
+      end
+      return tgt.pathmap("%X#{ext}")
+    end
     #Determine which directories correspond to the given name
     #
     #This method maps the repository directory structure to the component names
@@ -35,7 +53,7 @@ module Gaudi
       return paths
     end
     def determine_sources component_directories
-      Rake::FileList[*component_directories.pathmap("%p/**/*{#{src},#{asm}}")].exclude(*determine_test_directories(component_directories).pathmap('%p/*'))
+      Rake::FileList[*component_directories.pathmap("%p/**/*{#{src}}")].exclude(*determine_test_directories(component_directories).pathmap('%p/*'))
     end
     def determine_headers component_directories
       Rake::FileList[*component_directories.pathmap("%p/**/*#{hdr}")].exclude(*determine_test_directories(component_directories).pathmap('%p/*'))
@@ -52,25 +70,19 @@ module Gaudi
     #Conventions, naming and helpers for C projects
     module C
       def src 
-        '.c' 
+        '.c,.asm,.src' 
       end
       def hdr 
         '.h' 
-      end
-      def asm
-        '.asm' 
       end
     end
     #Conventions, naming and helpers for C++ projects
     module CPP
       def src 
-        '.cpp' 
+        '.cpp,.asm,.src' 
       end
       def hdr 
         '.h' 
-      end
-      def asm 
-        '.asm' 
       end
     end
   end

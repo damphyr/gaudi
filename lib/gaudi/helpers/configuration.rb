@@ -343,8 +343,8 @@ module Gaudi
           return @config['libs']
         end
 
-        def options
-          return @config['options']
+        def compiler_options
+          return @config['compiler_options']
         end
 
         alias_method :libs,:external_libraries
