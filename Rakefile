@@ -1,5 +1,7 @@
 # -*- ruby -*-
 require "rubygems"
+require 'coveralls'
+Coveralls.wear!
 require "hoe"
 require_relative('lib/gaudi/version')
 
