@@ -1,5 +1,6 @@
 require_relative '../version'
 require 'pathname'
+require 'yaml'
 
 module Gaudi
   def self.configuration
@@ -237,10 +238,10 @@ module Gaudi
       #The absolute basics for configuration
       module BaseConfiguration
         def self.list_keys
-          ['platforms','sources']
+          ['platforms','sources','libs']
         end
         def self.path_keys
-          ['base','out','sources']
+          ['base','out','sources','lib_cfg']
         end
         #The root path. 
         #Every path in the system can be defined relative to this
@@ -260,6 +261,42 @@ module Gaudi
         #returns the platform configuration hash
         def platform_config platform
           return @config['platform_data'][platform]
+        end
+        #Returns an array with paths to the external libraries as defined in the platform configuration
+        #
+        #To do this it uses the PlatformConfiguration.external_lib_cfg file to replace the library tokens with path values
+        #
+        #If the file exists under trunk/lib the entry is the full path to the file
+        #otherwise the entry from external_lib_cfg is returned as is (which works for system libraries i.e. winmm.lib, winole.lib etc.)
+        def external_libraries platform
+          libs=Rake::FileList.new
+          external_lib_tokens=platform_config(platform)['libs']
+          if external_lib_tokens
+            external_libs=external_libraries_config(platform)
+            external_lib_tokens.each do |o| 
+              lib_file=external_libs[o]
+              raise GaudiConfigurationError,"Library token #{o} not found in the external libraries configuration" unless lib_file
+              lib_path=File.join(self.base_dir,lib_file)
+              if File.exists?(lib_path)
+                libs<<lib_path
+              else
+                libs<<lib_file
+              end
+            end
+          end
+          return libs
+        end
+        #Loads and returns the external libraries configuration
+        #
+        #The configuration is a {name=>path} hash and is used to 
+        #replace the library names used in the PLatform.external_libraries setting
+        def external_libraries_config platform
+          external_lib_cfg=platform_config(platform)['lib_cfg']
+          if external_lib_cfg && File.exists?(external_lib_cfg)
+            return YAML.load(File.read(external_lib_cfg))
+          else
+            raise GaudiConfigurationError,"Cannot find external library configuration #{external_lib_cfg}"
+          end
         end
         alias_method :base_dir,:base
         alias_method :out_dir,:out

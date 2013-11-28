@@ -80,6 +80,45 @@ class TestSystemConfiguration < MiniTest::Unit::TestCase
     config=mock_configuration('system.cfg',['base=.','out=out/','sources= src','default_compiler_mode=FOO'])
     assert_raises(GaudiConfigurationError) {  Gaudi::Configuration::SystemConfiguration.new(config).default_compiler_mode }
   end
+
+  def test_external_libraries
+    config=mock_configuration('system.cfg',['base=.','out=out/','platforms=foo','foo=./foo.cfg'])
+    platform_cfg=File.join(File.dirname(__FILE__),'foo.cfg')
+    File.expects(:exists?).with(platform_cfg).returns(true)
+    File.expects(:readlines).with(platform_cfg).returns(['libs=foo','lib_cfg=libs.yml'])
+    lib_yml=File.join(File.dirname(__FILE__),'libs.yml')
+    File.expects(:exists?).with(lib_yml).returns(true)
+    File.expects(:read).with(lib_yml).returns(YAML.dump({'foo'=>'foo.lib'}))
+    File.expects(:exists?).with(File.join(File.dirname(__FILE__),'foo.lib')).returns(false)
+
+    cfg=Gaudi::Configuration::SystemConfiguration.new(config)
+    assert_equal(['foo.lib'], cfg.external_libraries('foo'))
+  end
+
+  def test_external_libraries_missing_lib_cfg
+    config=mock_configuration('system.cfg',['base=.','out=out/','platforms=foo','foo=./foo.cfg'])
+    platform_cfg=File.join(File.dirname(__FILE__),'foo.cfg')
+    File.expects(:exists?).with(platform_cfg).returns(true)
+    File.expects(:readlines).with(platform_cfg).returns(['libs=foo','lib_cfg=libs.yml'])
+    lib_yml=File.join(File.dirname(__FILE__),'libs.yml')
+    File.expects(:exists?).with(lib_yml).returns(false)
+    
+    cfg=Gaudi::Configuration::SystemConfiguration.new(config)
+    assert_raises(GaudiConfigurationError){cfg.external_libraries('foo')}
+  end
+
+  def test_external_libraries_missing_token
+    config=mock_configuration('system.cfg',['base=.','out=out/','platforms=foo','foo=./foo.cfg'])
+    platform_cfg=File.join(File.dirname(__FILE__),'foo.cfg')
+    File.expects(:exists?).with(platform_cfg).returns(true)
+    File.expects(:readlines).with(platform_cfg).returns(['libs=foo','lib_cfg=libs.yml'])
+    lib_yml=File.join(File.dirname(__FILE__),'libs.yml')
+    File.expects(:exists?).with(lib_yml).returns(true)
+    File.expects(:read).with(lib_yml).returns(YAML.dump({'bar'=>'bar.lib'}))
+    
+    cfg=Gaudi::Configuration::SystemConfiguration.new(config)
+    assert_raises(GaudiConfigurationError){cfg.external_libraries('foo')}
+  end
 end
 
 class TestBuildConfiguration < MiniTest::Unit::TestCase
