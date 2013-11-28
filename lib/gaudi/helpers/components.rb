@@ -1,3 +1,5 @@
+require_relative 'operations'
+
 module Gaudi
   #This is the default directory layout:
   # src/platform
@@ -8,6 +10,25 @@ module Gaudi
   #Code can be split in several source directories and by default we will look for the files in
   #source_directory/platform/name and source_directory/platform/name for every source_directory
   module StandardPaths
+    include Gaudi::PlatformOperations
+    #Returns the path to the executable file corresponding to the component
+    def executable component,system_config
+      ext_obj,ext_lib,ext_exe = *extensions(component.platform)
+      File.join(system_config.out,component.platform,component.name,"#{component.name}#{ext_exe}")
+    end
+    #Returns the path to the library file corresponding to the component
+    def library component,system_config
+      ext_obj,ext_lib,ext_exe = *extensions(component.platform)
+      File.join(system_config.out,component.platform,component.name,"#{component.name}#{ext_lib}")
+    end
+    #Returns the path to the object output file corresponding to src
+    def object_file src,component,system_config
+      ext_obj,ext_lib,ext_exe = *extensions(component.platform)
+      src.pathmap("#{system_config.out}/#{component.platform}/%n#{ext_obj}")
+    end
+    #Determine which directories correspond to the given name
+    #
+    #This method maps the repository directory structure to the component names
     def determine_directories name,source_directories,platform
       paths=source_directories.map{|source_dir| Rake::FileList["#{source_dir}/{#{platform},common}/#{name}"].existing}.inject(&:+)
       raise GaudiError,"Cannot find source directories for '#{name}' in #{source_directories.join(',')}" if paths.empty?
@@ -117,14 +138,15 @@ module Gaudi
     def initialize name,system_config
       @name=name
       @directories=determine_directories(name,system_config.source_directories)
+      @system_config=system_config
       raise GaudiError,"Cannot find directories for #{name} " if @directories.empty?
     end
     def platforms
       Rake::FileList[*@directories.pathmap("%p/*")].existing.pathmap('%n')
     end
     #A Program instance for every program configuration on the given platform
-    def programs system_config,platform
-      Rake::FileList[*@directories.pathmap("%p/#{platform}/*.cfg")].existing.map{|cfg| Program.new(cfg,name,system_config,platform)}
+    def programs platform
+      Rake::FileList[*@directories.pathmap("%p/#{platform}/*.cfg")].existing.map{|cfg| Program.new(cfg,name,@system_config,platform)}
     end
     def to_s
       name

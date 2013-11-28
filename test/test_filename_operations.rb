@@ -5,17 +5,6 @@ require "gaudi"
 
 class TestFilenameOperations < MiniTest::Unit::TestCase
   include Gaudi::Filenames
-  def test_filenames
-    component=mock()
-    system_config=mock()
-    component.stubs(:platform).returns('PC')
-    component.stubs(:name).returns('foo')
-    system_config.stubs(:out).returns('out')
-    exe=executable(component,system_config)
-    assert(exe.end_with?('.exe'), "Not an exe.")
-    obj=object_file('foo.c',component,system_config)
-    assert(obj.end_with?('obj'), "not an object.")
-  end
   def test_source_detection
     assert(is_source?('foo.c'), "It's a source file dummy")
     assert(is_source?('foo.src'), "It's a source file dummy")

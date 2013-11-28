@@ -4,6 +4,21 @@ require "mocha/setup"
 require "gaudi"
 require_relative 'helpers.rb'
 
+class TestStandardPaths < MiniTest::Unit::TestCase
+  include Gaudi::StandardPaths
+  def test_filenames
+    component=mock()
+    system_config=mock()
+    component.stubs(:platform).returns('PC')
+    component.stubs(:name).returns('foo')
+    system_config.stubs(:out).returns('out')
+    exe=executable(component,system_config)
+    assert(exe.end_with?('.exe'), "Not an exe.")
+    obj=object_file('foo.c',component,system_config)
+    assert(obj.end_with?('obj'), "not an object.")
+  end
+end
+
 class TestCCompilationUnit < MiniTest::Unit::TestCase
   include TestHelpers
   include Gaudi::StandardPaths

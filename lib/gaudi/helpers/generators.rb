@@ -14,7 +14,7 @@ module Gaudi
 
     #Tasks::Build contains all task generation methods for building source code
     module Build
-      include Filenames
+      include StandardPaths
       def deployment_task deployment,system_config
         deps=FileList.new
         deployment.platforms.each do |platform|
