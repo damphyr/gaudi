@@ -130,13 +130,20 @@ class TestBuildConfiguration < MiniTest::Unit::TestCase
   end
 
   def test_basic_configuration
-    config=mock_configuration('build.cfg',['prefix=TST','deps=COD,MOD','incs= ./inc','libs= foo.lib,bar.lib','compiler_options= FOO BAR'])
+    system_cfg=mock('system')
+    system_cfg.stubs(:config_base).returns(File.dirname(__FILE__))
+    config=mock_configuration('build.cfg',['prefix=TST','deps=COD,MOD','incs= ./inc','libs= foo,bar','compiler_options= FOO BAR'])
+    
     cfg=Gaudi::Configuration::BuildConfiguration.new(config)
     assert_equal('TST', cfg.prefix)
     assert_equal(['COD','MOD'],cfg.deps)
     assert_equal(['./inc'],cfg.incs)
-    assert_equal(['foo.lib','bar.lib'],cfg.libs)
     assert_equal('FOO BAR', cfg.compiler_options)
+
+    system_cfg.expects(:external_libraries_config).returns({'foo'=>'foo.lib','bar'=>'bar.lib'})
+    File.expects(:exists?).with(File.join(File.dirname(__FILE__),'foo.lib')).returns(false)
+    File.expects(:exists?).with(File.join(File.dirname(__FILE__),'bar.lib')).returns(false)
+    assert_equal(['foo.lib','bar.lib'],cfg.libs(system_cfg,'pc'))
   end
 
   def test_load

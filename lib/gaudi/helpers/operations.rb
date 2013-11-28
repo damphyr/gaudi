@@ -66,7 +66,7 @@ module Gaudi
       opts= config['compiler_options'].split(' ')
       opts<< "#{config['compiler_out']}\"#{output}\""
       opts+= component.configuration.compiler_options
-      opts+= prefixed_objects(includes,config['compiler_include'])
+      opts+= prefixed_objects(component_includes(component,system_config),config['compiler_include'])
       opts<< src
     end
 
@@ -75,7 +75,7 @@ module Gaudi
       output=object_file(src,component,system_config)
       opts= config['assembler_options'].split(' ')
       opts<< "#{config['assembler_out']}\"#{output}\""
-      opts+= prefixed_objects(includes,config['assembler_include'])
+      opts+= prefixed_objects(component_includes(component,system_config),config['assembler_include'])
       opts<< src
     end
 
@@ -99,19 +99,37 @@ module Gaudi
       #options+= prefixed_objects(libraries,config["linker_lib"])
     end
 
-    def command_line cmd,options,cmdfile,prefix
+    def command_line cmd,cmdfile,prefix
       cmdline= cmd
       if prefix && !prefix.empty?
         cmdline<< "#{prefix}#{cmdfile}"
       else
-        cmdline+= options
+        cmdline+= File.readlines(cmdfile)
       end
       cmdline
     end
-
     #adds a prefix to a list of filenames/objects
     def prefixed_objects objects,prefix_flag
       objects.map{|lo| "#{prefix_flag}#{lo}"}
+    end
+
+    def component_includes component,system_config
+      incs=component.include_paths
+      incs+=system_config.external_includes(component.platform)
+      incs+=component.configuration.external_includes
+      component.dependencies.each{|dep| incs+=dep.include_paths}
+      return incs
+    end
+  end
+  module ConfigurationOperations
+    #Given a list of tokens it will look them up in the config Hash
+    #and map them to 'base_dir/config[token]' if it exists or 'config[token]' if not
+    def interpret_library_tokens tokens,config,base_dir
+      tokens.map do |o| 
+        raise GaudiConfigurationError,"Library token #{o} not found in the external libraries configuration" unless config[o]
+        lib_path=File.join(base_dir,config[o])
+        File.exists?(lib_path) ? lib_path : config[o]
+      end
     end
   end
 end

@@ -237,6 +237,7 @@ module Gaudi
     module SystemModules
       #The absolute basics for configuration
       module BaseConfiguration
+        include ConfigurationOperations
         def self.list_keys
           ['platforms','sources','libs']
         end
@@ -262,6 +263,13 @@ module Gaudi
         def platform_config platform
           return @config['platform_data'][platform]
         end
+        #A list of paths to be used as include paths when compiling
+        #
+        #Relative paths are interpreted relative to the main configuration file's location
+        def external_includes platform
+          includes=platform_config(platform).fetch('incs',"")
+          return includes.split(',').map{|d| absolute_path(d,config_base)}
+        end
         #Returns an array with paths to the external libraries as defined in the platform configuration
         #
         #To do this it uses the PlatformConfiguration.external_lib_cfg file to replace the library tokens with path values
@@ -269,22 +277,8 @@ module Gaudi
         #If the file exists under trunk/lib the entry is the full path to the file
         #otherwise the entry from external_lib_cfg is returned as is (which works for system libraries i.e. winmm.lib, winole.lib etc.)
         def external_libraries platform
-          libs=Rake::FileList.new
-          external_lib_tokens=platform_config(platform)['libs']
-          if external_lib_tokens
-            external_libs=external_libraries_config(platform)
-            external_lib_tokens.each do |o| 
-              lib_file=external_libs[o]
-              raise GaudiConfigurationError,"Library token #{o} not found in the external libraries configuration" unless lib_file
-              lib_path=File.join(self.base_dir,lib_file)
-              if File.exists?(lib_path)
-                libs<<lib_path
-              else
-                libs<<lib_file
-              end
-            end
-          end
-          return libs
+          external_lib_tokens=platform_config(platform).fetch('libs',[])
+          return interpret_library_tokens(external_lib_tokens,external_libraries_config(platform),self.config_base)
         end
         #Loads and returns the external libraries configuration
         #
@@ -292,12 +286,14 @@ module Gaudi
         #replace the library names used in the PLatform.external_libraries setting
         def external_libraries_config platform
           external_lib_cfg=platform_config(platform)['lib_cfg']
-          if external_lib_cfg && File.exists?(external_lib_cfg)
+          raise GaudiConfigurationError,"No external library configuration for platform #{platform}" unless external_lib_cfg
+          if File.exists?(external_lib_cfg)
             return YAML.load(File.read(external_lib_cfg))
           else
-            raise GaudiConfigurationError,"Cannot find external library configuration #{external_lib_cfg}"
+            raise GaudiConfigurationError,"Cannot find external library configuration #{external_lib_cfg} for platform #{platform}"
           end
         end
+
         alias_method :base_dir,:base
         alias_method :out_dir,:out
         alias_method :source_directories,:sources
@@ -367,6 +363,7 @@ module Gaudi
       end
 
       module ProgramConfiguration
+        include ConfigurationOperations
         def self.list_keys
           ['libs']
         end
@@ -376,12 +373,12 @@ module Gaudi
         #A list of library files to be added when linking
         #
         #Relative paths are interpreted relative to the configuration file's location
-        def external_libraries
-          return @config['libs']
+        def external_libraries system_config,platform
+          return interpret_library_tokens(@config.fetch('libs',[]),system_config.external_libraries_config(platform),system_config.config_base)
         end
 
         def compiler_options
-          return @config['compiler_options']
+          return @config.fetch('compiler_options',[])
         end
 
         alias_method :libs,:external_libraries

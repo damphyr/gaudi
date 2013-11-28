@@ -62,7 +62,7 @@ module Gaudi
       Rake::FileList[*component_directories.pathmap('%p/test')].existing
     end
     def determine_interface_paths component_directories
-      Rake::FileList[*component_directories.pathmap("%p/inc")].existing
+      Rake::FileList[*component_directories.pathmap('%p/inc')].existing
     end
   end
 
