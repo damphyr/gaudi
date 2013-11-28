@@ -17,6 +17,14 @@ Fat chance this code is going to be a masterpiece, but you have to aspire to som
 
 Well, I've done this 4 times now and some things keep getting reused and some things are improved and I have reached the point where it is easier to clone a base repository with properly tested code and fill in the blanks than actually find the previous system and remove project specific stuff.
 
+## Will it make coffee?
+
+Under specific circumstances, yes!
+
+Gaudi is a build system for component-based, multi-platform, statically linked C or C++ projects of the kind you usually get when you are creating embedded systems. 
+
+It probably won't scale down. It's hodge-podge predecessors have been servicing teams of 7+, with projects running for longer than a year and LOC counts in the high 100Ks. Then again if you follow the default conventions it will work out of the box for any code size.
+
 ## LICENSE:
 
 (The MIT License)
