@@ -1,3 +1,6 @@
+require 'coveralls'
+Coveralls.wear!
+
 module TestHelpers
   def mock_configuration filename,lines
     fname=File.join(File.dirname(__FILE__),filename)
