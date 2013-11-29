@@ -24,7 +24,7 @@ module Gaudi
     #Returns the path to the object output file corresponding to src
     def object_file src,component,system_config
       ext_obj,ext_lib,ext_exe = *extensions(component.platform)
-      src.pathmap("#{system_config.out}/#{component.platform}/%n#{ext_obj}")
+      src.pathmap("#{system_config.out}/#{component.platform}/#{component.name}/%n#{ext_obj}")
     end
 
     def command_file tgt,component,system_config
@@ -98,7 +98,7 @@ module Gaudi
     attr_reader :identifier,:platform,:configuration,:name,:directories
     def initialize name,system_config,platform
       @directories = determine_directories(name,system_config.source_directories,platform)
-      config_files = Rake::FileList[*directories.pathmap('%p/build.cfg')]
+      config_files = Rake::FileList[*directories.pathmap('%p/build.cfg')].existing
       @configuration = Configuration::BuildConfiguration.load(config_files)
       extend @configuration.compiler_mode(system_config)
       @system_config=system_config

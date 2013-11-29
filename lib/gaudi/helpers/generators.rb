@@ -54,15 +54,15 @@ module Gaudi
         deps=component_task_dependencies(program,system_config)
         deps+=program.sources.map{|src| Tasks.define_file_task(object_file(src,program,system_config),object_task_dependencies(src,program,system_config))}
         program.dependencies.each do |dep|
-          deps+=dep.sources.map{|src| Tasks.define_file_task(object_file(src,program,system_config),object_task_dependencies(src,program,system_config))}
+          deps+=dep.sources.map{|src| Tasks.define_file_task(object_file(src,dep,system_config),object_task_dependencies(src,dep,system_config))}
         end
         deps<<commandfile_task(executable(program,system_config),program,system_config)
         Tasks.define_file_task(executable(program,system_config),deps)
       end
       def library_task component,system_config
-        deps=library_task_dependencies(component,system_config)
+        deps=component_task_dependencies(component,system_config)
         deps+=component.sources.map{|src| Tasks.define_file_task(object_file(src,component,system_config),object_task_dependencies(src,component,system_config))}
-        deps<<commandfile_task(library(component,system_config),program,system_config)
+        deps<<commandfile_task(library(component,system_config),component,system_config)
         Tasks.define_file_task(library(component,system_config),deps)
       end
       def commandfile_task src,component,system_config

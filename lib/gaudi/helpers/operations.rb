@@ -55,8 +55,7 @@ module Gaudi
     end
 
     def is_assembly? filename
-      filename.downcase.end_with?('.asm') ||
-      filename.downcase.end_with?('.src') 
+      filename.downcase.end_with?('.asm') || filename.downcase.end_with?('.src') 
     end
   end
   module ToolOperations
@@ -64,9 +63,9 @@ module Gaudi
       config=system_config.platform_config(component.platform)
       output=object_file(src,component,system_config)
       opts= config['compiler_options'].split(' ')
-      opts<< "#{config['compiler_out']}\"#{output}\""
       opts+= component.configuration.compiler_options
       opts+= prefixed_objects(component_includes(component,system_config),config['compiler_include'])
+      opts<< "#{config['compiler_out']}\"#{output}\""
       opts<< src
     end
 
@@ -94,6 +93,7 @@ module Gaudi
       options= config['linker_options'].split(' ')
       options<< "#{config['linker_out']}\"#{executable(component,system_config)}\""
       objects=component.sources.map{|src| object_file(src,component,system_config)}
+      component.dependencies.each{|dep| objects+=dep.sources.map{|src| object_file(src,dep,system_config)}}
       #libraries=component.external_libraries
       options+= prefixed_objects(objects,config["linker_in"])
       #options+= prefixed_objects(libraries,config["linker_lib"])
@@ -104,7 +104,7 @@ module Gaudi
       if prefix && !prefix.empty?
         cmdline<< "#{prefix}#{cmdfile}"
       else
-        cmdline+= File.readlines(cmdfile)
+        cmdline+= File.readlines(cmdfile).map{|l| l.strip}
       end
       cmdline
     end

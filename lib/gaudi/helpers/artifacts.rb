@@ -12,7 +12,7 @@ module Gaudi
     #Constructs the command line for linker and returns it as an Array
     def linker cmdfile,config
       li=config['linker']
-      raise GaudiConfigurationError,"Missing 'linker' setting" unless ll
+      raise GaudiConfigurationError,"Missing 'linker' setting" unless li
       return command_line(li,cmdfile,config.fetch('linker_commandfile_prefix',""))
     end
     #constructs the assembler command line
@@ -23,9 +23,9 @@ module Gaudi
     end
     #constructs the archiver command line
     def archiver cmdfile,config
-      ar=config['archiver']
-      raise GaudiConfigurationError,"Missing 'archiver' setting" unless ar
-      return command_line(ar,cmdfile,config.fetch('archiver_commandfile_prefix',""))
+      ar=config['archive']
+      raise GaudiConfigurationError,"Missing 'archive' setting" unless ar
+      return command_line(ar,cmdfile,config.fetch('archive_commandfile_prefix',""))
     end
   end
 
@@ -41,18 +41,18 @@ module Gaudi
         else
           cmdline = compiler(src.pathmap('%X.compile'),config)
         end
-        cmdline
+        sh(cmdline.join(' '))
       end
       #Statically links an executable or library
-      def link filename,system_config,platform
+      def build filename,system_config,platform
         config=system_config.platform_config(platform)
         mkdir_p(File.dirname(filename),:verbose=>false)
-        if (is_library?(platform))
+        if (is_library?(filename,platform))
           cmdline = archiver(filename.pathmap('%X.archive'),config)
         else
           cmdline = linker(filename.pathmap('%X.link'),config)
         end
-        cmdline
+        sh(cmdline.join(' '))
       end
     end
   end
