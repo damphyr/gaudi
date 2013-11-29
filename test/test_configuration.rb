@@ -137,7 +137,7 @@ class TestBuildConfiguration < MiniTest::Unit::TestCase
     cfg=Gaudi::Configuration::BuildConfiguration.new(config)
     assert_equal('TST', cfg.prefix)
     assert_equal(['COD','MOD'],cfg.deps)
-    assert_equal(['./inc'],cfg.incs)
+    assert_equal(["#{File.dirname(__FILE__)}/inc"],cfg.incs)
     assert_equal('FOO BAR', cfg.compiler_options)
 
     system_cfg.expects(:external_libraries_config).returns({'foo'=>'foo.lib','bar'=>'bar.lib'})
