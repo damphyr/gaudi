@@ -5,22 +5,26 @@ module Gaudi
     include ToolOperations
     #constructs the compiler command line and returns it as an Array
     def compiler cmdfile,config
-      cc=config.fetch('compiler',raise(GaudiError,"Missing compiler setting"))
+      cc=config['compiler']
+      raise GaudiConfigurationError,"Missing 'compiler' setting" unless cc
       return command_line(cc,cmdfile,config.fetch('compiler_commandfile_prefix',""))
     end
     #Constructs the command line for linker and returns it as an Array
     def linker cmdfile,config
-      li=config.fetch('linker',raise(GaudiError,"Missing linker setting"))
+      li=config['linker']
+      raise GaudiConfigurationError,"Missing 'linker' setting" unless ll
       return command_line(li,cmdfile,config.fetch('linker_commandfile_prefix',""))
     end
     #constructs the assembler command line
     def assembler cmdfile,config
-      as=config.fetch('assembler',raise(GaudiError,"Missing assembler setting"))
+      as=config['assembler']
+      raise GaudiConfigurationError,"Missing 'assembler' setting" unless as
       return command_line(as,cmdfile,config.fetch('assembler_commandfile_prefix',""))
     end
     #constructs the archiver command line
     def archiver cmdfile,config
-      ar=config.fetch('archiver',raise(GaudiError,"Missing archiver setting"))
+      ar=config['archiver']
+      raise GaudiConfigurationError,"Missing 'archiver' setting" unless ar
       return command_line(ar,cmdfile,config.fetch('archiver_commandfile_prefix',""))
     end
   end

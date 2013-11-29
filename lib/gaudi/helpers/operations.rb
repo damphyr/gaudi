@@ -100,7 +100,7 @@ module Gaudi
     end
 
     def command_line cmd,cmdfile,prefix
-      cmdline= cmd
+      cmdline= [cmd]
       if prefix && !prefix.empty?
         cmdline<< "#{prefix}#{cmdfile}"
       else
