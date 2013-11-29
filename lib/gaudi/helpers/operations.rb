@@ -94,9 +94,8 @@ module Gaudi
       options<< "#{config['linker_out']}\"#{executable(component,system_config)}\""
       objects=component.sources.map{|src| object_file(src,component,system_config)}
       component.dependencies.each{|dep| objects+=dep.sources.map{|src| object_file(src,dep,system_config)}}
-      #libraries=component.external_libraries
       options+= prefixed_objects(objects,config["linker_in"])
-      #options+= prefixed_objects(libraries,config["linker_lib"])
+      options+= prefixed_objects(component.external_libraries,config["linker_lib"])
     end
 
     def command_line cmd,cmdfile,prefix
@@ -127,7 +126,7 @@ module Gaudi
     def interpret_library_tokens tokens,config,base_dir
       tokens.map do |o| 
         raise GaudiConfigurationError,"Library token #{o} not found in the external libraries configuration" unless config[o]
-        lib_path=File.join(base_dir,config[o])
+        lib_path=File.expand_path(File.join(base_dir,config[o]))
         File.exists?(lib_path) ? lib_path : config[o]
       end
     end

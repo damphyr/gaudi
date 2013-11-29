@@ -127,6 +127,10 @@ module Gaudi
     def dependencies
       configuration.dependencies.map{|dep| Component.new(dep,@system_config,platform)}
     end
+
+    def external_includes
+      @system_config.external_includes(@platform)+@configuration.external_includes
+    end
   end
   #A Gaudi::Program is a collection of components built for a specific platform.
   class Program<Component
@@ -134,6 +138,10 @@ module Gaudi
       @configuration=Configuration::BuildConfiguration.load([config_file])
       super(@configuration.prefix,system_config,platform)
       @deployment=deployment_name
+    end
+
+    def external_libraries
+      @system_config.external_libraries(@platform)+@configuration.external_libraries(@system_config,platform)
     end
   end
   #A Deployment is a collection of Programs compiled for multiple platforms
