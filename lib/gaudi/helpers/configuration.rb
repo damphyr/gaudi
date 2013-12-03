@@ -59,7 +59,7 @@ module Gaudi
         if cfg
           return cfg
         else
-          raise GaudiConfigurationError, "No #{klass.to_s} configuration files in #{configuration_files}"
+          raise GaudiConfigurationError, "No #{klass.to_s} configuration files in '#{configuration_files}'"
         end
       end
 

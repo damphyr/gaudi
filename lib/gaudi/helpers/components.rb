@@ -26,7 +26,7 @@ module Gaudi
       ext_obj,ext_lib,ext_exe = *extensions(component.platform)
       src.pathmap("#{system_config.out}/#{component.platform}/#{component.name}/%n#{ext_obj}")
     end
-
+    #Returns the path to the file containing the commands for the given target
     def command_file tgt,component,system_config
       ext=""
       if is_library?(tgt,component.platform)
@@ -79,7 +79,7 @@ module Gaudi
     #Conventions, naming and helpers for C++ projects
     module CPP
       def src 
-        '.cpp,.asm,.src' 
+        '.cpp,.cc,.asm,.src' 
       end
       def hdr 
         '.h' 
@@ -99,6 +99,7 @@ module Gaudi
     def initialize name,system_config,platform
       @directories = determine_directories(name,system_config.source_directories,platform)
       config_files = Rake::FileList[*directories.pathmap('%p/build.cfg')].existing
+      raise GaudiConfigurationError,"No configuration files for #{name}" if config_files.empty?
       @configuration = Configuration::BuildConfiguration.load(config_files)
       extend @configuration.compiler_mode(system_config)
       @system_config=system_config
