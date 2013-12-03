@@ -117,11 +117,11 @@ module Gaudi
             l.chomp!
             #ignore if it starts with a hash
             unless l=~/^#/ || l.empty?
-              if /^setenv\s+(?<envvar>.+?)\s*=\s*(?<val>.+)/ =~ l
+              if /^setenv\s+(?<envvar>.+?)\s*=\s*(?<val>.*)/ =~ l
                 environment_variable(envvar,val)
               #if it starts with an import get a new config file
               elsif /^import\s+(?<path>.*)/ =~ l
-                import_config(path,cfg_dir)
+                cfg.merge!(import_config(path,cfg_dir))
               elsif /^(?<key>.*?)\s*=\s*(?<v>.*)/ =~ l
                 cfg[key]=handle_key(key,v,cfg_dir,list_keys,path_keys)
               else

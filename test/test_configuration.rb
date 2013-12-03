@@ -23,9 +23,10 @@ class TestLoader < MiniTest::Unit::TestCase
   def test_import
     config=mock_configuration('system.cfg',['import import.cfg'])
     File.expects(:exists?).with(File.join(File.dirname(config),"import.cfg")).returns(true).times(2)
-    File.expects(:readlines).with(File.join(File.dirname(config),"import.cfg")).returns([])
+    File.expects(:readlines).with(File.join(File.dirname(config),"import.cfg")).returns(['foo=bar'])
     cfg=Gaudi::Configuration::Loader.new(config)
-    assert(cfg.config.empty?, "Configuration should be empty")
+    assert(!cfg.config.empty?, "Configuration should not be empty")
+    assert_equal('bar', cfg.config['foo'])
   end
   def test_environment
     config=mock_configuration('system.cfg',['setenv GAUDI = brilliant builder'])
