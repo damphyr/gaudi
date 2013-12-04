@@ -152,17 +152,17 @@ module Gaudi
       def handle_key key,value,cfg_dir,list_keys,path_keys
         final_value=value
         if list_keys.include?(key) && path_keys.include?(key)
-          final_value=Rake::FileList[*(value.gsub(/\s*,\s*/,',').split(',').uniq.map{|d| absolute_path(d,cfg_dir)})]
+          final_value=Rake::FileList[*(value.gsub(/\s*,\s*/,',').split(',').uniq.map{|d| absolute_path(d.strip,cfg_dir)})]
         elsif list_keys.include?(key)
           #here we want to handle a comma separated list of entries
           final_value=value.gsub(/\s*,\s*/,',').split(',').uniq
         elsif path_keys.include?(key)
-          final_value=absolute_path(value,cfg_dir)
+          final_value=absolute_path(value.strip,cfg_dir)
         end
         return final_value
       end
       def import_config path,cfg_dir
-        path=absolute_path(path,cfg_dir)
+        path=absolute_path(path.strip,cfg_dir)
         raise GaudiConfigurationError,"Cannot find #{path} to import" unless File.exists?(path)
         read_configuration(path,*keys)
       end
@@ -300,7 +300,7 @@ module Gaudi
         #Relative paths are interpreted relative to the main configuration file's location
         def external_includes platform
           includes=platform_config(platform).fetch('incs',"")
-          return includes.split(',').map{|d| absolute_path(d,config_base)}
+          return includes.split(',').map{|d| absolute_path(d.strip,config_base)}
         end
         #Returns an array with paths to the external libraries as defined in the platform configuration
         #

@@ -37,7 +37,7 @@ module Gaudi
       def compile src,system_config,platform
         config=system_config.platform_config(platform)
         if is_assembly?(src)
-          cmdline = assembler(src.pathmap('%X.assembly'),config)
+          cmdline = assembler(src.pathmap('%X.assemble'),config)
         else
           cmdline = compiler(src.pathmap('%X.compile'),config)
         end
