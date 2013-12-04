@@ -23,6 +23,14 @@ import ./extra_options.cfg
 
 Extending the available configuration properties is done by adding modules to Gaudi::Configuration::SystemModules (for more details check [EXTENDING](EXTENDING.md))
 
+### Precedence order
+
+Usage of import raises the issue of what happens when a parameter is defined in several files.
+
+Gaudi has a simple precedence system: Last one wins.
+
+There is also 
+
 ## System Configuration
 
 The standard configuration parameters out-of-the-box are
@@ -32,6 +40,10 @@ The standard configuration parameters out-of-the-box are
  * source - A comma separated list of directories where project sources can be found
  * platforms - a comma separated list of compiler platform names e.g. platforms= mingw,rx,qnx etc.
  * default_compiler_mode - an optional setting which can be C or CPP (default is C) to indicate to the system what type of compilation takes place
+
+**All paths in the configuration can be defined absolutely or relative to the configuration file.**
+
+Defining _base_ relative to the configuration file has the added advantage of making the whole configuration portable to different branches. Generally avoid absolute paths for anything that is in your project's repository, Gaudi will expand all paths to their absolute values to avoid mixups.
 
 For each platform in the _platforms_ entry there needs to be a platform_name=path/to/platform.cfg entry in the configuration file:
 
@@ -83,15 +95,13 @@ linker_lib=
 linker_commandfile_prefix= 
 ```
 
-**All paths in the configuration can be defined absolutely or relative to the configuration file.**
-
 ### Third party
 
-It gets a bit more complicated. In many projects it is not uncommon to use third party libraries, which sometimes are only available in binary form. These libraries are acompanied by headers and the whole thing needs to be integrated somehow. 
+It gets a bit more complicated. In many projects it is not uncommon to use third party libraries, which sometimes are only available in binary form. These libraries are accompanied by headers and the whole thing needs to be integrated somehow. 
 
 So in each platform configuration you can use 
 
-´´´bash
+```bash
 #A comma separated list of paths to use as include paths
 incs= path1, always/relative/to/the/config/file, /absolute/is/also/ok
 #A comma separated list of tokens
@@ -99,7 +109,9 @@ libs= foo, bar
 #The yaml file matching the tokens to the actual files
 lib_cfg= ./lib_cfg.yaml
 ```
+
 The library configuration file is a simple YAML file:
+
 ```yaml
 ---
 foo: lib/foo/foo.lib
@@ -113,3 +125,5 @@ Now this might seem one layer of abstraction too much at first glance. It comes 
 sqlite3: sqlite3
 ```
 which will result in linking against libsqlite3.so
+
+The incs and libs platform configuration entries will be added as compiler and linker parameters for every platform build.
