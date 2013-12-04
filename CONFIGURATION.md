@@ -1,6 +1,6 @@
 # Gaudi Configuration
 
-Configuration is the core feature of Gaudi. While we talk about compiling and linking and multiple platform support, the core problem Gaudi is actually solving is how to get all the parameters all the tools need in one place in a sufficiantly flexible format to allow for the permutations needed in a typical project.
+Configuration is the core feature of Gaudi. While we talk about compiling and linking and multiple platform support, the core problem Gaudi is actually solving is how to get all the parameters for all the tools in one place in a sufficiently flexible format to allow for the permutations needed in a typical project.
 
 While the parts of Gaudi that are published deal with building C/C++ programs, project specific applications include static code analysis, IDE project generation, documentation generation, test execution, reporting and release management and more or less every task you could automate in a software project.
 
