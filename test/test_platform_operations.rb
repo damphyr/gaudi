@@ -20,5 +20,6 @@ class TestPlatformOperations < MiniTest::Unit::TestCase
     assert(is_source?('foo.cc'), "It's a source file dummy")
     assert(is_source?('foo.asm'), "It's a source file dummy")
     assert(is_source?('foo.Src'), "It's a source file dummy")
+    assert(!is_source?('foo.foo'), "Definitely not a source file this time")
   end
 end
