@@ -10,6 +10,7 @@ class TestLoader < MiniTest::Unit::TestCase
     config=mock_configuration('system.cfg',[])
     cfg=Gaudi::Configuration::Loader.new(config)
     assert_equal(config, cfg.config_file)
+    assert_equal(config, cfg.to_path)
   end
   def test_syntax_error
     config=mock_configuration('system.cfg',['foo'])
@@ -33,6 +34,7 @@ class TestLoader < MiniTest::Unit::TestCase
     Gaudi::Configuration::Loader.new(config)
     assert_equal('brilliant builder',ENV['GAUDI'])
   end
+
 end
 
 class TestSystemConfiguration < MiniTest::Unit::TestCase
@@ -55,6 +57,7 @@ class TestSystemConfiguration < MiniTest::Unit::TestCase
     cfg=Gaudi::Configuration::SystemConfiguration.load([config])
     assert_equal(File.dirname(__FILE__),cfg.base)
   end
+
   def test_platforms
     config=mock_configuration('system.cfg',['base=.','out=out/','platforms=foo','foo=./foo.cfg'])
     platform_cfg=File.join(File.dirname(__FILE__),'foo.cfg')
@@ -64,6 +67,7 @@ class TestSystemConfiguration < MiniTest::Unit::TestCase
     assert_equal(['foo'], cfg.platforms)
     assert_equal({"bar"=>"foo"}, cfg.platform_config('foo'))
   end
+  
   def test_list_of_paths
     config=mock_configuration('system.cfg',['base=.','out=out/','sources= src,tmp,../out'])
     cfg=Gaudi::Configuration::SystemConfiguration.new(config)
@@ -119,6 +123,25 @@ class TestSystemConfiguration < MiniTest::Unit::TestCase
     
     cfg=Gaudi::Configuration::SystemConfiguration.new(config)
     assert_raises(GaudiConfigurationError){cfg.external_libraries('foo')}
+  end
+
+  def test_external_includes
+    config=mock_configuration('system.cfg',['base=.','out=out/','platforms=foo','foo=./foo.cfg'])
+    platform_cfg=File.join(File.dirname(__FILE__),'foo.cfg')
+    File.expects(:exists?).with(platform_cfg).returns(true)
+    File.expects(:readlines).with(platform_cfg).returns(['incs=./foo,./bar'])
+
+    cfg=Gaudi::Configuration::SystemConfiguration.new(config)
+    assert_equal(["#{File.dirname(__FILE__)}/foo", "#{File.dirname(__FILE__)}/bar"],cfg.external_includes('foo'))
+  end
+  def test_external_includes_empty
+    config=mock_configuration('system.cfg',['base=.','out=out/','platforms=foo','foo=./foo.cfg'])
+    platform_cfg=File.join(File.dirname(__FILE__),'foo.cfg')
+    File.expects(:exists?).with(platform_cfg).returns(true)
+    File.expects(:readlines).with(platform_cfg).returns([])
+
+    cfg=Gaudi::Configuration::SystemConfiguration.new(config)
+    assert(cfg.external_includes('foo').empty?)
   end
 end
 

@@ -103,7 +103,6 @@ module Gaudi
 
         end
       end
-      private
       #Reads a configuration file and returns a hash with the
       #configuration as key-value pairs
       def read_configuration filename,list_keys,path_keys
@@ -134,6 +133,7 @@ module Gaudi
         end
         return cfg
       end
+      private
       def required_path fname
         if fname && !fname.empty?
           if File.exists?(fname)
@@ -262,6 +262,10 @@ module Gaudi
         #returns the platform configuration hash
         def platform_config platform
           return @config['platform_data'][platform]
+        end
+        #Sets the platform configuration hash
+        def set_platform_config(platform_data,platform)
+          @config['platform_data'][platform]=platform_data
         end
 
         alias_method :base_dir,:base
