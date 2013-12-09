@@ -149,8 +149,7 @@ class TestBuildConfiguration < MiniTest::Unit::TestCase
   include TestHelpers
   def test_empty_configuration
     config=mock_configuration('build.cfg',[])
-    cfg=Gaudi::Configuration::BuildConfiguration.new(config)
-    assert(cfg.respond_to?(:prefix), "prefix should be defined.")
+    assert_raises(GaudiConfigurationError) {  Gaudi::Configuration::BuildConfiguration.new(config) }
   end
 
   def test_basic_configuration
