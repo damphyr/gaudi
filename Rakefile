@@ -1,6 +1,5 @@
 # -*- ruby -*-
-require 'coveralls'
-Coveralls.wear!
+
 require "hoe"
 require_relative('lib/gaudi/version')
 
@@ -19,4 +18,14 @@ Hoe.spec "gaudi" do |prj|
   prj.description=prj.paragraphs_of('README.md',1..5).join("\n\n")
 end
 
+Rake::Task[:test].clear
+
+task :test do
+  require 'coveralls'
+  Coveralls.wear!
+  require 'minitest/autorun'
+  Rake::FileList["#{File.dirname(__FILE__)}/test/test_*.rb"].each do |test_file|
+    require_relative "test/#{test_file.pathmap('%n')}"
+  end
+end
 # vim: syntax=ruby
