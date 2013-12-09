@@ -57,6 +57,7 @@ module Gaudi
           deps+=dep.sources.map{|src| Tasks.define_file_task(object_file(src,dep,system_config),object_task_dependencies(src,dep,system_config))}
         end
         deps<<commandfile_task(executable(program,system_config),program,system_config)
+        deps+=resource_tasks(program,system_config)
         Tasks.define_file_task(executable(program,system_config),deps)
       end
       def library_task component,system_config
@@ -80,6 +81,15 @@ module Gaudi
             options= linker_options(component,system_config)
           end
           write_file(t.name,options.join("\n"))
+        end
+      end
+      def resource_tasks component,system_config
+        component.resources.map do |resource|
+          tgt=File.join(File.dirname(executable(component,system_config)),resource.pathmap('%f'))
+          file tgt => [resource] do |t|
+            mkdir_p(File.dirname(t.name),:verbose=>false)
+            cp(resource,t.name,:verbose=>false)
+          end
         end
       end
     end

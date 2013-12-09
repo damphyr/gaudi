@@ -325,7 +325,9 @@ module Gaudi
         #The configuration is a {name=>path} hash and is used to 
         #replace the library names used in the PLatform.external_libraries setting
         def external_libraries_config platform
-          external_lib_cfg=absolute_path(platform_config(platform)['lib_cfg'],config_base)
+          lib_config=platform_config(platform).fetch('lib_cfg',"")
+          raise GaudiConfigurationError,"Missing lib_cfg entry for platform #{platform}" if lib_config.empty?
+          external_lib_cfg=absolute_path(lib_config,config_base)
           raise GaudiConfigurationError,"No external library configuration for platform #{platform}" unless external_lib_cfg
           if File.exists?(external_lib_cfg)
             return YAML.load(File.read(external_lib_cfg))
@@ -351,7 +353,7 @@ module Gaudi
           ['incs']
         end
         def prefix
-          return @config['prefix']
+          return @config.fetch('prefix',"")
         end
         #A list of prefixes that represent dependencies to the system's
         #internal components
@@ -371,8 +373,10 @@ module Gaudi
             return Gaudi::CompilationUnit::C 
           when 'CPP'
             return Gaudi::CompilationUnit::CPP
+          when 'MIXED'
+            return Gaudi::CompilationUnit::MIXED
           else
-            raise GaudiConfigurationError,"There are only two acceptable values for compiler_mode: C or CPP"
+            raise GaudiConfigurationError,"There are only three acceptable values for compiler_mode: C,CPP or MIXED"
           end
         end
 
@@ -383,10 +387,10 @@ module Gaudi
       module ProgramConfiguration
         include ConfigurationOperations
         def self.list_keys
-          ['libs']
+          ['libs','resources']
         end
         def self.path_keys
-          []
+          ['resources']
         end
         #A list of library files to be added when linking
         #
@@ -397,6 +401,10 @@ module Gaudi
 
         def compiler_options
           return @config.fetch('compiler_options',[])
+        end 
+
+        def resources
+          return @config.fetch('resources',[])
         end
 
         alias_method :libs,:external_libraries
@@ -412,6 +420,7 @@ module Gaudi
 
       def initialize filename
         super(filename)
+        raise GaudiConfigurationError,"Missing prefix= option in '#{config_file}'" if prefix.empty?
       end
       
       def keys

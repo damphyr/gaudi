@@ -85,6 +85,15 @@ module Gaudi
         '.h' 
       end
     end
+    #Conventions, naming and helpers for C++ projects containing C code
+    module MIXED
+      def src 
+        '.c,.cpp,.cc,.asm,.src' 
+      end
+      def hdr 
+        '.h,.hh' 
+      end
+    end
   end
 
   #A Gaudi::Component is a logical grouping of a set of source and header files that maps to a directory structure.
@@ -99,8 +108,11 @@ module Gaudi
     def initialize name,system_config,platform
       @directories = determine_directories(name,system_config.source_directories,platform)
       config_files = Rake::FileList[*directories.pathmap('%p/build.cfg')].existing
-      raise GaudiConfigurationError,"No configuration files for #{name}" if config_files.empty?
-      @configuration = Configuration::BuildConfiguration.load(config_files)
+      if config_files.empty? 
+        raise GaudiConfigurationError,"No configuration files for #{name}" unless @configuration
+      else
+        @configuration = Configuration::BuildConfiguration.load(config_files)
+      end
       extend @configuration.compiler_mode(system_config)
       @system_config=system_config
       @platform=platform
@@ -143,6 +155,10 @@ module Gaudi
 
     def external_libraries
       @system_config.external_libraries(@platform)+@configuration.external_libraries(@system_config,platform)
+    end
+
+    def resources
+      @configuration.resources
     end
   end
   #A Deployment is a collection of Programs compiled for multiple platforms
