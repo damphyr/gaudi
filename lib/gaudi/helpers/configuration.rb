@@ -16,19 +16,19 @@ module Gaudi
     #
     #Is mixed in with SystemConfiguration
     module EnvironmentOptions
-      #Defines the component name to work with, raises an exception if not defined
+      #Defines the component name to work with, raises GaudiConfigurationError if not defined
       def component
         mandatory('COMPONENT')
       end
-      #Defines the user name to work with, raises an exception if not define
+      #Defines the user name to work with, raises GaudiConfigurationError if not defined
       def user!
         mandatory('USER')
       end
-
+      #Returns the user name to work with, raises no exception whatsoever
       def user
         return ENV['USER']
       end
-      #Defines the deployment name to work with, raises an exception if not defined
+      #Defines the deployment name to work with, raises GaudiConfigurationError if not defined
       def deployment
         mandatory('DEPLOYMENT')
       end
