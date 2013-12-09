@@ -65,7 +65,7 @@ module Gaudi
       opts= config['compiler_options'].split(' ')
       opts+= component.configuration.compiler_options
       opts+= prefixed_objects(component_includes(component,system_config),config['compiler_include'])
-      opts+=prefixed_objects(component.directories,config['compiler_include'])
+      opts+= prefixed_objects(component.directories,config['compiler_include'])
       opts<< "#{config['compiler_out']}\"#{output}\""
       opts<< src
     end
