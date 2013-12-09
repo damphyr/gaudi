@@ -48,7 +48,7 @@ Gaudi supports a set of environment variables as a way for passing options and e
 
 Adding methods to Gaudi::Configuration::EnvironmentOptions is the recommended way to expose environment variables to Gaudi. This is pure convention but results in pulling the documentation of environment options together in one rdoc page.
 
-In some cases there are two versions of the reader method for the environment variables. The bang version (i.e. user! ) will raise a GaudiConfigurationError if the requested value is nil or the empty string. When there is only one version the current choice is to raise the exception by default. In the case of - for example - DEPLOYMENT it rarely makes sense to work with a nil or empty value so...no bang. That is the convention, even though working with the no-bang versions is more error-prone than otherwise.
+In some cases there are two versions of the reader method for the environment variables. The bang version (i.e. user! ) will raise a GaudiConfigurationError if the requested value is nil or the empty string. When there is only one version the current choice is to raise the exception by default. In the case of - for example - DEPLOYMENT it rarely makes sense to work with a nil or empty value so...no bang. That is the convention, even though working with the nil returning methods is more error-prone than otherwise.
 
 ## System Configuration
 
