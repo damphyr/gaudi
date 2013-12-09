@@ -14,8 +14,18 @@ class TestStandardPaths < MiniTest::Unit::TestCase
     system_config.stubs(:out).returns('out')
     exe=executable(component,system_config)
     assert(exe.end_with?('.exe'), "Not an exe.")
+    lib=library(component,system_config)
+    assert(lib.end_with?('.lib'), "No a lib.")
     obj=object_file('foo.c',component,system_config)
     assert(obj.end_with?('obj'), "not an object.")
+    cmd_file=command_file(exe,component,system_config)
+    assert(cmd_file.end_with?('.link'), "Not a linker cmd file.")
+    cmd_file=command_file(lib,component,system_config)
+    assert(cmd_file.end_with?('.archive'), "Not a archiver cmd file.")
+    cmd_file=command_file("foo.c",component,system_config)
+    assert(cmd_file.end_with?('.compile'), "Not a compiler cmd file.")
+    cmd_file=command_file("foo.asm",component,system_config)
+    assert(cmd_file.end_with?('.assemble'), "Not a compiler cmd file.")
   end
 end
 
