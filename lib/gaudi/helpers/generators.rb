@@ -4,6 +4,7 @@ require_relative 'operations.rb'
 module Gaudi
   #Task Generators are modules that create the types of tasks the build system supports
   module Tasks
+    #Defines a file task with or without dependencies
     def self.define_file_task task_name,dependencies
       if dependencies && !dependencies.empty?
         file task_name => dependencies
@@ -11,8 +12,9 @@ module Gaudi
         file task_name
       end
     end
-
+    #Methods to calculate dependencies for the various task types
     module TaskDependencies
+      #Returns the general dependencies for a Component task
       def component_task_dependencies component,system_config
         ###TODO: here any change in a dependency's interface header will trigger a build which slows incremental builds down.
         #The solution is to parse the code and add the dependencies per file
@@ -23,6 +25,7 @@ module Gaudi
         deps+=component.directories
         return deps.uniq
       end
+      #Returns the general dependencies for an object file task
       def object_task_dependencies src,component,system_config
         file src => commandfile_task(src,component,system_config)
         files=[src]+component.headers
@@ -36,10 +39,17 @@ module Gaudi
     end
 
     #Tasks::Build contains all task generation methods for building source code
+    #
+    #When building a deployment the chain of task dependencies looks like:
+    # deployment => programs => objects => command_files => sources
     module Build
       include StandardPaths
       include TaskDependencies
       include ToolOperations
+      #Returns a task for building a Deployment
+      #
+      # t=deployment_task(deployment,system_config)
+      # Rake::Task[t].invoke
       def deployment_task deployment,system_config
         deps=FileList.new
         deployment.platforms.each do |platform|
@@ -50,6 +60,7 @@ module Gaudi
         deps<<system_config.to_path
         task deployment.name => deps
       end
+      #Returns a task for building a Program
       def program_task program,system_config
         deps=component_task_dependencies(program,system_config)
         deps+=program.sources.map{|src| Tasks.define_file_task(object_file(src,program,system_config),object_task_dependencies(src,program,system_config))}
@@ -60,12 +71,16 @@ module Gaudi
         deps+=resource_tasks(program,system_config)
         Tasks.define_file_task(executable(program,system_config),deps)
       end
+      #Returns a task for building a library
       def library_task component,system_config
         deps=component_task_dependencies(component,system_config)
         deps+=component.sources.map{|src| Tasks.define_file_task(object_file(src,component,system_config),object_task_dependencies(src,component,system_config))}
         deps<<commandfile_task(library(component,system_config),component,system_config)
         Tasks.define_file_task(library(component,system_config),deps)
       end
+      #Returns a task forcreating a command file
+      #
+      #This method is heavily used in creating other tasks
       def commandfile_task src,component,system_config
         file command_file(src,component,system_config) => [component.configuration.to_path,system_config.to_path] do |t|
           options= []
@@ -83,6 +98,7 @@ module Gaudi
           write_file(t.name,options.join("\n"))
         end
       end
+      #A list of file tasks that copy resources to the component's output directory.
       def resource_tasks component,system_config
         component.resources.map do |resource|
           tgt=File.join(File.dirname(executable(component,system_config)),resource.pathmap('%f'))

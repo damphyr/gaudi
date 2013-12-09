@@ -65,31 +65,37 @@ module Gaudi
       Rake::FileList[*component_directories.pathmap('%p/inc')].existing
     end
   end
-
+  #This module namespaces the different compilation mode modules
   module CompilationUnit
     #Conventions, naming and helpers for C projects
     module C
+      #Source file extensions
       def src 
         '.c,.asm,.src' 
       end
+      #Header file extensions
       def hdr 
         '.h' 
       end
     end
     #Conventions, naming and helpers for C++ projects
     module CPP
+      #Source file extensions
       def src 
         '.cpp,.cc,.asm,.src' 
       end
+      #Header file extensions
       def hdr 
         '.h' 
       end
     end
     #Conventions, naming and helpers for C++ projects containing C code
     module MIXED
+      #Source file extensions
       def src 
         '.c,.cpp,.cc,.asm,.src' 
       end
+      #Header file extensions
       def hdr 
         '.h,.hh' 
       end
@@ -118,6 +124,7 @@ module Gaudi
       @platform=platform
       @name=@identifier=configuration.prefix
     end
+    #The components sources
     def sources
       determine_sources(directories)
     end
@@ -137,10 +144,11 @@ module Gaudi
     def all
       sources+headers
     end
+    #All components upon which this Component depends on
     def dependencies
       configuration.dependencies.map{|dep| Component.new(dep,@system_config,platform)}
     end
-
+    #External (additional) include paths
     def external_includes
       @system_config.external_includes(@platform)+@configuration.external_includes
     end
@@ -152,11 +160,11 @@ module Gaudi
       super(@configuration.prefix,system_config,platform)
       @deployment=deployment_name
     end
-
+    #External (additional) libraries the Program depends on.
     def external_libraries
       @system_config.external_libraries(@platform)+@configuration.external_libraries(@system_config,platform)
     end
-
+    #List of resources to copy with the program artifacts
     def resources
       @configuration.resources
     end
@@ -178,6 +186,7 @@ module Gaudi
       @system_config=system_config
       raise GaudiError,"Cannot find directories for #{name} " if @directories.empty?
     end
+    #Returns the list of platforms this Deployment has programs for
     def platforms
       Rake::FileList[*@directories.pathmap("%p/*")].existing.pathmap('%n')
     end

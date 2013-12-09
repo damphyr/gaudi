@@ -3,6 +3,7 @@ require 'pathname'
 require 'yaml'
 
 module Gaudi
+  #Loads and returns the system configuration
   def self.configuration
     #Load the system configuration
     cfg_file=File.expand_path(ENV['GAUDI_CONFIG'])
@@ -51,6 +52,7 @@ module Gaudi
     #
     # setenv GAUDI=brilliant builder
     class Loader
+      #Goes through a list of configuration files and returns the resulting merged configuration
       def self.load configuration_files,klass
         cfg=nil
         configuration_files.each do |cfg_file|
@@ -138,6 +140,7 @@ module Gaudi
         return cfg
       end
       private
+      #:nodoc:
       def required_path fname
         if fname && !fname.empty?
           if File.exists?(fname)
@@ -165,11 +168,13 @@ module Gaudi
         end
         return final_value
       end
+      #:nodoc:
       def import_config path,cfg_dir
         path=absolute_path(path.strip,cfg_dir)
         raise GaudiConfigurationError,"Cannot find #{path} to import" unless File.exists?(path)
         read_configuration(path,*keys)
       end
+      #:nodoc:
       def absolute_path path,cfg_dir
         if Pathname.new(path).absolute?
           path
@@ -177,9 +182,11 @@ module Gaudi
           File.expand_path(File.join(cfg_dir,path)) 
         end
       end
+      #:nodoc:
       def environment_variable(envvar,value)
         ENV[envvar]=value
       end
+      #:nodoc:
       def load_key_modules module_const
         list_keys=[]
         path_keys=[]
@@ -221,6 +228,7 @@ module Gaudi
       end
 
       private
+      #:nodoc:
       def load_platform_configurations
         @config['platform_data']={}
         @config['platforms']||=[]
@@ -257,9 +265,11 @@ module Gaudi
         def out
           return @config["out"]
         end
+        #List of available platforms
         def platforms
           return @config['platforms']
         end
+        #List of directories containing sources
         def sources
           @config["sources"].map{|d| File.expand_path(d)}
         end
@@ -276,7 +286,7 @@ module Gaudi
         alias_method :out_dir,:out
         alias_method :source_directories,:sources
       end
-
+      #Miscelaneous settings module
       module Settings
         def self.list_keys
           []
@@ -284,6 +294,9 @@ module Gaudi
         def self.path_keys
           []
         end
+        #The default compiler mode is optional. If not defined the system assumes C
+        #
+        #Valid compiler modes are defined in Gaudi::CompilationUnit
         def default_compiler_mode
           mode=@config.fetch('default_compiler_mode','C').upcase
           valid_modes=['C','CPP']
@@ -294,7 +307,7 @@ module Gaudi
           end
         end
       end
-
+      #Platform configuration methods that proide more control over the raw Hash platform data
       module PlatformConfiguration
         include ConfigurationOperations
         def self.list_keys
@@ -345,6 +358,7 @@ module Gaudi
     #
     #Modules are guaranteed a @config Hash providing access to the configuration file contents
     module BuildModules
+      #Configuration directoves for simple components
       module ComponentConfiguration
         def self.list_keys
           ['deps','incs']
@@ -383,7 +397,9 @@ module Gaudi
         alias_method :incs,:external_includes
         alias_method :deps,:dependencies
       end
-
+      #Configuration directoves for programs.
+      #
+      #For a Gaudi::Program instance these are added in addition to the ComponentConfiguration directives
       module ProgramConfiguration
         include ConfigurationOperations
         def self.list_keys
@@ -398,11 +414,11 @@ module Gaudi
         def external_libraries system_config,platform
           return interpret_library_tokens(@config.fetch('libs',[]),system_config.external_libraries_config(platform),system_config.config_base)
         end
-
+        #Compiler options. These are added to the platform configuration options, they do NOT override them
         def compiler_options
           return @config.fetch('compiler_options',[])
         end 
-
+        #List of paths to resource files that are copied with the program build
         def resources
           return @config.fetch('resources',[])
         end

@@ -58,7 +58,10 @@ module Gaudi
       filename.downcase.end_with?('.asm') || filename.downcase.end_with?('.src') 
     end
   end
+  #Methods for creating and managing tool command lines
   module ToolOperations
+    #Returns the compiler command line options merging the options from all
+    #cofniguration files
     def compiler_options src,component,system_config
       config=system_config.platform_config(component.platform)
       output=object_file(src,component,system_config)
@@ -69,7 +72,8 @@ module Gaudi
       opts<< "#{config['compiler_out']}\"#{output}\""
       opts<< src
     end
-
+    #Returns the assembler command line options merging the options from all
+    #cofniguration files
     def assembler_options src,component,system_config
       config=system_config.platform_config(component.platform)
       output=object_file(src,component,system_config)
@@ -79,7 +83,8 @@ module Gaudi
       opts+=prefixed_objects(component.directories,config['assembler_include'])
       opts<< src
     end
-
+    #Returns the archiver command line options merging the options from all
+    #cofniguration files
     def archiver_options component,system_config
       config=system_config.platform_config(component.platform)
       options= config['archive_options'].split(' ')
@@ -89,7 +94,8 @@ module Gaudi
       objects=component.sources.map{|src| object_file(src,component,system_config)}
       options+=prefixed_objects(objects,config['archive_in'])
     end
-
+    #Returns the linker command line options merging the options from all
+    #cofniguration files
     def linker_options component,system_config
       config=system_config.platform_config(component.platform)
       options= config['linker_options'].split(' ')
@@ -99,7 +105,7 @@ module Gaudi
       options+= prefixed_objects(objects,config["linker_in"])
       options+= prefixed_objects(component.external_libraries,config["linker_lib"])
     end
-
+    #returns the commandline for cmd as an Array
     def command_line cmd,cmdfile,prefix
       cmdline= [cmd]
       if prefix && !prefix.empty?
@@ -113,7 +119,7 @@ module Gaudi
     def prefixed_objects objects,prefix_flag
       objects.map{|lo| "#{prefix_flag}#{lo}"}
     end
-
+    #List of include paths for component
     def component_includes component,system_config
       incs=component.include_paths
       incs+=system_config.external_includes(component.platform)
@@ -122,6 +128,7 @@ module Gaudi
       return incs
     end
   end
+  #Methods to do with configuration entries and data
   module ConfigurationOperations
     #Given a list of tokens it will look them up in the config Hash
     #and map them to 'base_dir/config[token]' if it exists or 'config[token]' if not
