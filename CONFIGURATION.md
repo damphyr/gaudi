@@ -1,6 +1,6 @@
 # Gaudi Configuration
 
-Configuration is the core feature of Gaudi. While we talk about compiling and linking and multiple platform support, the core problem Gaudi is actually solving is how to get all the parameters for all the tools in one place in a sufficiently flexible format to allow for the permutations needed in a typical project.
+Configuration is the core feature of Gaudi. While we talk about compiling and linking and multiple platform support, the core problem Gaudi is actually solving is how to get all the parameters for all the tools in one place in a sufficiently flexible format to allow for the permutations needed in a typical project<sup>1</sup>.
 
 While the parts of Gaudi that are published deal with building C/C++ programs, project specific applications include static code analysis, IDE project generation, documentation generation, test execution, reporting and release management and more or less every task you could automate in a software project.
 
@@ -29,7 +29,26 @@ Usage of import raises the issue of what happens when a parameter is defined in 
 
 Gaudi has a simple precedence system: Last one wins.
 
-There is also 
+Also compiler options and linker options can be overriden in the component build configuration files and environment variables can be used to pass values to Gaudi.
+
+### Environment Variables
+
+rake allows you to define an environment variable on the command line:
+
+```bash
+rake task FOO=bar
+```
+
+Gaudi supports a set of environment variables as a way for passing options and exposes these as attributes of the system configuration
+
+ * GAUDI_CONFIG - points to the cofniguration file. This needs to be set, Gaudi will exit with an error if it's empty or the file does not exist
+ * DEPLOYMENT - passes the deployment name 
+ * COMPONENT - passes the component name
+ * USER - passes the user name
+
+In some cases there are two versions of the reader method for the environment variables. The bang version (i.e. user! ) will raise a GaudiConfigurationException if the requested value is nil or the empty string. When there is only one version the current choice is to raise the exception by default. In the case of - for example - DEPLOYMENT it rarely makes sense to work with a nil or empty value so...no bang. That is the convention, even though working with the no-bang versions is more error-prone than otherwise.
+
+Adding methods to Gaudi::Configuration::EnvironmentOptions is the recommended way to expose environment variables to Gaudi. This is pure convention but results in pulling the documentation of environment options together in one rdoc page.
 
 ## System Configuration
 
@@ -127,3 +146,5 @@ sqlite3: sqlite3
 which will result in linking against libsqlite3.so
 
 The incs and libs platform configuration entries will be added as compiler and linker parameters for every platform build.
+------
+<sup>1</sup> For given values of typical that might differ from everybody else's
