@@ -21,7 +21,7 @@ task :"graph:deployment" do
   digraph do
     boxes
     graph_deployment(deployment)
-    mkdir_p($configuration.out_dir,'graphs',:verbose=>false)
-    save File.join($configuration.out_dir,deployment.name), "png"
+    mkdir_p(File.join($configuration.out_dir,'graphs'),:verbose=>false)
+    save File.join($configuration.out_dir,'graphs',deployment.name), "png"
   end#graph
 end
