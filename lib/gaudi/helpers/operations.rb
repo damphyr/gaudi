@@ -6,16 +6,20 @@ module Gaudi
   #To add support for a new platform create a PlatformOperation::Name module with
   #a class method extensions that returns [object,library,executable]
   #
-  #See PlatformOperations::PC or PlatformOperations::RX for an example
+  #See PlatformOperations::MS or PlatformOperations::GCC for an example
   module PlatformOperations
     #Support for the Microsoft compiler
-    module PC
+    module MS
       def self.extensions
         ['.obj','.lib','.exe']
       end
     end
     #Renesas RX toolchain support
     module RX
+      #For Renesas CPUs the format that allows debugging is .abs
+      #
+      #Every other format can be had by transforming the .abs file 
+      #with post-link steps
       def self.extensions
         ['.obj','.lib','.abs']
       end
@@ -24,6 +28,14 @@ module Gaudi
     module MINGW
       def self.extensions
         ['.obj','.lib','.exe']
+      end
+    end
+    #GCC support
+    module GCC
+      #The lack of an extension for executables on *ix systems is problematic.
+      #So we just define one for use in Gaudi.
+      def self.extensions
+        ['.o','.a','.e']
       end
     end
     #returns the extensions for the platform as [object,library,executable]
@@ -57,8 +69,13 @@ module Gaudi
     def is_assembly? filename
       filename.downcase.end_with?('.asm') || filename.downcase.end_with?('.src') 
     end
+
+    def is_header? filename
+      filename.downcase.end_with?('.h') ||
+      filename.downcase.end_with?('.hh')
+    end
   end
-  #Methods for creating and managing tool command lines
+#Methods for creating and managing tool command lines
   module ToolOperations
     #Returns the compiler command line options merging the options from all
     #cofniguration files

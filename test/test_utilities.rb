@@ -17,7 +17,7 @@ class TestUtilities < MiniTest::Unit::TestCase
     config.expects(:platform_config).returns({'foo'=>'bar'})
     config.expects(:read_configuration).returns({'bar'=>'foo'})
     config.expects(:set_platform_config).times(2)
-    switch_platform_configuration './foo.cfg',config,'pc' do
+    switch_platform_configuration './foo.cfg',config,'gcc' do
       #what exactly are we testing here?
     end
   end

@@ -7,10 +7,10 @@ require "gaudi"
 class TestPlatformOperations < MiniTest::Unit::TestCase
   include Gaudi::PlatformOperations
   def test_extensions
-    ext_obj,ext_lib,ext_exe=*extensions('PC')
-    assert_equal('.exe', ext_exe)
-    assert_equal('.obj', ext_obj)
-    assert_equal('.lib', ext_lib)
+    ext_obj,ext_lib,ext_exe=*extensions('gcc')
+    assert_equal('.e', ext_exe)
+    assert_equal('.o', ext_obj)
+    assert_equal('.a', ext_lib)
     assert_raises(GaudiError) { extensions('FOO') }
   end
   def test_source_detection

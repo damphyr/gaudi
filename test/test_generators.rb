@@ -28,8 +28,6 @@ class TestTaskGenerators < MiniTest::Unit::TestCase
   def test_component_dependencies
     system_config=system_configuration_mock
     program=Gaudi::Component.new('FOO',system_config,'mingw')
-    program.stubs(:platform).returns('PC')
-    program.stubs(:name).returns('FOO')
 
     deps=component_task_dependencies(program,system_config)
     assert_equal(3, deps.size)
@@ -41,8 +39,6 @@ class TestTaskGenerators < MiniTest::Unit::TestCase
   def test_object_dependencies
     system_config=system_configuration_mock
     component=Gaudi::Component.new('FOO',system_config,'mingw')
-    component.stubs(:platform).returns('PC')
-    component.stubs(:name).returns('FOO')
 
     deps=object_task_dependencies(component.sources[0],component,system_config)
     assert_equal(6, deps.size)

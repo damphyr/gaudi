@@ -166,7 +166,7 @@ class TestBuildConfiguration < MiniTest::Unit::TestCase
     system_cfg.expects(:external_libraries_config).returns({'foo'=>'foo.lib','bar'=>'bar.lib'})
     File.expects(:exists?).with(File.join(File.dirname(__FILE__),'foo.lib')).returns(false)
     File.expects(:exists?).with(File.join(File.dirname(__FILE__),'bar.lib')).returns(false)
-    assert_equal(['foo.lib','bar.lib'],cfg.libs(system_cfg,'pc'))
+    assert_equal(['foo.lib','bar.lib'],cfg.libs(system_cfg,'gcc'))
   end
 
   def test_load

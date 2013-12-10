@@ -7,7 +7,7 @@ You're lucky I didn't call it yabsir (Yet Another Build System In Ruby)
 
 ## Gaudi?
 
-Well, if you know who [Gaudi](http://en.wikipedia.org/wiki/Antoni_Gaud%C3%AD) you should concentrate on the fact that he rarely produced detailed plans of his works, he created models. 
+Well, if you know who [Gaudi](http://en.wikipedia.org/wiki/Antoni_Gaud%C3%AD) was you should concentrate on the fact that he rarely produced detailed plans of his works, he created models. 
 
 Gaudi was very much a builder and a craftsman, each of his buildings unique yet based on his knowledge of the materials and the techniques for working with them.
 
