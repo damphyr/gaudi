@@ -56,7 +56,7 @@ module Gaudi
       Rake::FileList[*component_directories.pathmap("%p/**/*{#{src}}")].exclude(*determine_test_directories(component_directories).pathmap('%p/**/*'))
     end
     def determine_headers component_directories
-      Rake::FileList[*component_directories.pathmap("%p/**/*#{hdr}")].exclude(*determine_test_directories(component_directories).pathmap('%p/**/*'))
+      Rake::FileList[*component_directories.pathmap("%p/**/*{#{hdr}}")].exclude(*determine_test_directories(component_directories).pathmap('%p/**/*'))
     end
     def determine_test_directories component_directories
       Rake::FileList[*component_directories.pathmap('%p/test')].existing

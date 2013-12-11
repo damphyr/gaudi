@@ -89,4 +89,18 @@ class TestComponent< MiniTest::Unit::TestCase
     assert_equal(5, comp.all.size)
     assert_equal(3, comp.test_files.size)
   end
+
+  def test_component_mixed_mode
+    system_config=mock()
+    src_dir=directory_fixture
+    system_config.expects(:source_directories).returns([src_dir])
+    system_config.expects(:default_compiler_mode).returns('MIXED')
+    comp=Gaudi::Component.new('FOO',system_config,'mingw')
+    assert_equal('FOO', comp.name)
+    assert_equal(2, comp.directories.size)
+    assert_equal(5, comp.sources.size)
+    assert_equal(2, comp.headers.size)
+    assert_equal(7, comp.all.size)
+    assert_equal(4, comp.test_files.size)
+  end
 end
