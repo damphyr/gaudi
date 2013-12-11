@@ -53,10 +53,10 @@ module Gaudi
       return paths
     end
     def determine_sources component_directories
-      Rake::FileList[*component_directories.pathmap("%p/**/*{#{src}}")].exclude(*determine_test_directories(component_directories).pathmap('%p/*'))
+      Rake::FileList[*component_directories.pathmap("%p/**/*{#{src}}")].exclude(*determine_test_directories(component_directories).pathmap('%p/**/*'))
     end
     def determine_headers component_directories
-      Rake::FileList[*component_directories.pathmap("%p/**/*#{hdr}")].exclude(*determine_test_directories(component_directories).pathmap('%p/*'))
+      Rake::FileList[*component_directories.pathmap("%p/**/*#{hdr}")].exclude(*determine_test_directories(component_directories).pathmap('%p/**/*'))
     end
     def determine_test_directories component_directories
       Rake::FileList[*component_directories.pathmap('%p/test')].existing
@@ -110,19 +110,20 @@ module Gaudi
   #and the directory is exposed by Gaudi for use in include statements.
   class Component
     include StandardPaths
-    attr_reader :identifier,:platform,:configuration,:name,:directories
+    attr_reader :identifier,:platform,:configuration,:name,:directories,:test_directories
     def initialize name,system_config,platform
-      @directories = determine_directories(name,system_config.source_directories,platform)
-      config_files = Rake::FileList[*directories.pathmap('%p/build.cfg')].existing
+      @directories= determine_directories(name,system_config.source_directories,platform)
+      @test_directories= determine_test_directories(@directories)
+      config_files= Rake::FileList[*directories.pathmap('%p/build.cfg')].existing
       if config_files.empty? 
         raise GaudiConfigurationError,"No configuration files for #{name}" unless @configuration
       else
         @configuration = Configuration::BuildConfiguration.load(config_files)
       end
       extend @configuration.compiler_mode(system_config)
-      @system_config=system_config
-      @platform=platform
-      @name=@identifier=configuration.prefix
+      @system_config= system_config
+      @platform= platform
+      @name=@identifier= configuration.prefix
     end
     #The components sources
     def sources
@@ -134,7 +135,7 @@ module Gaudi
     end
     #The headers the component exposes
     def interface
-      Rake::FileList[*include_paths.pathmap('%p/**/*#{HDR}')]
+      Rake::FileList[*include_paths.pathmap('%p/**/*#{hdr}')]
     end
     #The include paths for this Component
     def include_paths
@@ -151,6 +152,10 @@ module Gaudi
     #External (additional) include paths
     def external_includes
       @system_config.external_includes(@platform)+@configuration.external_includes
+    end
+    #Unit test sources
+    def test_files
+      Rake::FileList[*test_directories.pathmap("%p/**/*{#{src},#{hdr}}")]
     end
   end
   #A Gaudi::Program is a collection of components built for a specific platform.
