@@ -27,17 +27,17 @@ module Gaudi
       src.pathmap("#{system_config.out}/#{component.platform}/#{component.name}/%n#{ext_obj}")
     end
     #Returns the path to the file containing the commands for the given target
-    def command_file tgt,component,system_config
-      ext=""
-      if is_library?(tgt,component.platform)
-        ext=".archive"
-      elsif is_exe?(tgt,component.platform)
-        ext=".link"
+    def command_file tgt,system_config,platform
+      ext="_#{platform}"
+      if is_library?(tgt,platform)
+        ext<<".archive"
+      elsif is_exe?(tgt,platform)
+        ext<<".link"
       elsif is_source?(tgt)
         if is_assembly?(tgt)
-          ext='.assemble'
+          ext<<'.assemble'
         else
-          ext='.compile'
+          ext<<'.compile'
         end
       else
         raise GaudiError,"Don't know how to name a command file for #{tgt}"

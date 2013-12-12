@@ -37,9 +37,9 @@ module Gaudi
       def compile src,system_config,platform
         config=system_config.platform_config(platform)
         if is_assembly?(src)
-          cmdline = assembler(src.pathmap('%X.assemble'),config)
+          cmdline = assembler(command_file(src,system_config,platform),config)
         else
-          cmdline = compiler(src.pathmap('%X.compile'),config)
+          cmdline = compiler(command_file(src,system_config,platform),config)
         end
         sh(cmdline.join(' '))
       end
@@ -48,9 +48,9 @@ module Gaudi
         config=system_config.platform_config(platform)
         mkdir_p(File.dirname(filename),:verbose=>false)
         if (is_library?(filename,platform))
-          cmdline = archiver(filename.pathmap('%X.archive'),config)
+          cmdline = archiver(command_file(filename,system_config,platform),config)
         else
-          cmdline = linker(filename.pathmap('%X.link'),config)
+          cmdline = linker(command_file(filename,system_config,platform),config)
         end
         sh(cmdline.join(' '))
       end

@@ -82,7 +82,7 @@ module Gaudi
       #
       #This method is heavily used in creating other tasks
       def commandfile_task src,component,system_config
-        file command_file(src,component,system_config) => [component.configuration.to_path,system_config.to_path] do |t|
+        file command_file(src,system_config,component.platform) => [component.configuration.to_path,system_config.to_path] do |t|
           options= []
           if is_source?(src)
             if is_assembly?(src)
