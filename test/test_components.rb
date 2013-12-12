@@ -18,13 +18,13 @@ class TestStandardPaths < MiniTest::Unit::TestCase
     assert(lib.end_with?('.a'), "No a lib.")
     obj=object_file('foo.c',component,system_config)
     assert(obj.end_with?('.o'), "not an object.")
-    cmd_file=command_file(exe,component,system_config)
+    cmd_file=command_file(exe,system_config,component.platform)
     assert(cmd_file.end_with?('.link'), "Not a linker cmd file.")
-    cmd_file=command_file(lib,component,system_config)
+    cmd_file=command_file(lib,system_config,'gcc')
     assert(cmd_file.end_with?('.archive'), "Not a archiver cmd file.")
-    cmd_file=command_file("foo.c",component,system_config)
+    cmd_file=command_file("foo.c",system_config,component.platform)
     assert(cmd_file.end_with?('.compile'), "Not a compiler cmd file.")
-    cmd_file=command_file("foo.asm",component,system_config)
+    cmd_file=command_file("foo.asm",system_config,component.platform)
     assert(cmd_file.end_with?('.assemble'), "Not a compiler cmd file.")
   end
 end
