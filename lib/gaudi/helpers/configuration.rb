@@ -333,6 +333,16 @@ module Gaudi
           external_lib_tokens=platform_config(platform).fetch('libs',"").split(',').map{|el| el.strip}
           return interpret_library_tokens(external_lib_tokens,external_libraries_config(platform),self.config_base)
         end
+        #Returns an array with paths to the external libraries in use for unit tests as defined in the platform configuration
+        #
+        #To do this it uses the PlatformConfiguration.external_lib_cfg file to replace the library tokens with path values
+        #
+        #If the file exists under trunk/lib the entry is the full path to the file
+        #otherwise the entry from external_lib_cfg is returned as is (which works for system libraries i.e. winmm.lib, libsqlite3 etc.)
+        def unit_test_libraries platform
+          external_lib_tokens=platform_config(platform).fetch('unit_test_libs',"").split(',').map{|el| el.strip}
+          return interpret_library_tokens(external_lib_tokens,external_libraries_config(platform),self.config_base)
+        end
         #Loads and returns the external libraries configuration
         #
         #The configuration is a {name=>path} hash and is used to 
@@ -347,6 +357,10 @@ module Gaudi
           else
             raise GaudiConfigurationError,"Cannot find external library configuration #{external_lib_cfg} for platform #{platform}"
           end
+        end
+        #A list of files to be copied together with every program
+        def resources platform
+          return platform_config(platform).fetch('resources',"").split(',').map{|d| absolute_path(d.strip,config_base)}
         end
       end
     end

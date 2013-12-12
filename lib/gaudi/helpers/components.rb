@@ -44,6 +44,18 @@ module Gaudi
       end
       return tgt.pathmap("%X#{ext}")
     end
+    #Returns the path to the unit test binary corresponding to the component
+    def unit_test component,system_config
+      ext_obj,ext_lib,ext_exe = *extensions(component.platform)
+      File.join(system_config.out,component.platform,'tests',"#{component.name}Test#{ext_exe}")
+    end
+    #Is this a unit test or not?
+    #
+    #If you change the StandardPaths#unit_test naming convention you should 
+    #implement this accordingly.
+    def is_unit_test? filename
+      filename.pathmap('%n').end_with?('Test')
+    end
     #Determine which directories correspond to the given name
     #
     #This method maps the repository directory structure to the component names
