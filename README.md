@@ -33,6 +33,8 @@ The main goals for Gaudi are:
  * Codify a set of conventions for projects targeting multiple platforms. 
  * Form the basis for a consistent CLI interface between the developers and the development environment
 
+Check the [documentation](doc/README.md) for more details.
+
 ## LICENSE:
 
 (The MIT License)
