@@ -135,7 +135,7 @@ module Gaudi
             end#unless
           end#lines.each
         else
-          raise "Cannot load configuration.'#{filename}' not found"
+          raise GaudiConfigurationError,"Cannot load configuration.'#{filename}' not found"
         end
         return cfg
       end
