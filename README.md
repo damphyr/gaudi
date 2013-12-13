@@ -25,6 +25,14 @@ Gaudi is a build system for component-based, multi-platform, statically linked C
 
 It probably won't scale down. It's hodge-podge predecessors have been servicing teams of 7+, with projects running for longer than a year and LOC counts in the high 100Ks. Then again if you follow the default conventions it will work out of the box for any code size.
 
+## Goals
+
+The main goals for Gaudi are:
+
+ * Provide a simple, centralized way for configuring a development environment beginning with the build
+ * Codify a set of conventions for projects targeting multiple platforms. 
+ * Form the basis for a consistent CLI interface between the developers and the development environment
+
 ## LICENSE:
 
 (The MIT License)
