@@ -17,7 +17,7 @@ Hoe.spec "gaudi" do |prj|
   prj.summary='A collection of helpers and an opinionated implementation of a C build system on top of rake'
   prj.description=prj.paragraphs_of('README.md',1..5).join("\n\n")
   prj.local_rdoc_dir='doc/rdoc'
-  prj.readme_file="README.md  "
+  prj.readme_file="README.md"
 end
 
 Rake::Task[:test].clear
