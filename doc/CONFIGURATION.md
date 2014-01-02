@@ -27,7 +27,9 @@ Usage of import raises the issue of what happens when a parameter is defined in 
 
 Gaudi has a simple precedence system: Last one wins.
 
-Also compiler options and linker options can be overriden in the component build configuration files and environment variables can be used to pass values to Gaudi.
+Environment variables can be used to pass values to Gaudi.
+
+The 'last one wins' rule has one exception: compiler and linker options defined in program configuration files are *added* to the global compiler and linker options. The reason for this is to allow program specific settings (mostly defines) without duplicating all the options.
 
 ### Environment Variables
 
