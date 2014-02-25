@@ -36,6 +36,14 @@ module Gaudi
         end
         files+incs
       end
+
+      def commandfile_task_dependencies component,system_config
+        files=component.headers
+        component.dependencies.each do |dep| 
+          files+=dep.interface
+        end
+        [component.configuration.to_path,system_config.to_path]+files
+      end
     end
 
     #Tasks::Build contains all task generation methods for building source code
@@ -78,11 +86,11 @@ module Gaudi
         deps<<commandfile_task(library(component,system_config),component,system_config)
         Tasks.define_file_task(library(component,system_config),deps)
       end
-      #Returns a task forcreating a command file
+      #Returns a task for creating a command file
       #
       #This method is heavily used in creating other tasks
       def commandfile_task src,component,system_config
-        file command_file(src,system_config,component.platform) => [component.configuration.to_path,system_config.to_path] do |t|
+        file command_file(src,system_config,component.platform) => commandfile_task_dependencies(component,system_config) do |t|
           options= []
           if is_source?(src)
             if is_assembly?(src)
