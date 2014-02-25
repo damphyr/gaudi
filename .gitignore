@@ -2,6 +2,7 @@ Gemfile.lock
 test/tmp/
 test/out/
 coverage/
+doc/rdoc
 
 #################
 ## Eclipse
