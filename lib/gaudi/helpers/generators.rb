@@ -20,8 +20,7 @@ module Gaudi
         #The solution is to parse the code and add the dependencies per file
         #this is one more file task chain (obj->headers_info->c). Zukunftsmusik!
         deps=Rake::FileList[component.configuration.to_path]
-        ifaces=Rake::FileList.new
-        component.dependencies.each{|dep| ifaces+=dep.interface }
+        component.dependencies.each{|dep| deps+=dep.interface }
         deps+=component.directories
         return deps.uniq
       end
