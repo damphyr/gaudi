@@ -3,6 +3,7 @@ test/tmp/
 test/out/
 coverage/
 doc/rdoc
+sandbox/
 
 #################
 ## Eclipse
