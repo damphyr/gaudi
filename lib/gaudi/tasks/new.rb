@@ -2,7 +2,7 @@ namespace :new do
   desc "Directory structure for a new project. Uses PROJECT_ROOT or the current directory"
   task :project do |t|
     project_root=File.expand_path(ENV.fetch('PROJECT_ROOT',Dir.pwd))
-    raise "#{project_root} already exists!" if File.exists?(project_root)
+    raise "#{project_root} already exists!" if File.exists?(project_root) && project_root != Dir.pwd
     puts "Creating Gaudi filesystem structure at #{project_root}"
     structure=["doc","lib","src","test","tools/build","tools/templates"]
     structure.each do |dir|
