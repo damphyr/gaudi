@@ -26,7 +26,7 @@ env_setup(File.dirname(__FILE__))
 base=../../
 #the build output directory
 out=../../out
-sources=../src/
+sources=../../src/
 #enumerate the platforms i.e. platforms=mingw,ms,arm
 #platforms=
 #add a platform=platform.cfg for each platform pointing to the platform configuration
