@@ -2,6 +2,7 @@
 
 require "hoe"
 require_relative('lib/gaudi/version')
+require_relative('lib/gaudi/tasks/new')
 
 # Hoe.plugin :compiler
 # Hoe.plugin :gem_prelude_sucks
