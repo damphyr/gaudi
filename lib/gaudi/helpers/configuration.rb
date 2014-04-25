@@ -5,12 +5,16 @@ require 'yaml'
 module Gaudi
   #Loads and returns the system configuration
   def self.configuration
-    #Load the system configuration
-    cfg_file=File.expand_path(ENV['GAUDI_CONFIG'])
-    ENV['GAUDI_CONFIG']=cfg_file
-    puts "Reading main configuration from \n\t#{cfg_file}"
-    system_config=SystemConfiguration.new(cfg_file)
-    return system_config
+    if ENV['GAUDI_CONFIG']
+      #Load the system configuration
+      cfg_file=File.expand_path()
+      ENV['GAUDI_CONFIG']=cfg_file
+      puts "Reading main configuration from \n\t#{cfg_file}"
+      system_config=SystemConfiguration.new(cfg_file)
+      return system_config
+    else
+      raise "No configuration file (GAUDI_CONFIG is empty)"
+    end
   end
   module Configuration
     #Encapsulates the environment variables used to adjust the builder's configuration
@@ -81,7 +85,7 @@ module Gaudi
       #The first one lists the names of all keys that correspond to list values (comma separated values, e.g. key=value1,value2,value3)
       #Loader will assign an Array of the values to the key, e.g. config[key]=[value1,value2,value3]
       #
-      #The second Array is a list of keys that correspond to pathnames. 
+      #The second Array is a list of keys that correspond to pathnames.
       #
       #Loader will then expand_path the value so that the key contains the absolute path.
       def keys
@@ -116,7 +120,7 @@ module Gaudi
           lines=File.readlines(filename)
           cfg={}
           cfg_dir=File.dirname(filename)
-          
+
           lines.each do |l|
             l.gsub!("\t","")
             l.chomp!
@@ -179,7 +183,7 @@ module Gaudi
         if Pathname.new(path).absolute?
           path
         else
-          File.expand_path(File.join(cfg_dir,path)) 
+          File.expand_path(File.join(cfg_dir,path))
         end
       end
       #:nodoc:
@@ -206,7 +210,7 @@ module Gaudi
     #The available functionality is extended through SystemModules modules
     class SystemConfiguration<Loader
       include EnvironmentOptions
-      
+
       #I guess this is what you call a Factory Method?
       def self.load configuration_files
         super(configuration_files,self)
@@ -219,7 +223,7 @@ module Gaudi
         raise GaudiConfigurationError, "Setting 'base' must be defined" unless base
         raise GaudiConfigurationError, "Setting 'out' must be defined" unless out
         @workspace=Dir.pwd
-        @timestamp = Time.now  
+        @timestamp = Time.now
         load_platform_configurations
       end
 
@@ -241,7 +245,7 @@ module Gaudi
     end
     #Adding modules in this module allows SystemConfiguration to extend it's functionality
     #
-    #Modules must implement two methods: 
+    #Modules must implement two methods:
     #list_keys returning an Array with the keys that are comma separated lists
     #and path_keys returning an Array with the keys whose value is a file path
     #
@@ -256,12 +260,12 @@ module Gaudi
         def self.path_keys
           ['base','out','sources']
         end
-        #The root path. 
+        #The root path.
         #Every path in the system can be defined relative to this
         def base
-          return @config["base"] 
+          return @config["base"]
         end
-        #The output directory  
+        #The output directory
         def out
           return @config["out"]
         end
@@ -345,7 +349,7 @@ module Gaudi
         end
         #Loads and returns the external libraries configuration
         #
-        #The configuration is a {name=>path} hash and is used to 
+        #The configuration is a {name=>path} hash and is used to
         #replace the library names used in the PLatform.external_libraries setting
         def external_libraries_config platform
           lib_config=platform_config(platform).fetch('lib_cfg',"")
@@ -366,7 +370,7 @@ module Gaudi
     end
     #Adding modules in this module allows BuildConfiguration to extend it's functionality
     #
-    #Modules must implement two methods: 
+    #Modules must implement two methods:
     #list_keys returning an Array with the keys that are comma separated lists
     #and path_keys returning an Array with the keys whose value is a file path
     #
@@ -398,7 +402,7 @@ module Gaudi
         def compiler_mode(system_config)
           case (@config.fetch('compiler_mode',system_config.default_compiler_mode).upcase)
           when 'C'
-            return Gaudi::CompilationUnit::C 
+            return Gaudi::CompilationUnit::C
           when 'CPP'
             return Gaudi::CompilationUnit::CPP
           when 'MIXED'
@@ -411,7 +415,7 @@ module Gaudi
         alias_method :incs,:external_includes
         alias_method :deps,:dependencies
       end
-      #Configuration directoves for programs.
+      #Configuration directives for programs.
       #
       #For a Gaudi::Program instance these are added in addition to the ComponentConfiguration directives
       module ProgramConfiguration
@@ -431,7 +435,7 @@ module Gaudi
         #Compiler options. These are added to the platform configuration options, they do NOT override them
         def compiler_options
           return @config.fetch('compiler_options',[])
-        end 
+        end
         #List of paths to resource files that are copied with the program build
         def resources
           return @config.fetch('resources',[])
@@ -452,7 +456,7 @@ module Gaudi
         super(filename)
         raise GaudiConfigurationError,"Missing prefix= option in '#{config_file}'" if prefix.empty?
       end
-      
+
       def keys
         load_key_modules(Gaudi::Configuration::BuildModules)
       end
