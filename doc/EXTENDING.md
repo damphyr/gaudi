@@ -19,7 +19,7 @@ lib/
   |-custom/
   |-gaudi.rb
 
-You only need one rakefile at the root of your repository (assuming a standard directory structure. See CONVENTIONS.md for details)
+You only need one rakefile at the root of your repository (assuming a standard directory structure. See [CONVENTIONS.md](CONVENTIONS.md) for details)
 
 ```ruby
 $:.unshift('path/to/build/system/lib')
