@@ -3,7 +3,7 @@ namespace :test do
   task :unit do
     include UnityOperations
     component=Gaudi::Component.new($configuration.component,$configuration)
-    unity_task(component,$configuration)
+    t=unity_task(component,$configuration)
     Rake::Task[t].invoke
   end
 end

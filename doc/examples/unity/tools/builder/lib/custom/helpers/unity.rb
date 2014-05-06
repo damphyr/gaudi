@@ -20,7 +20,7 @@ module Gaudi::Configuration::SystemModules
 end
 
 module UnityOperations
-  include Gaudi::Build
+  include Gaudi::Tasks::Build
   #Task to build Unity tests for a component
   def unity_task component,system_config
     c=UnityTest.new(component,system_config)
@@ -54,12 +54,12 @@ module UnityOperations
   end
 end
 #Most awesome way to bend the base class to our whim
-class UnityTest < DelegateClass(Component)
+class UnityTest < DelegateClass(Gaudi::Component)
   attr_reader :directories,:dependencies,:name
   def initialize component,system_config
     super(component)
     @directories=__getobj__.directories+__getobj__.test_directories
-    @dependencies= [Component.new('Unity',system_config,platform)]
+    @dependencies= [Gaudi::Component.new('Unity',system_config,platform)]
     @name="#{__getobj__.name}Test"
     @system_config=system_config
   end
