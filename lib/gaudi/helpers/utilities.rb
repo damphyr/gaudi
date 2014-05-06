@@ -1,4 +1,4 @@
-require 'gaudi/helpers/errors'
+require_relative 'errors'
 module Gaudi
   module Utilities
     #Requires all files defined in the list printing out errors 

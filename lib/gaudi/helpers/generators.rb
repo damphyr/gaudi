@@ -1,5 +1,5 @@
 require 'rake/dsl_definition'
-require_relative 'operations.rb'
+require_relative 'operations'
 
 module Gaudi
   #Task Generators are modules that create the types of tasks the build system supports

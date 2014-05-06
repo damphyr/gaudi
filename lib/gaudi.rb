@@ -1,7 +1,7 @@
 # encoding: UTF-8
 require 'rake/dsl_definition'
 require 'rake/file_list'
-require 'gaudi/helpers/utilities'
+require_relative 'gaudi/helpers/utilities'
 include Rake::DSL
 include Gaudi::Utilities
 
