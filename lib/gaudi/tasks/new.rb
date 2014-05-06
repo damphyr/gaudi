@@ -17,7 +17,7 @@ namespace :new do
       rakefile_content=<<-EOT
 require_relative 'tools/build/lib/gaudi'
 env_setup(File.dirname(__FILE__))
-#add the custom stuff here
+require_relative 'tools/build/lib/gaudi/tasks'
       EOT
       File.open(rakefile, 'wb') {|f| f.write(rakefile_content) }
     end
