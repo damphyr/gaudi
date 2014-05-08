@@ -32,4 +32,11 @@ We then use the Gaudi::Tasks::Build#program_task method to create a task that wi
 
 All the supporting code goes in custom/helpers/unity.rb
 
-A sample task that builds any component's unit tests s provided in [custom/tasks/unity.rb](tools/build/lib/custom/tasks/unity.rb).
+A sample task that triggers the generation of all the files provided in [custom/tasks/unity.rb](tools/build/lib/custom/tasks/unity.rb) and a Rake rule that will build the unit tests is provided in [custom/rules/build.rb](tools/build/lib/custom/rules/build.rb)
+
+##Assumptions
+Gaudi builds for multiple platforms but this is not easy to demonstrate in the examples.
+
+In this case the assumption is that the unit tests are done on Windows with the MinGW compiler toolchain. This influences the values used in the task and the rules for building.
+
+This platform dependency is the reason why Gaudi does not offer rules for compiling/linking out of the box.

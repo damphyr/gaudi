@@ -1,4 +1,4 @@
-require 'gaudi'
+require 'delegate'
 
 module Gaudi::Configuration::SystemModules
   #System configuration parameters for the Unity
@@ -9,12 +9,12 @@ module Gaudi::Configuration::SystemModules
     end
 
     def self.path_keys
-      ['unity_test_generator']
+      ['unity_runner_generator']
     end
     #Point this to the Ruby script Unity uses to create test runners
-    # unity_test_generator=path/to/unity/auto/generate_test_runner.rb
-    def unity_test_generator
-      return required_path(@config['unity_test_generator'])
+    # unity_runner_generator=path/to/unity/auto/generate_test_runner.rb
+    def unity_runner_generator
+      return required_path(@config['unity_runner_generator'])
     end
   end
 end
@@ -31,16 +31,19 @@ module UnityOperations
   #Creates a file task that creates the test runner for the given component
   def test_runner_task component,system_config
     src= test_runner(component,system_config)
-    file src => commandfile_task(src,component,system_config) do |t|
+    runner_deps=component.test_files
+    runner_deps.delete(src)
+    file src => runner_deps do |t|
+      puts "Generating test runner for #{component.name}"
       sources=component.test_files.select{|f| is_source?(f)}
       raise GaudiError,"No test sources for #{component.name}" if sources.empty?
-      cmdline="ruby #{system_config.unity_test_generator} #{sources} #{t.name}"
+      cmdline="ruby #{system_config.unity_runner_generator} #{sources} #{t.name}"
       mkdir_p(File.dirname(t.name),:verbose=>false)
       cmd=Patir::ShellCommand.new(:cmd=>cmdline)
       cmd.run
       if !cmd.success?
         puts [cmd,cmd.output,cmd.error].join("\n")
-        raise GaudiError,"Creating test runner for #{name} failed"
+        raise GaudiError,"Creating test runner for #{component.name} failed"
       end
     end
   end
@@ -59,7 +62,8 @@ class UnityTest < DelegateClass(Gaudi::Component)
   def initialize component,system_config
     super(component)
     @directories=__getobj__.directories+__getobj__.test_directories
-    @dependencies= [Gaudi::Component.new('Unity',system_config,platform)]
+    unity=Gaudi::Component.new('Unity',system_config,platform)
+    @dependencies= [unity]+__getobj__.dependencies+unity.dependencies
     @name="#{__getobj__.name}Test"
     @system_config=system_config
   end

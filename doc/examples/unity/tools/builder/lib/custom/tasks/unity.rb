@@ -1,8 +1,9 @@
-namespace :test do
+namespace :build do
   desc "Builds and runs the unit tests for COMPONENT"
   task :unit do
     include UnityOperations
-    component=Gaudi::Component.new($configuration.component,$configuration)
+    platform="mingw"
+    component=Gaudi::Component.new($configuration.component,$configuration,platform)
     t=unity_task(component,$configuration)
     Rake::Task[t].invoke
   end
