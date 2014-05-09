@@ -75,7 +75,7 @@ module Gaudi
       filename.downcase.end_with?('.hh')
     end
   end
-#Methods for creating and managing tool command lines
+  #Methods for creating and managing tool command lines
   module ToolOperations
     #Returns the compiler command line options merging the options from all
     #cofniguration files
