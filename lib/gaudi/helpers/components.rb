@@ -24,7 +24,11 @@ module Gaudi
     #Returns the path to the object output file corresponding to src
     def object_file src,component,system_config
       ext_obj,ext_lib,ext_exe = *extensions(component.platform)
-      src.pathmap("#{system_config.out}/#{component.platform}/#{component.name}/%n#{ext_obj}")
+      if is_generated?(src,system_config)
+        src.pathmap("%X#{ext_obj}")
+      else
+        src.pathmap("#{system_config.out}/#{component.platform}/#{component.name}/%n#{ext_obj}")
+      end
     end
     #Returns the path to the file containing the commands for the given target
     def command_file tgt,system_config,platform
@@ -55,6 +59,11 @@ module Gaudi
     #implement this accordingly.
     def is_unit_test? filename
       filename.pathmap('%n').end_with?('Test')
+    end
+    #Gaudi supports code generation under the convention that all generated files
+    #are created in the output directory.
+    def is_generated? filename,system_config
+      /#{system_config.out}/=~File.expand_path(filename)
     end
     #Determine which directories correspond to the given name
     #
@@ -139,11 +148,11 @@ module Gaudi
     end
     #The components sources
     def sources
-      determine_sources(directories)
+      determine_sources(directories).uniq
     end
     #All headers
     def headers
-      determine_headers(directories)
+      determine_headers(directories).uniq
     end
     #The headers the component exposes
     def interface
@@ -151,7 +160,7 @@ module Gaudi
     end
     #The include paths for this Component
     def interface_paths
-      determine_interface_paths(directories)
+      determine_interface_paths(directories).uniq
     end
     #All files
     def all
@@ -169,7 +178,7 @@ module Gaudi
     #
     #This should be a complete list of all paths to include so that the component compiles succesfully
     def include_paths
-      incs=@directories
+      incs=directories
       incs+=interface_paths
       incs+=external_includes
       dependencies.each{|dep| incs+=dep.interface_paths}
