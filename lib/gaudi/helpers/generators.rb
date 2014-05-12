@@ -26,23 +26,24 @@ module Gaudi
       end
       #Returns the general dependencies for an object file task
       def object_task_dependencies src,component,system_config
-        file src => commandfile_task(src,component,system_config)
-        files=[src]+component.headers
+        file_task=commandfile_task(src,component,system_config)
+        files=[src,file_task]+component.headers
         #we add the paths so that a rule does not have to recosntruct the Component
         #It only needs to filter directories and add them as includes
         incs=component.include_paths
         component.dependencies.each do |dep| 
           files+=dep.interface
         end
-        files+incs
+        (files+incs).uniq
       end
 
-      def commandfile_task_dependencies component,system_config
-        files=component.headers
+      def commandfile_task_dependencies src,component,system_config
+        files=[component.configuration.to_path,system_config.to_path]
+        files+=component.headers
         component.dependencies.each do |dep| 
           files+=dep.interface
         end
-        [component.configuration.to_path,system_config.to_path]+files
+        files.uniq
       end
     end
 
@@ -71,12 +72,13 @@ module Gaudi
       #Returns a task for building a Program
       def program_task program,system_config
         deps=component_task_dependencies(program,system_config)
-        deps+=program.sources.map{|src| Tasks.define_file_task(object_file(src,program,system_config),object_task_dependencies(src,program,system_config))}
+        deps+=program.sources.map{|src| object_task(src,program,system_config)}
         program.dependencies.each do |dep|
-          deps+=dep.sources.map{|src| Tasks.define_file_task(object_file(src,dep,system_config),object_task_dependencies(src,dep,system_config))}
+          deps+=dep.sources.map{|src| object_task(src,dep,system_config)}
         end
         deps<<commandfile_task(executable(program,system_config),program,system_config)
         deps+=resource_tasks(program,system_config)
+        deps.uniq!
         Tasks.define_file_task(executable(program,system_config),deps)
       end
       #Returns a task for building a library
@@ -86,11 +88,16 @@ module Gaudi
         deps<<commandfile_task(library(component,system_config),component,system_config)
         Tasks.define_file_task(library(component,system_config),deps)
       end
+
+      def object_task src,component,system_config
+        t=object_file(src,component,system_config)
+        file t=>object_task_dependencies(src,component,system_config)
+      end
       #Returns a task for creating a command file
       #
       #This method is heavily used in creating other tasks
       def commandfile_task src,component,system_config
-        file command_file(src,system_config,component.platform) => commandfile_task_dependencies(component,system_config) do |t|
+        file command_file(src,system_config,component.platform) => commandfile_task_dependencies(src,component,system_config) do |t|
           options= []
           if is_source?(src)
             if is_assembly?(src)
