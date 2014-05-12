@@ -96,7 +96,6 @@ module Gaudi
       opts= config['assembler_options'].split(' ')
       opts<< "#{config['assembler_out']}\"#{output}\""
       opts+= prefixed_objects(component.include_paths,config['assembler_include'])
-      opts+=prefixed_objects(component.directories,config['assembler_include'])
       opts<< src
     end
     #Returns the archiver command line options merging the options from all
@@ -111,13 +110,14 @@ module Gaudi
       options+=prefixed_objects(objects,config['archive_in'])
     end
     #Returns the linker command line options merging the options from all
-    #cofniguration files
+    #configuration files
     def linker_options component,system_config
       config=system_config.platform_config(component.platform)
       options= config['linker_options'].split(' ')
       options<< "#{config['linker_out']}\"#{executable(component,system_config)}\""
       objects=component.sources.map{|src| object_file(src,component,system_config)}
       component.dependencies.each{|dep| objects+=dep.sources.map{|src| object_file(src,dep,system_config)}}
+      objects.uniq!
       options+= prefixed_objects(objects,config["linker_in"])
       options+= prefixed_objects(component.external_libraries,config["linker_lib"])
     end
