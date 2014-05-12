@@ -27,9 +27,7 @@ module Gaudi::Utilities
         system_config.workspace=File.expand_path(work_dir)
         $configuration=system_config
       else
-        if !ARGV.empty? && ARGV.include?('T')
-          raise GaudiError,"Did not specify a configuration.\n Add GAUDI_CONFIG=path/to/config to the commandline or specify the GAUDI_CONFIG environment variable"
-        end
+        raise GaudiError,"Did not specify a configuration.\n Add GAUDI_CONFIG=path/to/config to the commandline or specify the GAUDI_CONFIG environment variable"
       end
     end
   end
