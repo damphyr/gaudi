@@ -42,7 +42,7 @@ class TestTaskGenerators < MiniTest::Unit::TestCase
     component=Gaudi::Component.new('FOO',system_config,'mingw')
 
     deps=object_task_dependencies(component.sources[0],component,system_config)
-    assert_equal(6, deps.size)
+    assert_equal(7, deps.size)
     assert(deps.include?(component.sources[0]))
     f,d=deps.partition{|e| !File.directory?(e.to_s)}
     assert_equal(3, d.size, "not enough include paths")
