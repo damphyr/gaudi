@@ -147,10 +147,10 @@ module Gaudi
     end
     #The headers the component exposes
     def interface
-      Rake::FileList[*include_paths.pathmap("%p/**/*#{hdr}")]
+      Rake::FileList[*interface_paths.pathmap("%p/**/*#{hdr}")]
     end
     #The include paths for this Component
-    def include_paths
+    def interface_paths
       determine_interface_paths(directories)
     end
     #All files
@@ -165,7 +165,17 @@ module Gaudi
     def external_includes
       @system_config.external_includes(@platform)+@configuration.external_includes
     end
-    #Unit test sources
+    #List of include paths for this component
+    #
+    #This should be a complete list of all paths to include so that the component compiles succesfully
+    def include_paths
+      incs=@directories
+      incs+=interface_paths
+      incs+=external_includes
+      dependencies.each{|dep| incs+=dep.interface_paths}
+      return incs.uniq
+    end
+    #Test sources
     def test_files
       Rake::FileList[*test_directories.pathmap("%p/**/*{#{src},#{hdr}}")]
     end

@@ -28,10 +28,11 @@ module Gaudi
       def object_task_dependencies src,component,system_config
         file src => commandfile_task(src,component,system_config)
         files=[src]+component.headers
-        incs=component.include_paths+component.directories
+        #we add the paths so that a rule does not have to recosntruct the Component
+        #It only needs to filter directories and add them as includes
+        incs=component.include_paths
         component.dependencies.each do |dep| 
           files+=dep.interface
-          incs+=dep.include_paths
         end
         files+incs
       end

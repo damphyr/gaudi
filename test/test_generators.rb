@@ -38,6 +38,7 @@ class TestTaskGenerators < MiniTest::Unit::TestCase
 
   def test_object_dependencies
     system_config=system_configuration_mock
+    system_config.expects(:external_includes).returns(FileList.new)
     component=Gaudi::Component.new('FOO',system_config,'mingw')
 
     deps=object_task_dependencies(component.sources[0],component,system_config)

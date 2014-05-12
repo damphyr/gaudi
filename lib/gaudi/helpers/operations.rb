@@ -84,8 +84,7 @@ module Gaudi
       output=object_file(src,component,system_config)
       opts= config['compiler_options'].split(' ')
       opts+= component.configuration.compiler_options
-      opts+= prefixed_objects(component_includes(component,system_config),config['compiler_include'])
-      opts+= prefixed_objects(component.directories,config['compiler_include'])
+      opts+= prefixed_objects(component.include_paths,config['compiler_include'])
       opts<< "#{config['compiler_out']}\"#{output}\""
       opts<< src
     end
@@ -96,7 +95,7 @@ module Gaudi
       output=object_file(src,component,system_config)
       opts= config['assembler_options'].split(' ')
       opts<< "#{config['assembler_out']}\"#{output}\""
-      opts+= prefixed_objects(component_includes(component,system_config),config['assembler_include'])
+      opts+= prefixed_objects(component.include_paths,config['assembler_include'])
       opts+=prefixed_objects(component.directories,config['assembler_include'])
       opts<< src
     end
@@ -135,14 +134,6 @@ module Gaudi
     #adds a prefix to a list of filenames/objects
     def prefixed_objects objects,prefix_flag
       objects.map{|lo| "#{prefix_flag}#{lo}"}
-    end
-    #List of include paths for component
-    def component_includes component,system_config
-      incs=component.include_paths
-      incs+=system_config.external_includes(component.platform)
-      incs+=component.configuration.external_includes
-      component.dependencies.each{|dep| incs+=dep.include_paths}
-      return incs
     end
   end
   #Methods to do with configuration entries and data
