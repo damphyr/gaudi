@@ -192,8 +192,9 @@ module Gaudi
   #A Gaudi::Program is a collection of components built for a specific platform.
   class Program<Component
     def initialize config_file,deployment_name,system_config,platform
-      @configuration=Configuration::BuildConfiguration.load([config_file])
-      super(@configuration.prefix,system_config,platform)
+      configuration=Configuration::BuildConfiguration.load([config_file])
+      super(configuration.prefix,system_config,platform)
+      @configuration.merge(configuration)
       @deployment=deployment_name
     end
     #External (additional) libraries the Program depends on.
