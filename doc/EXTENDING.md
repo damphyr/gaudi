@@ -1,6 +1,6 @@
 #Extending Gaudi
 
-Which is to say, actually using the thing. As it is stated clearly in the README, Gaudi is to be used as a springboard for creating build systems and is not an off-the-shelf solution that will work out of the box. That it will work out of the box if you follow the default conventions is just a nice bonus for the three people that use those conventions.
+Which is to say, making the thing usable. As it is stated clearly in the README, Gaudi is to be used as a springboard for creating build systems and is not an off-the-shelf solution that will work out of the box. That it will work out of the box if you follow the default conventions is just a nice bonus for the three people that use those conventions.
 
 So this document outlines where you have to replace or add stuff to get the job done.
 
@@ -12,12 +12,19 @@ There is one case where if the defaults don't work, you should replace the code 
 
 ##Integrating custom code
 
-The simplest way to get Gaudi code and your custom code together is to put them side by side in a directory:
+The simplest way to get Gaudi code and your custom code together is to put them side by side in a directory. To make it even easier, Gaudi expects a custom/ directory and integrates it in it's load sequence. So you only need to drop the code in the appropriate place:
 
 lib/
   |-gaudi/
   |-custom/
+      |-helpers/
+      |-tasks/
+      |-rules/
   |-gaudi.rb
+
+Don't mix tasks and helpers the load sequence ensures that all code in the helpers/ directory is available before loading any tasks
+
+##Rakefiles
 
 You only need one rakefile at the root of your repository (assuming a standard directory structure. See [CONVENTIONS.md](CONVENTIONS.md) for details)
 
@@ -44,3 +51,7 @@ module Gaudi
   end
 end
 ```
+
+##Configuration
+
+Coming Soon...
