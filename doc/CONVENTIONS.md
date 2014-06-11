@@ -12,4 +12,5 @@ The following image shows the structure created by the new:project scaffolding t
 ![directory structure](directory_structure.png)
 
 Following this structure any additions to the build system code should be added under tools/build/lib/custom and Gaudi will include that code automatically.
+
 It is important that custom tasks are added as files in custom/tasks, while supporting code is added in custom/helpers. Helpers are required before any task files so that the code is available to all tasks.
