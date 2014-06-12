@@ -1,5 +1,7 @@
 # Gaudi - A Builder [![Build Status](https://travis-ci.org/damphyr/gaudi.png)](https://travis-ci.org/damphyr/gaudi) [![Coverage Status](https://coveralls.io/repos/damphyr/gaudi/badge.png)](https://coveralls.io/r/damphyr/gaudi) [![Code Climate](https://codeclimate.com/github/damphyr/gaudi.png)](https://codeclimate.com/github/damphyr/gaudi)
 
+tl:dr; Go to the [documentation](doc/README.md)
+
 This is not a gem nor is it a library. It's more like a bootstrap for creating a build system for C or C++ based projects using rake.
 
 A couple of guidelines, a bit of supporting code, a lot of assumptions and conventions with fill-in-the-blanks space for creating a works-for-me build system.  
@@ -21,7 +23,7 @@ Well, I've done this 4 times now and some things keep getting reused and some th
 
 Under specific circumstances, yes!
 
-Gaudi is a build system for component-based, multi-platform, statically linked C or C++ projects of the kind you usually get when you are creating embedded systems. 
+Gaudi is ostensibly a build system for component-based, multi-platform, statically linked C or C++ projects of the kind you usually get when you are creating embedded systems. In truth it's an all dancing, all singing automation tool that happens to know how to compile code.
 
 It probably won't scale down. It's hodge-podge predecessors have been servicing teams of 7+, with projects running for longer than a year and LOC counts in the high 100Ks. Then again if you follow the default conventions it will work out of the box for any code size.
 
