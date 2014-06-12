@@ -1,2 +1,8 @@
+# 0.2.0
+ * Test coverage is satisfactory
+ * Path and dependency resolution work reliably
+ * Configuration system is stable
+ * Scaffolding code added
+
 # 0.0.1
  * Initial version, totally unstable
