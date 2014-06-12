@@ -8,7 +8,7 @@ module Gaudi
   #             |-test/ - unit tests
   #
   #Code can be split in several source directories and by default we will look for the files in
-  #source_directory/platform/name and source_directory/platform/name for every source_directory
+  #source_directory/common/name and source_directory/platform/name for every source_directory
   module StandardPaths
     include Gaudi::PlatformOperations
     #Returns the path to the executable file corresponding to the component
