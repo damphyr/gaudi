@@ -16,7 +16,7 @@ module Gaudi
     end
     #Switches the configuration for the given block
     #
-    #That is it switches the system configuration by reading a completely different file.
+    #It switches the system configuration by reading a completely different file.
     #
     #This makes for some interesting usage when you don't want to have multiple calls
     #with a different GAUDI_CONFIG parameter
