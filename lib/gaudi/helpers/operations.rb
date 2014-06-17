@@ -72,7 +72,8 @@ module Gaudi
 
     def is_header? filename
       filename.downcase.end_with?('.h') ||
-      filename.downcase.end_with?('.hh')
+      filename.downcase.end_with?('.hh') ||
+      filename.downcase.end_with?('.hpp')
     end
   end
   #Methods for creating and managing tool command lines
