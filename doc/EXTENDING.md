@@ -22,7 +22,7 @@ lib/
       |-rules/
   |-gaudi.rb
 
-Don't mix tasks and helpers the load sequence ensures that all code in the helpers/ directory is available before loading any tasks
+Don't mix tasks and helpers, the load sequence ensures that all code in the helpers/ directory is available before loading any tasks
 
 ##Rakefiles
 
@@ -33,23 +33,6 @@ $:.unshift('path/to/build/system/lib')
 require 'gaudi'
 env_setup(File.dirname(__FILE__))
 #add the custom stuff here
-```
-
-##Add a platform
-
-To add a new platform create a module in Gaudi::PlatformOperations and give it a class method 'extensions' that returns the extensions for generated files: [object,library,executable].
-Make sure the name of the module is all capitals (FOO is OK, Foo is not)
-
-```ruby
-module Gaudi
-  module PlatformOperations
-    module FOO
-      def self.extensions
-        ['.obj','.lib','.exe']
-      end
-    end
-  end
-end
 ```
 
 ##Configuration
