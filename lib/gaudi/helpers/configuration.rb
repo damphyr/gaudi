@@ -236,10 +236,11 @@ module Gaudi
       def load_platform_configurations
         @config['platform_data']={}
         @config['platforms']||=[]
-        platforms.each do |platform|
-          path=@config[platform]
+        platforms.each do |platform_name|
+          path=@config[platform_name]
           path=File.expand_path(File.join(@config_base,path)) if !Pathname.new(path).absolute?
-          @config['platform_data'][platform]=read_configuration(path,*keys)
+          pdata=read_configuration(path,*keys)
+          @config['platform_data'][platform_name]=PlatformConfiguration.new(platform_name,pdata)
         end
       end
     end
@@ -286,30 +287,17 @@ module Gaudi
           @config['platform_data'][platform]=platform_data
         end
 
+        def extensions platform
+          if @config['platform_data'].keys.include?(platform)
+            return @config['platform_data'][platform].extensions
+          else
+            raise GaudiConfigurationError,"Unknown platform #{platform}"
+          end
+        end
+
         alias_method :base_dir,:base
         alias_method :out_dir,:out
         alias_method :source_directories,:sources
-      end
-      #Miscelaneous settings module
-      module Settings
-        def self.list_keys
-          []
-        end
-        def self.path_keys
-          []
-        end
-        #The default compiler mode is optional. If not defined the system assumes C
-        #
-        #Valid compiler modes are defined in Gaudi::CompilationUnit
-        def default_compiler_mode
-          mode=@config.fetch('default_compiler_mode','C').upcase
-          valid_modes=['C','CPP']
-          if valid_modes.include?(mode)
-            mode
-          else
-            raise GaudiConfigurationError,"Theonly two acceptable values for default_compiler_mode are: [#{valid_modes.join(',')}]"
-          end
-        end
       end
       #Platform configuration methods that proide more control over the raw Hash platform data
       module PlatformConfiguration
@@ -319,6 +307,14 @@ module Gaudi
         end
         def self.path_keys
           []
+        end
+
+        def source_extensions platform
+          return platform_config(platform)['source_extensions']
+        end
+
+        def header_extensions platform
+          return platform_config(platform)['header_extensions']
         end
         #A list of paths to be used as include paths when compiling
         #
@@ -399,19 +395,6 @@ module Gaudi
           return @config.fetch('incs',Rake::FileList.new)
         end
 
-        def compiler_mode(system_config)
-          case (@config.fetch('compiler_mode',system_config.default_compiler_mode).upcase)
-          when 'C'
-            return Gaudi::CompilationUnit::C
-          when 'CPP'
-            return Gaudi::CompilationUnit::CPP
-          when 'MIXED'
-            return Gaudi::CompilationUnit::MIXED
-          else
-            raise GaudiConfigurationError,"There are only three acceptable values for compiler_mode: C,CPP or MIXED"
-          end
-        end
-
         alias_method :incs,:external_includes
         alias_method :deps,:dependencies
       end
@@ -459,6 +442,22 @@ module Gaudi
 
       def keys
         load_key_modules(Gaudi::Configuration::BuildModules)
+      end
+    end
+
+    class PlatformConfiguration < DelegateClass(::Hash)
+      attr_reader :name
+
+      def initialize name,platform_data
+        super(platform_data)
+        __getobj__.merge(platform_data)
+        validate
+      end
+
+      private
+      def validate
+        raise GaudiConfigurationError, "Define source_extensions for platform #{name}" unless self.keys.include?('source_extensions')
+        raise GaudiConfigurationError, "Define source_extensions for platform #{name}" unless self.keys.include?('header_extensions')
       end
     end
   end

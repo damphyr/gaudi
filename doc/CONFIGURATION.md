@@ -58,7 +58,6 @@ The standard configuration parameters out-of-the-box are
  * out - the build output directory.
  * source - A comma separated list of directories where project sources can be found
  * platforms - a comma separated list of compiler platform names e.g. platforms= mingw,rx,qnx etc.
- * default_compiler_mode - an optional setting which can be C or CPP (default is C) to indicate to the system what type of compilation takes place
 
 **All paths in the configuration can be defined absolutely or relative to the configuration file.**
 
@@ -79,6 +78,11 @@ Configuring different toolchains varies wildly so the compiler platform configur
 A platform configuration is accessed by SystemConfiguration#platform_config(platform), where _platform_ is one of the values defined in the _platforms_ property.
 
 ```bash
+##### Source file setting
+#the source_extensions and header_extensions are mandatory parameters
+#and their value is a comma separated list of file extensions
+source_extensions= .c,.asm
+header_extensions= .h
 ######Compiler settings
 #Compiler executable (gcc etc.)
 compiler= 

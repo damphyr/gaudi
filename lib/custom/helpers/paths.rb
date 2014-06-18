@@ -17,10 +17,12 @@ module Gaudi
       raise GaudiError,"Cannot find source directories for '#{name}' in #{source_directories.join(',')}" if paths.empty?
       return paths
     end
-    def determine_sources component_directories
+    def determine_sources component_directories,system_config,platform
+      src=system_config.source_extensions(platform)
       Rake::FileList[*component_directories.pathmap("%p/**/*{#{src}}")].exclude(*determine_test_directories(component_directories).pathmap('%p/**/*'))
     end
-    def determine_headers component_directories
+    def determine_headers component_directories,system_config,platform
+      hdr=system_config.header_extensions(platform)
       Rake::FileList[*component_directories.pathmap("%p/**/*{#{hdr}}")].exclude(*determine_test_directories(component_directories).pathmap('%p/**/*'))
     end
     def determine_test_directories component_directories

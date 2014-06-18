@@ -66,43 +66,6 @@ module Gaudi
       /#{system_config.out}/=~File.expand_path(filename)
     end
   end
-  #This module namespaces the different compilation mode modules
-  module CompilationUnit
-    #Conventions, naming and helpers for C projects
-    module C
-      #Source file extensions
-      def src 
-        '.c,.asm,.src' 
-      end
-      #Header file extensions
-      def hdr 
-        '.h' 
-      end
-    end
-    #Conventions, naming and helpers for C++ projects
-    module CPP
-      #Source file extensions
-      def src 
-        '.cpp,.cc,.asm,.src' 
-      end
-      #Header file extensions
-      def hdr 
-        '.h' 
-      end
-    end
-    #Conventions, naming and helpers for C++ projects containing C code
-    module MIXED
-      #Source file extensions
-      def src 
-        '.c,.cpp,.cc,.asm,.src' 
-      end
-      #Header file extensions
-      def hdr 
-        '.h,.hh' 
-      end
-    end
-  end
-
   #A Gaudi::Component is a logical grouping of a set of source and header files that maps to a directory structure.
   #
   #Given a base directory where sources reside, the name of Component is used to map to one or more Component source directories.
@@ -121,22 +84,21 @@ module Gaudi
       else
         @configuration = Configuration::BuildConfiguration.load(config_files)
       end
-      extend @configuration.compiler_mode(system_config)
       @system_config= system_config
       @platform= platform
       @name=@identifier= configuration.prefix
     end
     #The components sources
     def sources
-      determine_sources(directories).uniq
+      determine_sources(directories,@system_config,@platform).uniq
     end
     #All headers
     def headers
-      determine_headers(directories).uniq
+      determine_headers(directories,@system_config,@platform).uniq
     end
     #The headers the component exposes
     def interface
-      Rake::FileList[*interface_paths.pathmap("%p/**/*#{hdr}")]
+      Rake::FileList[*interface_paths.pathmap("%p/**/*#{@system_config.header_extensions(platform)}")]
     end
     #The include paths for this Component
     def interface_paths
@@ -166,6 +128,8 @@ module Gaudi
     end
     #Test sources
     def test_files
+      src=@system_config.source_extensions(platform)
+      hdr=@system_config.header_extensions(platform)
       Rake::FileList[*test_directories.pathmap("%p/**/*{#{src},#{hdr}}")]
     end
   end

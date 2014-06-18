@@ -20,8 +20,9 @@ class TestTaskGenerators < MiniTest::Unit::TestCase
     system_config=mock()
     system_config.stubs(:source_directories).returns([File.join(File.dirname(__FILE__),'tmp')])
     system_config.stubs(:out).returns('out')
-    system_config.stubs(:default_compiler_mode).returns('C')
     system_config.stubs(:to_path).returns('system.cfg')
+    system_config.stubs(:source_extensions).returns('.c')
+    system_config.stubs(:header_extensions).returns(['.h'])
     system_config
   end
 
