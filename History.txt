@@ -1,3 +1,7 @@
+# 0.3.0
+ * Source file extensions now part of the platform configuration
+ * The directory structure methods are now in custom/helpers/paths.rb
+
 # 0.2.0
  * Test coverage is satisfactory
  * Path and dependency resolution work reliably
