@@ -1,6 +1,7 @@
 require_relative '../version'
 require 'pathname'
 require 'yaml'
+require 'delegate'
 
 module Gaudi
   #Loads and returns the system configuration
