@@ -6,16 +6,16 @@
  * Add a subdirectory for each platform the Deployment provides executables for.
  * Create a program configuration file for each program
 
-{```ruby
+```ruby
 prefix=Dummy
 #the comma separated list of code components used in this executable
 deps=Foo,Bar
-```}
+```
 
 Build it with 
-{```bash
+```bash
 rake build:deployment DEPLOYMENT=Dummy
-```}
+```
 
 # Add a new code component
 
@@ -28,19 +28,19 @@ Foo/
 
 Create a file build.cfg:
 
-{```ruby
+```ruby
 prefix=Foo
 #a comma separated list of the code components Foo depends on
 deps=Bar
-```}
+```
 
 #Add extra compiler options to a code component
 
 Some times we want to compile a component with additional compiler flags. The extra options can be added in the build.cfg file of the code component.
 
-{```ruby
+```ruby
 prefix=Foo
 deps=Bar
 compiler_options= -DFOO
 assembler_options= -whatever
-}
+```
