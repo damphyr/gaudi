@@ -418,7 +418,7 @@ module Gaudi
         end
         #Compiler options. These are added to the platform configuration options, they do NOT override them
         def compiler_options
-          return @config.fetch('compiler_options',[])
+          return @config.fetch('compiler_options','')
         end
         #List of paths to resource files that are copied with the program build
         def resources
@@ -457,11 +457,9 @@ module Gaudi
 
       private
       def validate
-        raise GaudiConfigurationError, "Define source_extensions for platform #{name}" unless self.keys.include?('source_extensions')
-        raise GaudiConfigurationError, "Define source_extensions for platform #{name}" unless self.keys.include?('header_extensions')
-        raise GaudiConfigurationError, "Define object_extension for platform #{name}" unless self.keys.include?('object_extension')
-        raise GaudiConfigurationError, "Define library_extension for platform #{name}" unless self.keys.include?('library_extension')
-        raise GaudiConfigurationError, "Define executable_extension for platform #{name}" unless self.keys.include?('executable_extension')
+        ['source_extensions','header_extensions','object_extension','library_extension','executable_extension'].each do |key|
+          raise GaudiConfigurationError, "Define #{key} for platform #{name}" unless self.keys.include?(key)
+        end
       end
     end
   end
