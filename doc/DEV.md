@@ -24,7 +24,7 @@ Create a subdirectory in the source directory using the standard Gaudi structure
 Foo/
     |-inc #Include files usable outside the component
     |-test #Tests for this code component
-    |-*.*
+    |-*.* #All othe files (sources and build.cfg)
 ```
 Create a file build.cfg:
 
