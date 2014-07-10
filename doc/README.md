@@ -11,6 +11,7 @@ And in stage III you have to build the thing from scratch because the evil manag
 ## Stage I : Use
 
   * [Object hierarchy](HIERARCHY.md) 
+  * [I, Developer](DEV.md) - on the daily work with Gaudi 
 
 ## Stage II: Setup & Configure
 

@@ -8,7 +8,7 @@ Where defaults work and Gaudi would profit from extension we use namespaced modu
 
 There is a clear definition of the extension point (e.g. Gaudi::PlatformOperations) and the extension will be a module implementing an interface and sometimes following a naming convention.
 
-There is one case where if the defaults don't work, you should replace the code and that is the Gaudi::StandardPaths module. This module encapsulates the directory structure for the sources. Consequently, if you like to arrange your files differently you will have to replace it.
+There is one case where if the defaults don't work, you should replace the code and that is the Gaudi::StandardPaths module. This module encapsulates the directory structure for the sources. Consequently, if you like to arrange your files differently you will have to replace it. You will find the Gaudi::StandardPaths module in the custom/helpers/paths.rb file.
 
 ##Integrating custom code
 
