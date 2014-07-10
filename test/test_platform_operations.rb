@@ -6,13 +6,6 @@ require "gaudi"
 
 class TestPlatformOperations < MiniTest::Unit::TestCase
   include Gaudi::PlatformOperations
-  def test_extensions
-    ext_obj,ext_lib,ext_exe=*extensions('gcc')
-    assert_equal('.e', ext_exe)
-    assert_equal('.o', ext_obj)
-    assert_equal('.a', ext_lib)
-    assert_raises(GaudiError) { extensions('FOO') }
-  end
   def test_source_detection
     assert(is_source?('foo.c'), "It's a source file dummy")
     assert(is_source?('foo.src'), "It's a source file dummy")

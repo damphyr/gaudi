@@ -105,9 +105,9 @@ module Gaudi
             else
               options= compiler_options(src,component,system_config)
             end
-          elsif is_library?(src,component.platform)
+          elsif is_library?(src,system_config,component.platform)
             options= librarian_options(component,system_config)
-          elsif is_exe?(src,component.platform)
+          elsif is_exe?(src,system_config,component.platform)
             options= linker_options(component,system_config)
           end
           write_file(t.name,options.join("\n"))

@@ -13,17 +13,17 @@ module Gaudi
     include Gaudi::PlatformOperations
     #Returns the path to the executable file corresponding to the component
     def executable component,system_config
-      ext_obj,ext_lib,ext_exe = *extensions(component.platform)
+      ext_obj,ext_lib,ext_exe = *system_config.extensions(component.platform)
       File.join(system_config.out,component.platform,component.name,"#{component.name}#{ext_exe}")
     end
     #Returns the path to the library file corresponding to the component
     def library component,system_config
-      ext_obj,ext_lib,ext_exe = *extensions(component.platform)
+      ext_obj,ext_lib,ext_exe = *system_config.extensions(component.platform)
       File.join(system_config.out,component.platform,component.name,"#{component.name}#{ext_lib}")
     end
     #Returns the path to the object output file corresponding to src
     def object_file src,component,system_config
-      ext_obj,ext_lib,ext_exe = *extensions(component.platform)
+      ext_obj,ext_lib,ext_exe = *system_config.extensions(component.platform)
       if is_generated?(src,system_config)
         src.pathmap("%X#{ext_obj}")
       else
@@ -33,9 +33,9 @@ module Gaudi
     #Returns the path to the file containing the commands for the given target
     def command_file tgt,system_config,platform
       ext="_#{platform}"
-      if is_library?(tgt,platform)
+      if is_library?(tgt,system_config,platform)
         ext<<".library"
-      elsif is_exe?(tgt,platform)
+      elsif is_exe?(tgt,system_config,platform)
         ext<<".link"
       elsif is_source?(tgt)
         if is_assembly?(tgt)
@@ -50,7 +50,7 @@ module Gaudi
     end
     #Returns the path to the unit test binary corresponding to the component
     def unit_test component,system_config
-      ext_obj,ext_lib,ext_exe = *extensions(component.platform)
+      ext_obj,ext_lib,ext_exe = *system_config.extensions(component.platform)
       File.join(system_config.out,component.platform,'tests',"#{component.name}Test#{ext_exe}")
     end
     #Is this a unit test or not?

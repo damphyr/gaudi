@@ -43,11 +43,11 @@ module Gaudi
         end
         sh(cmdline.join(' '))
       end
-      #Statically links an executable or library
+      #Links an executable or library
       def build filename,system_config,platform
         config=system_config.platform_config(platform)
         mkdir_p(File.dirname(filename),:verbose=>false)
-        if (is_library?(filename,platform))
+        if (is_library?(filename,system_config,platform))
           cmdline = librarian(command_file(filename,system_config,platform),config)
         else
           cmdline = linker(command_file(filename,system_config,platform),config)

@@ -8,52 +8,14 @@ module Gaudi
   #
   #See PlatformOperations::MS or PlatformOperations::GCC for an example
   module PlatformOperations
-    #Support for the Microsoft compiler
-    module MS
-      def self.extensions
-        ['.obj','.lib','.exe']
-      end
-    end
-    #Renesas RX toolchain support
-    module RX
-      #For Renesas CPUs the format that allows debugging is .abs
-      #
-      #Every other format can be had by transforming the .abs file 
-      #with post-link steps
-      def self.extensions
-        ['.obj','.lib','.abs']
-      end
-    end
-    #Support for the mingw compiler on windows
-    module MINGW
-      def self.extensions
-        ['.obj','.lib','.exe']
-      end
-    end
-    #GCC support
-    module GCC
-      #The lack of an extension for executables on *ix systems is problematic.
-      #So we just define one for use in Gaudi.
-      def self.extensions
-        ['.o','.a','.e']
-      end
-    end
-    #returns the extensions for the platform as [object,library,executable]
-    def extensions platform
-      if PlatformOperations.constants.include?(platform.upcase.to_sym)
-        return PlatformOperations.const_get(platform.upcase).extensions
-      else
-        raise GaudiError,"Unknown platform #{platform}"
-      end
-    end
     #Returns true if the file given is a library for the given platform
-    def is_library? filename,platform
-      obj,lib,exe=*extensions(platform)
+    def is_library? filename,system_config,platform
+      obj,lib,exe=*system_config.extensions(platform)
       return filename.end_with?(lib)
     end
     #Returns true if the file given is a library for the given platform
-    def is_exe? filename,platform
-      obj,lib,exe=*extensions(platform)
+    def is_exe? filename,system_config,platform
+      obj,lib,exe=*system_config.extensions(platform)
       return filename.end_with?(exe)
     end
     #Returns true if the file is a recognized source file
