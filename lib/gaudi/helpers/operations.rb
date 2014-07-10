@@ -46,7 +46,7 @@ module Gaudi
       config=system_config.platform_config(component.platform)
       output=object_file(src,component,system_config)
       opts= config['compiler_options'].split(' ')
-      opts+= component.configuration.compiler_options
+      opts+= component.configuration.compiler_options.split(' ')
       opts+= prefixed_objects(component.include_paths,config['compiler_include'])
       opts<< "#{config['compiler_out']}\"#{output}\""
       opts<< src
