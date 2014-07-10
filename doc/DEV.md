@@ -26,7 +26,7 @@ Foo/
     |-test #Tests for this code component
     |-*.* #All othe files (sources and build.cfg)
 ```
-Create a file build.cfg:
+Create a file build.cfg in the code component directory:
 
 ```ruby
 prefix=Foo
