@@ -34,7 +34,7 @@ module Gaudi
     def command_file tgt,system_config,platform
       ext="_#{platform}"
       if is_library?(tgt,platform)
-        ext<<".archive"
+        ext<<".library"
       elsif is_exe?(tgt,platform)
         ext<<".link"
       elsif is_source?(tgt)

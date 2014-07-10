@@ -21,11 +21,11 @@ module Gaudi
       raise GaudiConfigurationError,"Missing 'assembler' setting" unless as
       return command_line(as,cmdfile,config.fetch('assembler_commandfile_prefix',""))
     end
-    #constructs the archiver command line
-    def archiver cmdfile,config
-      ar=config['archive']
-      raise GaudiConfigurationError,"Missing 'archive' setting" unless ar
-      return command_line(ar,cmdfile,config.fetch('archive_commandfile_prefix',""))
+    #constructs the librarian command line
+    def librarian cmdfile,config
+      ar=config['librarian']
+      raise GaudiConfigurationError,"Missing 'librarian' setting" unless ar
+      return command_line(ar,cmdfile,config.fetch('library_commandfile_prefix',""))
     end
   end
 
@@ -48,7 +48,7 @@ module Gaudi
         config=system_config.platform_config(platform)
         mkdir_p(File.dirname(filename),:verbose=>false)
         if (is_library?(filename,platform))
-          cmdline = archiver(command_file(filename,system_config,platform),config)
+          cmdline = librarian(command_file(filename,system_config,platform),config)
         else
           cmdline = linker(command_file(filename,system_config,platform),config)
         end

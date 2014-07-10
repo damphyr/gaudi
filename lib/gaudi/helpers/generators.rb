@@ -106,7 +106,7 @@ module Gaudi
               options= compiler_options(src,component,system_config)
             end
           elsif is_library?(src,component.platform)
-            options= archiver_options(component,system_config)
+            options= librarian_options(component,system_config)
           elsif is_exe?(src,component.platform)
             options= linker_options(component,system_config)
           end

@@ -101,16 +101,16 @@ assembler_options=
 assembler_commandfile_prefix= 
 assembler_out= 
 assembler_include= 
-#####Static linker (archiver) settings
-archive= 
-archive_options= 
-archive_in= 
-archive_out= 
-archive_commandfile_prefix= 
-#####Dynamic linker settings
+#####Settings for linking libraries
+librarian= 
+library_options= 
+library_in= 
+library_out= 
+library_commandfile_prefix= 
+#####Settings for linking executables
 linker= 
 linker_options= 
-#Input files flag (some linkers do have it. You prefix ever object file with it, yes you do)
+#input files flag (some linkers do have it. You prefix every object file with it, yes you do)
 linker_in= 
 linker_out=
 #Some linkers have a different flag for dynamically linked and statically linked libraries. Some don't

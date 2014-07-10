@@ -21,7 +21,7 @@ class TestStandardPaths < MiniTest::Unit::TestCase
     cmd_file=command_file(exe,system_config,component.platform)
     assert(cmd_file.end_with?('.link'), "Not a linker cmd file.")
     cmd_file=command_file(lib,system_config,'gcc')
-    assert(cmd_file.end_with?('.archive'), "Not a archiver cmd file.")
+    assert(cmd_file.end_with?('.library'), "Not a librarian cmd file.")
     cmd_file=command_file("foo.c",system_config,component.platform)
     assert(cmd_file.end_with?('.compile'), "Not a compiler cmd file.")
     cmd_file=command_file("foo.asm",system_config,component.platform)
