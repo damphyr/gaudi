@@ -20,12 +20,12 @@ rake build:deployment DEPLOYMENT=Dummy
 ##Add a new code component
 
 Create a subdirectory in the source directory using the standard Gaudi structure:
-
+```
 Foo/
     |-inc #Include files usable outside the component
     |-test #Tests for this code component
     |-*.*
-
+```
 Create a file build.cfg:
 
 ```ruby
