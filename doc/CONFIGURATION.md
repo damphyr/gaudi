@@ -79,10 +79,12 @@ A platform configuration is accessed by SystemConfiguration#platform_config(plat
 
 ```bash
 ##### Source file setting
-#the source_extensions and header_extensions are mandatory parameters
-#and their value is a comma separated list of file extensions
-source_extensions= .c,.asm
-header_extensions= .h
+#all extension parameters are mandatory
+source_extensions= .c,.asm #comma separated list of file extensions
+header_extensions= .h #comma separated list of file extensions
+object_extension= .o #single entry
+library_extension= .so #single entry
+executable_extension= .e #single entry
 ######Compiler settings
 #Compiler executable (gcc etc.)
 compiler= 
@@ -94,7 +96,7 @@ compiler_out=
 compiler_commandfile_prefix= 
 #Include path flag
 compiler_include= 
-#### Basically the set above is repeated for ar, the linker and the assembler
+#### Basically the set above is repeated the linker (libraries and executables) and the assembler
 #####Assembler settings
 assembler= 
 assembler_options= 

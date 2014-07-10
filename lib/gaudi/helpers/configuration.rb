@@ -459,6 +459,9 @@ module Gaudi
       def validate
         raise GaudiConfigurationError, "Define source_extensions for platform #{name}" unless self.keys.include?('source_extensions')
         raise GaudiConfigurationError, "Define source_extensions for platform #{name}" unless self.keys.include?('header_extensions')
+        raise GaudiConfigurationError, "Define object_extension for platform #{name}" unless self.keys.include?('object_extension')
+        raise GaudiConfigurationError, "Define library_extension for platform #{name}" unless self.keys.include?('library_extension')
+        raise GaudiConfigurationError, "Define executable_extension for platform #{name}" unless self.keys.include?('executable_extension')
       end
     end
   end
