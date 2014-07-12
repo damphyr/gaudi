@@ -405,7 +405,7 @@ module Gaudi
       module ProgramConfiguration
         include ConfigurationOperations
         def self.list_keys
-          ['libs','resources']
+          ['libs','resources','shared_deps']
         end
         def self.path_keys
           ['resources']
@@ -424,7 +424,11 @@ module Gaudi
         def resources
           return @config.fetch('resources',[])
         end
-
+        #A list of prefixes that represent shared dependencies to the system's
+        #internal components
+        def shared_dependencies
+          return @config.fetch('shared_deps',Rake::FileList.new)
+        end
         alias_method :libs,:external_libraries
       end
     end

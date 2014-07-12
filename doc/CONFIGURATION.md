@@ -6,7 +6,8 @@ Core to Gaudi's development environment control approach is to have the configur
 
 ## Configuration files
 
-Essentially there are three configuration file types for Gaudi. There's the system configuration file, which IS the centralized configuration we've been talking about. Then there is the platform configuration file which serves to differentiate between the different supported compiler platforms/toolchains and at last we have the component build configuration files.
+There are a few configuration file types for Gaudi.
+There's the system configuration file, which IS the centralized configuration we've been talking about. Then there is the platform configuration file which serves to differentiate between the different supported compiler platforms/toolchains and at last we have the program and component build configuration files.
 
 ## Configuration format
 

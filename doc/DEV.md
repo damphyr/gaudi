@@ -44,3 +44,18 @@ deps=Bar
 compiler_options= -DFOO
 assembler_options= -whatever
 ```
+
+##Use a code component as a shared library
+
+Compiling a code component as a shared library is platform specific and might require extra compiler flags.
+For example compiling a shared library with gcc needs the -fpic parameter. This is done in the code component's build.cfg (see previous section).
+
+Additionally, you need to specify that the component is used as a shared library in the program configuration:
+
+```ruby
+prefix=FooProgram
+#This will statically link the contents of Bar 
+deps=Bar
+#This will build component Foo as a shared library
+shared_deps= Foo
+```

@@ -149,6 +149,9 @@ module Gaudi
     def resources
       @configuration.resources
     end
+    def  shared_dependencies
+      configuration.shared_dependencies.map{|dep| Component.new(dep,@system_config,platform)}
+    end
   end
   #A Deployment is a collection of Programs compiled for multiple platforms
   #

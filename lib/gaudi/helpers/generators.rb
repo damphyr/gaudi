@@ -76,6 +76,9 @@ module Gaudi
         program.dependencies.each do |dep|
           deps+=dep.sources.map{|src| object_task(src,dep,system_config)}
         end
+        prorgam.shared_dependencies.each do |dep|
+          deps<<library_task(dep,system_config)
+        end
         deps<<commandfile_task(executable(program,system_config),program,system_config)
         deps+=resource_tasks(program,system_config)
         deps.uniq!
@@ -88,7 +91,7 @@ module Gaudi
         deps<<commandfile_task(library(component,system_config),component,system_config)
         Tasks.define_file_task(library(component,system_config),deps)
       end
-
+      #Returns the task to create an object file from src
       def object_task src,component,system_config
         t=object_file(src,component,system_config)
         file t=>object_task_dependencies(src,component,system_config)
@@ -113,7 +116,7 @@ module Gaudi
           write_file(t.name,options.join("\n"))
         end
       end
-      #A list of file tasks that copy resources to the component's output directory.
+      #A list of file tasks that copy resources to the component's build output directory.
       def resource_tasks component,system_config
         component.resources.map do |resource|
           tgt=File.join(File.dirname(executable(component,system_config)),resource.pathmap('%f'))
