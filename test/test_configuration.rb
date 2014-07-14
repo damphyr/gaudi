@@ -138,6 +138,16 @@ class TestSystemConfiguration < MiniTest::Unit::TestCase
     cfg=Gaudi::Configuration::SystemConfiguration.new(config)
     assert(cfg.external_includes('foo').empty?)
   end
+
+  def test_extensions
+    config=mock_configuration('system.cfg',['base=.','out=out/','platforms=foo','foo=./foo.cfg'])
+    platform_cfg=File.join(File.dirname(__FILE__),'foo.cfg')
+    File.expects(:exists?).with(platform_cfg).returns(true)
+    File.expects(:readlines).with(platform_cfg).returns(['source_extensions=.c,.cpp','header_extensions=.h',
+      'object_extension=.o', 'library_extension=.so','executable_extension=.e'])
+    cfg=Gaudi::Configuration::SystemConfiguration.new(config)
+    assert_equal([".o", ".so", ".e"], cfg.extensions('foo'))
+  end
 end
 
 class TestBuildConfiguration < MiniTest::Unit::TestCase
@@ -183,6 +193,6 @@ class TestPlatformConfiguration < MiniTest::Unit::TestCase
       'object_extension'=>'.o', 'library_extension'=>'.so','executable_extension'=>'.e'}
     assert_equal('.c',pcfg['source_extensions'])
     assert_equal('.h', pcfg['header_extensions'])
-    assert_equal([".o", ".so", ".e"], pcfg.extensions('foo'))
+    assert_equal([".o", ".so", ".e"], pcfg.extensions)
   end
 end
