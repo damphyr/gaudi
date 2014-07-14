@@ -183,5 +183,6 @@ class TestPlatformConfiguration < MiniTest::Unit::TestCase
       'object_extension'=>'.o', 'library_extension'=>'.so','executable_extension'=>'.e'}
     assert_equal('.c',pcfg['source_extensions'])
     assert_equal('.h', pcfg['header_extensions'])
+    assert_equal([".o", ".so", ".e"], pcfg.extensions('foo'))
   end
 end

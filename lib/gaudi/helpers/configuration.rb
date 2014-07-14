@@ -455,6 +455,9 @@ module Gaudi
         validate
       end
 
+      def extensions platform 
+        [__getobj__['object_extension'],__getobj__['library_extension'],__getobj__['executable_extension']]
+      end
       private
       def validate
         ['source_extensions','header_extensions','object_extension','library_extension','executable_extension'].each do |key|
