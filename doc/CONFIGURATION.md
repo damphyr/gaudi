@@ -27,8 +27,6 @@ Usage of import raises the issue of what happens when a parameter is defined in 
 
 Gaudi has a simple precedence system: Last one wins.
 
-Environment variables can be used to pass values to Gaudi.
-
 The 'last one wins' rule has one exception: compiler and linker options defined in program configuration files are *added* to the global compiler and linker options. The reason for this is to allow program specific settings (mostly defines) without duplicating all the options.
 
 ### Environment Variables
@@ -92,11 +90,11 @@ compiler=
 compiler_options= 
 #Output flag
 compiler_out=
-#Command file flag (to make th compiler read a file for the parameters) 
+#Command file flag (to make the compiler read the prameters from a file) 
 compiler_commandfile_prefix= 
 #Include path flag
 compiler_include= 
-#### Basically the set above is repeated the linker (libraries and executables) and the assembler
+#### Basically the set above is repeated the for the linker (libraries and executables) and the assembler
 #####Assembler settings
 assembler= 
 assembler_options= 
@@ -115,7 +113,7 @@ linker_options=
 #input files flag (some linkers do have it. You prefix every object file with it, yes you do)
 linker_in= 
 linker_out=
-#Some linkers have a different flag for dynamically linked and statically linked libraries. Some don't
+#Flag for dynamically linked libraries
 linker_lib= 
 linker_commandfile_prefix= 
 ```
@@ -143,13 +141,13 @@ foo: lib/foo/foo.lib
 bar: lib/bar/bar.lib
 ```
 
-Now this might seem one layer of abstraction too much at first glance. It comes in handy if for example you use GCC and decide to use the system libraries. In that case you will set linker_lib=-l (which means linking dynamically) and then you can add 
+Now this might seem one layer of abstraction too much at first glance. It comes in handy if for example you use GCC and decide to use the system libraries. In that case you will set linker_lib=-l and then you can add 
 
 ```yaml
 ---
 sqlite3: sqlite3
 ```
-which will result in linking against libsqlite3.so
+which will result in linking against libsqlite3.so from the system's default library paths
 
 The incs and libs platform configuration entries will be added as compiler and linker parameters for every platform build.
 <hr/>
