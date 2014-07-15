@@ -38,7 +38,7 @@ module Gaudi
       end
 
       def commandfile_task_dependencies src,component,system_config
-        files=[component.configuration.to_path,system_config.to_path]
+        files=component.config_files+[system_config.to_path]
         files+=component.headers
         component.dependencies.each do |dep| 
           files+=dep.interface
@@ -76,7 +76,7 @@ module Gaudi
         program.dependencies.each do |dep|
           deps+=dep.sources.map{|src| object_task(src,dep,system_config)}
         end
-        prorgam.shared_dependencies.each do |dep|
+        program.shared_dependencies.each do |dep|
           deps<<library_task(dep,system_config)
         end
         deps<<commandfile_task(executable(program,system_config),program,system_config)

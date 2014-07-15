@@ -74,15 +74,15 @@ module Gaudi
   #and the directory is exposed by Gaudi for use in include statements.
   class Component
     include StandardPaths
-    attr_reader :identifier,:platform,:configuration,:name,:directories,:test_directories
+    attr_reader :identifier,:platform,:configuration,:name,:directories,:test_directories,:config_files
     def initialize name,system_config,platform
       @directories= determine_directories(name,system_config.source_directories,platform)
       @test_directories= determine_test_directories(@directories)
-      config_files= Rake::FileList[*directories.pathmap('%p/build.cfg')].existing
-      if config_files.empty? 
+      @config_files= Rake::FileList[*directories.pathmap('%p/build.cfg')].existing
+      if @config_files.empty? 
         raise GaudiConfigurationError,"No configuration files for #{name}" unless @configuration
       else
-        @configuration = Configuration::BuildConfiguration.load(config_files)
+        @configuration = Configuration::BuildConfiguration.load(@config_files)
       end
       @system_config= system_config
       @platform= platform
@@ -136,9 +136,13 @@ module Gaudi
   #A Gaudi::Program is a collection of components built for a specific platform.
   class Program<Component
     def initialize config_file,deployment_name,system_config,platform
-      configuration=Configuration::BuildConfiguration.load([config_file])
-      super(configuration.prefix,system_config,platform)
-      @configuration.merge(configuration)
+      @name=@identifier= configuration.prefix
+      @system_config= system_config
+      @platform= platform
+      @directories= determine_directories(name,system_config.source_directories,platform)
+      @test_directories= determine_test_directories(@directories)
+      @config_files= Rake::FileList[config_file]
+      @configuration=Configuration::BuildConfiguration.load([config_file])
       @deployment=deployment_name
     end
     #External (additional) libraries the Program depends on.
