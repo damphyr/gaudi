@@ -5,6 +5,7 @@ require "mocha/setup"
 require "gaudi"
 
 class TestUtilities < MiniTest::Unit::TestCase
+  include TestHelpers
   def test_switch_configuration
     Gaudi::Configuration::SystemConfiguration.stubs(:load).returns([])
     ENV['GAUDI_CONFIG']='./bar.cfg'
@@ -13,12 +14,14 @@ class TestUtilities < MiniTest::Unit::TestCase
     end
   end
   def test_switch_platform_configuration
-    config=mock()
-    config.expects(:platform_config).returns({'foo'=>'bar'})
-    config.expects(:read_configuration).returns({'bar'=>'foo'})
-    config.expects(:set_platform_config).times(2)
-    switch_platform_configuration './foo.cfg',config,'gcc' do
-      #what exactly are we testing here?
+    File.stubs(:exists?).returns(true)
+    File.expects(:readlines).returns(platform_config_test_data+['foo=bar'])
+    File.expects(:readlines).returns(platform_config_test_data)
+    File.expects(:readlines).returns(system_config_test_data)
+    config=Gaudi::Configuration::SystemConfiguration.new('bar.cfg')
+    switch_platform_configuration './foo.cfg',config,'foo' do
+      assert_equal('bar', config.platform_config('foo')['foo'])
     end
+    assert_nil(config.platform_config('foo')['foo'])
   end
 end

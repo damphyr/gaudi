@@ -26,4 +26,12 @@ module TestHelpers
     File.open("#{base}/tmp/common/FOO/build.cfg","wb"){|f| f.write(['prefix=FOO','deps=BAR','incs= ./inc','libs= foo.lib,bar.lib'].join("\n"))}
     return "#{base}/tmp"
   end
+
+  def platform_config_test_data
+    ['source_extensions=.c,.cpp','header_extensions=.h','object_extension=.o', 'library_extension=.so','executable_extension=.e']
+  end
+
+  def system_config_test_data
+    ['base=.','out=out/','platforms=foo','foo=./foo.cfg']
+  end
 end

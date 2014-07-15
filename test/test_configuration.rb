@@ -1,5 +1,5 @@
 $:.unshift(File.join(File.dirname(__FILE__),'..','lib'))
-require_relative 'helpers.rb'
+require_relative 'helpers'
 require "minitest/autorun"
 require "mocha/setup"
 require "gaudi"
@@ -58,11 +58,10 @@ class TestSystemConfiguration < MiniTest::Unit::TestCase
   end
 
   def test_platforms
-    config=mock_configuration('system.cfg',['base=.','out=out/','platforms=foo','foo=./foo.cfg'])
+    config=mock_configuration('system.cfg',system_config_test_data)
     platform_cfg=File.join(File.dirname(__FILE__),'foo.cfg')
     File.expects(:exists?).with(platform_cfg).returns(true)
-    File.expects(:readlines).with(platform_cfg).returns(['source_extensions=.c,.cpp','header_extensions=.h',
-      'object_extension=.o', 'library_extension=.so','executable_extension=.e','bar=foo'])
+    File.expects(:readlines).with(platform_cfg).returns(platform_config_test_data+['bar=foo'])
     cfg=Gaudi::Configuration::SystemConfiguration.load([config])
     assert_equal(['foo'], cfg.platforms)
     assert_equal({"source_extensions"=>".c,.cpp", "header_extensions"=>".h",
@@ -77,11 +76,10 @@ class TestSystemConfiguration < MiniTest::Unit::TestCase
   end
 
   def test_external_libraries
-    config=mock_configuration('system.cfg',['base=.','out=out/','platforms=foo','foo=./foo.cfg'])
+    config=mock_configuration('system.cfg',system_config_test_data)
     platform_cfg=File.join(File.dirname(__FILE__),'foo.cfg')
     File.expects(:exists?).with(platform_cfg).returns(true)
-    File.expects(:readlines).with(platform_cfg).returns(['source_extensions=.c,.cpp','header_extensions=.h',
-      'object_extension=.o', 'library_extension=.so','executable_extension=.e','libs=foo','lib_cfg=libs.yml'])
+    File.expects(:readlines).with(platform_cfg).returns(platform_config_test_data+['libs=foo','lib_cfg=libs.yml'])
     lib_yml=File.join(File.dirname(__FILE__),'libs.yml')
     File.expects(:exists?).with(lib_yml).returns(true)
     File.expects(:read).with(lib_yml).returns(YAML.dump({'foo'=>'foo.lib'}))
@@ -92,7 +90,7 @@ class TestSystemConfiguration < MiniTest::Unit::TestCase
   end
 
   def test_external_libraries_missing_lib_cfg
-    config=mock_configuration('system.cfg',['base=.','out=out/','platforms=foo','foo=./foo.cfg'])
+    config=mock_configuration('system.cfg',system_config_test_data)
     platform_cfg=File.join(File.dirname(__FILE__),'foo.cfg')
     File.expects(:exists?).with(platform_cfg).returns(true)
     File.expects(:readlines).with(platform_cfg).returns(['source_extensions=.c,.cpp','header_extensions=.h',
@@ -105,11 +103,10 @@ class TestSystemConfiguration < MiniTest::Unit::TestCase
   end
 
   def test_external_libraries_missing_token
-    config=mock_configuration('system.cfg',['base=.','out=out/','platforms=foo','foo=./foo.cfg'])
+    config=mock_configuration('system.cfg',system_config_test_data)
     platform_cfg=File.join(File.dirname(__FILE__),'foo.cfg')
     File.expects(:exists?).with(platform_cfg).returns(true)
-    File.expects(:readlines).with(platform_cfg).returns(['source_extensions=.c,.cpp','header_extensions=.h',
-      'object_extension=.o', 'library_extension=.so','executable_extension=.e',
+    File.expects(:readlines).with(platform_cfg).returns(platform_config_test_data+[
       'libs=foo','lib_cfg=libs.yml'])
     lib_yml=File.join(File.dirname(__FILE__),'libs.yml')
     File.expects(:exists?).with(lib_yml).returns(true)
@@ -120,31 +117,28 @@ class TestSystemConfiguration < MiniTest::Unit::TestCase
   end
 
   def test_external_includes
-    config=mock_configuration('system.cfg',['base=.','out=out/','platforms=foo','foo=./foo.cfg'])
+    config=mock_configuration('system.cfg',system_config_test_data)
     platform_cfg=File.join(File.dirname(__FILE__),'foo.cfg')
     File.expects(:exists?).with(platform_cfg).returns(true)
-    File.expects(:readlines).with(platform_cfg).returns(['source_extensions=.c,.cpp','header_extensions=.h',
-      'object_extension=.o', 'library_extension=.so','executable_extension=.e','incs=./foo,./bar'])
+    File.expects(:readlines).with(platform_cfg).returns(platform_config_test_data+['incs=./foo,./bar'])
 
     cfg=Gaudi::Configuration::SystemConfiguration.new(config)
     assert_equal(["#{File.dirname(__FILE__)}/foo", "#{File.dirname(__FILE__)}/bar"],cfg.external_includes('foo'))
   end
   def test_external_includes_empty
-    config=mock_configuration('system.cfg',['base=.','out=out/','platforms=foo','foo=./foo.cfg'])
+    config=mock_configuration('system.cfg',system_config_test_data)
     platform_cfg=File.join(File.dirname(__FILE__),'foo.cfg')
     File.expects(:exists?).with(platform_cfg).returns(true)
-    File.expects(:readlines).with(platform_cfg).returns(['source_extensions=.c,.cpp','header_extensions=.h',
-      'object_extension=.o', 'library_extension=.so','executable_extension=.e'])
+    File.expects(:readlines).with(platform_cfg).returns(platform_config_test_data)
     cfg=Gaudi::Configuration::SystemConfiguration.new(config)
     assert(cfg.external_includes('foo').empty?)
   end
 
   def test_extensions
-    config=mock_configuration('system.cfg',['base=.','out=out/','platforms=foo','foo=./foo.cfg'])
+    config=mock_configuration('system.cfg',system_config_test_data)
     platform_cfg=File.join(File.dirname(__FILE__),'foo.cfg')
     File.expects(:exists?).with(platform_cfg).returns(true)
-    File.expects(:readlines).with(platform_cfg).returns(['source_extensions=.c,.cpp','header_extensions=.h',
-      'object_extension=.o', 'library_extension=.so','executable_extension=.e'])
+    File.expects(:readlines).with(platform_cfg).returns(platform_config_test_data)
     cfg=Gaudi::Configuration::SystemConfiguration.new(config)
     assert_equal([".o", ".so", ".e"], cfg.extensions('foo'))
   end
