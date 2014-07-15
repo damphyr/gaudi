@@ -6,4 +6,12 @@ namespace :build do
     t=deployment_task(deployment,$configuration)
     Rake::Task[t].invoke
   end
+
+  desc "Builds a library for the component specified with COMPONENT.\n rake build:library COMPONENT=Foo"
+  task :library do
+    include Gaudi::Tasks::Build
+    library=Gaudi::Component.new($configuration.component,$configuration)
+    t=library_task(library,$configuration)
+    Rake::Task[t].invoke
+  end
 end
