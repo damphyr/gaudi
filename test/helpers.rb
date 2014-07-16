@@ -24,6 +24,11 @@ module TestHelpers
     touch("#{base}/tmp/common/BAR/bar.c",:verbose=>false)    
     File.open("#{base}/tmp/common/BAR/build.cfg","wb"){|f| f.write(['prefix=BAR'].join("\n"))}
     File.open("#{base}/tmp/common/FOO/build.cfg","wb"){|f| f.write(['prefix=FOO','deps=BAR','incs= ./inc','libs= foo.lib,bar.lib'].join("\n"))}
+    mkdir_p("#{base}/tmp/deployments/FOO/foo",:verbose=>false)
+    File.open("#{base}/tmp/deployments/FOO/foo/Pinky.cfg","wb"){|f| f.write(['prefix=Pinky','deps=FOO'].join("\n"))}
+
+    File.open("#{base}/tmp/brain.cfg","wb"){|f| f.write(system_config_test_data.join("\n"))}
+    File.open("#{base}/tmp/foo.cfg","wb"){|f| f.write(platform_config_test_data.join("\n"))}
     return "#{base}/tmp"
   end
 
@@ -32,6 +37,6 @@ module TestHelpers
   end
 
   def system_config_test_data
-    ['base=.','out=out/','platforms=foo','foo=./foo.cfg']
+    ['base=.','out=out/','platforms=foo','foo=./foo.cfg',"sources=#{File.dirname(__FILE__)}/tmp/"]
   end
 end

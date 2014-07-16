@@ -18,7 +18,7 @@ class TestTaskGenerators < MiniTest::Unit::TestCase
 
   def system_configuration_mock
     system_config=mock()
-    system_config.stubs(:source_directories).returns([File.join(File.dirname(__FILE__),'tmp')])
+    system_config.stubs(:source_directories).returns(FileList[File.join(File.dirname(__FILE__),'tmp')])
     system_config.stubs(:out).returns('out')
     system_config.stubs(:to_path).returns('system.cfg')
     system_config.stubs(:source_extensions).returns('.c')
@@ -48,5 +48,11 @@ class TestTaskGenerators < MiniTest::Unit::TestCase
     assert(deps.include?(component.sources[0]))
     f,d=deps.partition{|e| !File.directory?(e.to_s)}
     assert_equal(3, d.size, "not enough include paths")
+  end
+
+  def test_deployment_task
+    system_config=Gaudi::Configuration::SystemConfiguration.new("#{File.dirname(__FILE__)}/tmp/brain.cfg")
+    deployment=Gaudi::Deployment.new('FOO',system_config)
+    assert(deployment_task(deployment,system_config))
   end
 end
