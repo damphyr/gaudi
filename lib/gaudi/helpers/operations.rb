@@ -82,6 +82,8 @@ module Gaudi
       component.dependencies.each{|dep| objects+=dep.sources.map{|src| object_file(src,dep,system_config)}}
       objects.uniq!
       options+= prefixed_objects(objects,config["linker_in"])
+      shared_libs=component.shared_dependencies.map{|dep| library(dep,system_config)}
+      options+= prefixed_objects(shared_libs,config["linker_shared"]) 
       options+= prefixed_objects(component.external_libraries,config["linker_lib"])
     end
     #returns the commandline for cmd as an Array
