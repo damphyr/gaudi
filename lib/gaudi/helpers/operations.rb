@@ -45,7 +45,7 @@ module Gaudi
     def compiler_options src,component,system_config
       config=system_config.platform_config(component.platform)
       output=object_file(src,component,system_config)
-      opts= config['compiler_options'].split(' ')
+      opts= config.fetch('compiler_options','').split(' ')
       opts+= component.configuration.compiler_options.split(' ')
       opts+= prefixed_objects(component.include_paths,config['compiler_include'])
       opts<< "#{config['compiler_out']}\"#{output}\""
@@ -76,7 +76,7 @@ module Gaudi
     #configuration files
     def linker_options component,system_config
       config=system_config.platform_config(component.platform)
-      options= config['linker_options'].split(' ')
+      options= config.fetch('linker_options','').split(' ')
       options<< "#{config['linker_out']}\"#{executable(component,system_config)}\""
       objects=component.sources.map{|src| object_file(src,component,system_config)}
       component.dependencies.each{|dep| objects+=dep.sources.map{|src| object_file(src,dep,system_config)}}

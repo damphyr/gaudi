@@ -26,14 +26,16 @@ module TestHelpers
     File.open("#{base}/tmp/common/FOO/build.cfg","wb"){|f| f.write(['prefix=FOO','deps=BAR','incs= ./inc','libs= foo.lib,bar.lib'].join("\n"))}
     mkdir_p("#{base}/tmp/deployments/FOO/foo",:verbose=>false)
     File.open("#{base}/tmp/deployments/FOO/foo/Pinky.cfg","wb"){|f| f.write(['prefix=Pinky','deps=FOO'].join("\n"))}
-
+    touch("#{base}/tmp/libs.yml",:verbose=>false)    
     File.open("#{base}/tmp/brain.cfg","wb"){|f| f.write(system_config_test_data.join("\n"))}
     File.open("#{base}/tmp/foo.cfg","wb"){|f| f.write(platform_config_test_data.join("\n"))}
     return "#{base}/tmp"
   end
 
   def platform_config_test_data
-    ['source_extensions=.c,.cpp','header_extensions=.h','object_extension=.o', 'library_extension=.so','executable_extension=.e']
+    ['source_extensions=.c,.cpp','header_extensions=.h','object_extension=.o', 'library_extension=.so','executable_extension=.e',
+      'libs=','lib_cfg=libs.yml'
+    ]
   end
 
   def system_config_test_data

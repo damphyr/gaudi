@@ -33,24 +33,24 @@ module Gaudi
     module Build
       include Gaudi::Commandlines
       include Gaudi::PlatformOperations
-      #Compiles a source file
-      def compile src,system_config,platform
+      #Compiles a source file from a previously constructed command file
+      def compile cmd_file,system_config,platform
         config=system_config.platform_config(platform)
-        if is_assembly?(src)
-          cmdline = assembler(command_file(src,system_config,platform),config)
+        if cmd_file.end_with?('.assembly')
+          cmdline = assembler(cmd_file,config)
         else
-          cmdline = compiler(command_file(src,system_config,platform),config)
+          cmdline = compiler(cmd_file,config)
         end
         sh(cmdline.join(' '))
       end
-      #Links an executable or library
-      def build filename,system_config,platform
+      #Links an executable or library using a previously constructed command file
+      def build cmd_file,system_config,platform
         config=system_config.platform_config(platform)
-        mkdir_p(File.dirname(filename),:verbose=>false)
-        if (is_library?(filename,system_config,platform))
-          cmdline = librarian(command_file(filename,system_config,platform),config)
+        mkdir_p(File.dirname(cmd_file),:verbose=>false)
+        if cmd_file.end_with?('.library')
+          cmdline = librarian(cmd_file,config)
         else
-          cmdline = linker(command_file(filename,system_config,platform),config)
+          cmdline = linker(cmd_file,config)
         end
         sh(cmdline.join(' '))
       end

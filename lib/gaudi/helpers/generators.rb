@@ -26,8 +26,7 @@ module Gaudi
       end
       #Returns the general dependencies for an object file task
       def object_task_dependencies src,component,system_config
-        file_task=commandfile_task(src,component,system_config)
-        files=[src,file_task]+component.headers
+        files=[src]+component.headers
         #we add the paths so that a rule does not have to recosntruct the Component
         #It only needs to filter directories and add them as includes
         incs=component.include_paths
@@ -36,21 +35,12 @@ module Gaudi
         end
         (files+incs).uniq
       end
-
-      def commandfile_task_dependencies src,component,system_config
-        files=component.config_files+[system_config.to_path]
-        files+=component.headers
-        component.dependencies.each do |dep| 
-          files+=dep.interface
-        end
-        files.uniq
-      end
     end
 
     #Tasks::Build contains all task generation methods for building source code
     #
     #When building a deployment the chain of task dependencies looks like:
-    # deployment => programs => objects => command_files => sources
+    # deployment => programs => linker command files => objects => compiler command files => sources
     module Build
       include StandardPaths
       include TaskDependencies
@@ -79,40 +69,39 @@ module Gaudi
         program.shared_dependencies.each do |dep|
           deps<<library_task(dep,system_config)
         end
-        deps<<commandfile_task(executable(program,system_config),program,system_config)
         deps+=resource_tasks(program,system_config)
         deps.uniq!
-        Tasks.define_file_task(executable(program,system_config),deps)
+        options= linker_options(program,system_config)
+        cmd_task=commandfile_task(executable(program,system_config),options,deps,system_config,program.platform)
+        Tasks.define_file_task(executable(program,system_config),[cmd_task])
       end
       #Returns a task for building a library
       def library_task component,system_config
         deps=component_task_dependencies(component,system_config)
-        deps+=component.sources.map{|src| Tasks.define_file_task(object_file(src,component,system_config),object_task_dependencies(src,component,system_config))}
-        deps<<commandfile_task(library(component,system_config),component,system_config)
-        Tasks.define_file_task(library(component,system_config),deps)
+        deps+=component.sources.map{|src| object_task(src,component,system_config)}
+        options= librarian_options(component,system_config)
+        cmd_task=commandfile_task(library(component,system_config),options,deps,system_config,component.platform)
+        file library(component,system_config) => [cmd_task]
       end
       #Returns the task to create an object file from src
       def object_task src,component,system_config
+        options=[]
+        if is_source?(src)
+          if is_assembly?(src)
+            options= assembler_options(src,component,system_config)
+          else
+            options= compiler_options(src,component,system_config)
+          end
+        end
         t=object_file(src,component,system_config)
-        file t=>object_task_dependencies(src,component,system_config)
+        file t=> [commandfile_task(src,options,object_task_dependencies(src,component,system_config),system_config,component.platform)]
       end
       #Returns a task for creating a command file
       #
       #This method is heavily used in creating other tasks
-      def commandfile_task src,component,system_config
-        file command_file(src,system_config,component.platform) => commandfile_task_dependencies(src,component,system_config) do |t|
-          options= []
-          if is_source?(src)
-            if is_assembly?(src)
-              options= assembler_options(src,component,system_config)
-            else
-              options= compiler_options(src,component,system_config)
-            end
-          elsif is_library?(src,system_config,component.platform)
-            options= librarian_options(component,system_config)
-          elsif is_exe?(src,system_config,component.platform)
-            options= linker_options(component,system_config)
-          end
+      def commandfile_task src,options,dependencies,system_config,platform
+        file command_file(src,system_config,platform) => dependencies do |t|
+          puts "Writing #{t.name}"
           write_file(t.name,options.join("\n"))
         end
       end

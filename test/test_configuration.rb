@@ -65,7 +65,7 @@ class TestSystemConfiguration < MiniTest::Unit::TestCase
     cfg=Gaudi::Configuration::SystemConfiguration.load([config])
     assert_equal(['foo'], cfg.platforms)
     assert_equal({"source_extensions"=>".c,.cpp", "header_extensions"=>".h",
-        "object_extension"=>".o", "library_extension"=>".so", "executable_extension"=>".e","bar"=>"foo"}, cfg.platform_config('foo'))
+        "object_extension"=>".o", "library_extension"=>".so", "executable_extension"=>".e","libs"=>"", "lib_cfg"=>"libs.yml","bar"=>"foo"}, cfg.platform_config('foo'))
   end
   
   def test_list_of_paths
