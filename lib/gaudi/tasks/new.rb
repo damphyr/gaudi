@@ -35,10 +35,10 @@ base=../../
 #the build output directory
 out=../../out
 sources=../../src/
-#enumerate the platforms i.e. platforms=mingw,ms,arm
+#enumerate the platforms i.e. platforms=gcc,ms,arm
 #platforms=
 #add a platform=platform.cfg for each platform pointing to the platform configuration
-#mingw=./mingw.cfg
+#gcc=./gcc.cfg
       EOT
       File.open(config_file, 'wb') {|f| f.write(configuration_content) }
     end
