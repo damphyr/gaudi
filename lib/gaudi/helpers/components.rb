@@ -11,25 +11,6 @@ module Gaudi
   #source_directory/common/name and source_directory/platform/name for every source_directory
   module StandardPaths
     include Gaudi::PlatformOperations
-    #Returns the path to the executable file corresponding to the component
-    def executable component,system_config
-      ext_obj,ext_lib,ext_exe = *system_config.extensions(component.platform)
-      File.join(system_config.out,component.platform,component.name,"#{component.name}#{ext_exe}")
-    end
-    #Returns the path to the library file corresponding to the component
-    def library component,system_config
-      ext_obj,ext_lib,ext_exe = *system_config.extensions(component.platform)
-      File.join(system_config.out,component.platform,component.name,"#{component.name}#{ext_lib}")
-    end
-    #Returns the path to the object output file corresponding to src
-    def object_file src,component,system_config
-      ext_obj,ext_lib,ext_exe = *system_config.extensions(component.platform)
-      if is_generated?(src,system_config)
-        src.pathmap("%X#{ext_obj}")
-      else
-        src.pathmap("#{system_config.out}/#{component.platform}/#{component.name}/%n#{ext_obj}")
-      end
-    end
     #Returns the path to the file containing the commands for the given target
     def command_file tgt,system_config,platform
       ext="_#{platform}"
@@ -47,18 +28,6 @@ module Gaudi
         raise GaudiError,"Don't know how to name a command file for #{tgt}"
       end
       return tgt.pathmap("%X#{ext}")
-    end
-    #Returns the path to the unit test binary corresponding to the component
-    def unit_test component,system_config
-      ext_obj,ext_lib,ext_exe = *system_config.extensions(component.platform)
-      File.join(system_config.out,component.platform,'tests',"#{component.name}Test#{ext_exe}")
-    end
-    #Is this a unit test or not?
-    #
-    #If you change the StandardPaths#unit_test naming convention you should 
-    #implement this accordingly.
-    def is_unit_test? filename
-      filename.pathmap('%n').end_with?('Test')
     end
     #Gaudi supports code generation under the convention that all generated files
     #are created in the output directory.
