@@ -2,6 +2,7 @@ source 'http://rubygems.org'
 
 gem 'highline','~>1.6.19', require: false
 gem 'rake','~>10.0.1'
+gem 'graph','~>2.7.0'
 
 group :development do
   gem 'coveralls', require: false
