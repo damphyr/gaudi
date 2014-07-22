@@ -23,31 +23,24 @@ class TestTaskGenerators < MiniTest::Unit::TestCase
     system_config.stubs(:to_path).returns('system.cfg')
     system_config.stubs(:source_extensions).returns('.c')
     system_config.stubs(:header_extensions).returns(['.h'])
+    system_config.stubs(:configuration_files).returns(['system.cfg'])
     system_config
   end
 
   def test_component_dependencies
     system_config=system_configuration_mock
-    program=Gaudi::Component.new('FOO',system_config,'mingw')
-
-    deps=component_task_dependencies(program,system_config)
-    assert_equal(3, deps.size)
-    f,d=deps.partition{|e| !File.directory?(e.to_s)}
-    assert_equal(2, d.size)
-    assert_equal(1, f.size)
+    component=Gaudi::Component.new('FOO',system_config,'mingw')
+    deps=component_task_dependencies(component,system_config)
+    assert_equal(2, deps.size)
   end
 
   def test_object_dependencies
     system_config=system_configuration_mock
-    system_config.expects(:external_includes).returns(FileList.new)
     system_config.stubs(:extensions).returns(['.o','.a','.e'])
     component=Gaudi::Component.new('FOO',system_config,'mingw')
-
-    deps=object_task_dependencies(component.sources[0],component,system_config)
-    assert_equal(6, deps.size)
-    assert(deps.include?(component.sources[0]))
-    f,d=deps.partition{|e| !File.directory?(e.to_s)}
-    assert_equal(3, d.size, "not enough include paths")
+    deps=object_task_dependencies(component.sources.first,component,system_config)
+    assert_equal(3, deps.size)
+    assert(deps.include?(component.sources.first))
   end
 
   def test_deployment_task

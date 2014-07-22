@@ -16,24 +16,17 @@ module Gaudi
     module TaskDependencies
       #Returns the general dependencies for a Component task
       def component_task_dependencies component,system_config
+        deps=system_config.configuration_files
+        deps+=component.configuration.configuration_files
         ###TODO: here any change in a dependency's interface header will trigger a build which slows incremental builds down.
         #The solution is to parse the code and add the dependencies per file
         #this is one more file task chain (obj->headers_info->c). Zukunftsmusik!
-        deps=Rake::FileList[component.configuration.to_path]
         component.dependencies.each{|dep| deps+=dep.interface }
-        deps+=component.directories
         return deps.uniq
       end
       #Returns the general dependencies for an object file task
       def object_task_dependencies src,component,system_config
-        files=[src]+component.headers
-        #we add the paths so that a rule does not have to recosntruct the Component
-        #It only needs to filter directories and add them as includes
-        incs=component.include_paths
-        component.dependencies.each do |dep| 
-          files+=dep.interface
-        end
-        (files+incs).uniq
+        [src]+component_task_dependencies(component,system_config)
       end
     end
 
@@ -56,7 +49,7 @@ module Gaudi
             deps<<program_task(pgm,system_config)
           end
         end
-        deps<<system_config.to_path
+        deps+=system_config.configuration_files
         task deployment.name => deps
       end
       #Returns a task for building a Program
@@ -72,16 +65,16 @@ module Gaudi
         deps+=resource_tasks(program,system_config)
         deps.uniq!
         options= linker_options(program,system_config)
-        cmd_task=commandfile_task(executable(program,system_config),options,deps,system_config,program.platform)
-        Tasks.define_file_task(executable(program,system_config),[cmd_task])
+        cmd_file=command_file(executable(program,system_config),system_config,program.platform)
+        file executable(program,system_config) => [commandfile_task(cmd_file,options,deps)]
       end
       #Returns a task for building a library
       def library_task component,system_config
         deps=component_task_dependencies(component,system_config)
         deps+=component.sources.map{|src| object_task(src,component,system_config)}
         options= librarian_options(component,system_config)
-        cmd_task=commandfile_task(library(component,system_config),options,deps,system_config,component.platform)
-        file library(component,system_config) => [cmd_task]
+        cmd_file=command_file(library(component,system_config),system_config,component.platform)
+        file library(component,system_config) => [commandfile_task(cmd_file,options,deps)]
       end
       #Returns the task to create an object file from src
       def object_task src,component,system_config
@@ -94,13 +87,14 @@ module Gaudi
           end
         end
         t=object_file(src,component,system_config)
-        file t=> [commandfile_task(src,options,object_task_dependencies(src,component,system_config),system_config,component.platform)]
+        cmd_file=command_file(src,system_config,component.platform)
+        file t=> [commandfile_task(cmd_file,options,object_task_dependencies(src,component,system_config))]
       end
       #Returns a task for creating a command file
       #
       #This method is heavily used in creating other tasks
-      def commandfile_task src,options,dependencies,system_config,platform
-        file command_file(src,system_config,platform) => dependencies do |t|
+      def commandfile_task cmd_file,options,dependencies
+        file cmd_file => dependencies do |t|
           puts "Writing #{t.name}"
           write_file(t.name,options.join("\n"))
         end

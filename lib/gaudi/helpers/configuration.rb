@@ -74,10 +74,10 @@ module Gaudi
         end
       end
 
-      attr_reader :config,:config_file
+      attr_reader :config,:configuration_files
       def initialize filename
-        @config_file=File.expand_path(filename)
-        @config=read_configuration(@config_file,*keys)
+        @configuration_files=[File.expand_path(filename)]
+        @config=read_configuration(File.expand_path(filename),*keys)
       end
       #Returns an Array containing two arrays.
       #
@@ -93,10 +93,7 @@ module Gaudi
         return [],[]
       end
       def to_s
-        "Gaudi #{Gaudi::Version::STRING} with #{@config_file}"
-      end
-      def to_path
-        return config_file
+        "Gaudi #{Gaudi::Version::STRING} with #{configuration_files.first}"
       end
       #Merges the parameters from cfg_file into this instance
       def merge cfg_file
@@ -110,6 +107,7 @@ module Gaudi
               @config[k]=cfg[k] #last one wins
             end
           end
+          @configuration_files<<cfg_file
         rescue
 
         end
@@ -177,6 +175,7 @@ module Gaudi
       def import_config path,cfg_dir
         path=absolute_path(path.strip,cfg_dir)
         raise GaudiConfigurationError,"Cannot find #{path} to import" unless File.exists?(path)
+        @configuration_files<<path
         read_configuration(path,*keys)
       end
       #:nodoc:
@@ -220,7 +219,7 @@ module Gaudi
       attr_accessor :config_base,:workspace,:timestamp
       def initialize filename
         super(filename)
-        @config_base=File.dirname(@config_file)
+        @config_base=File.dirname(configuration_files.first)
         raise GaudiConfigurationError, "Setting 'base' must be defined" unless base
         raise GaudiConfigurationError, "Setting 'out' must be defined" unless out
         @workspace=Dir.pwd
@@ -241,6 +240,7 @@ module Gaudi
           path=@config[platform_name]
           path=File.expand_path(File.join(@config_base,path)) if !Pathname.new(path).absolute?
           pdata=read_configuration(path,*keys)
+          @configuration_files<<path
           @config['platform_data'][platform_name]=PlatformConfiguration.new(platform_name,pdata)
         end
       end
@@ -442,7 +442,7 @@ module Gaudi
 
       def initialize filename
         super(filename)
-        raise GaudiConfigurationError,"Missing prefix= option in '#{config_file}'" if prefix.empty?
+        raise GaudiConfigurationError,"Missing prefix= option in '#{filename}'" if prefix.empty?
       end
 
       def keys

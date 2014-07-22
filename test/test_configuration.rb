@@ -9,8 +9,7 @@ class TestLoader < MiniTest::Unit::TestCase
   def test_empty_configuration
     config=mock_configuration('system.cfg',[])
     cfg=Gaudi::Configuration::Loader.new(config)
-    assert_equal(config, cfg.config_file)
-    assert_equal(config, cfg.to_path)
+    assert_equal([config], cfg.configuration_files)
   end
   def test_syntax_error
     config=mock_configuration('system.cfg',['foo'])
