@@ -1,3 +1,12 @@
+#0.5.0
+ * Moved artifact naming methods over to custom/paths.rb
+ * The configuration classes now enumerate all configuration files and respond to configuration_files() returning an Array
+ * removed config_file from the configuration classes. Use configuration_files.first to get the main file 
+ * Deployments don't allow programs of the same name in the same platform
+#0.4.0
+ * Binary extensions now part of the platform configuration
+ * Platform configuration now shared library aware. Archiver renamed to Librarian
+ 
 # 0.3.0
  * Source file extensions now part of the platform configuration
  * The directory structure methods are now in custom/helpers/paths.rb
