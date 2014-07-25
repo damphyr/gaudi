@@ -109,7 +109,7 @@ module Gaudi
       @name=@identifier= configuration.prefix
       @system_config= system_config
       @platform= platform
-      @directories= FileList.new
+      @directories= Rake::FileList.new
       @test_directories= determine_test_directories(@directories)
       @config_files= Rake::FileList[config_file]
       @deployment=deployment_name
@@ -142,6 +142,7 @@ module Gaudi
       @directories=determine_directories(name,system_config.source_directories)
       @system_config=system_config
       raise GaudiError,"Cannot find directories for #{name} " if @directories.empty?
+      validate
     end
     #Returns the list of platforms this Deployment has programs for
     def platforms
@@ -155,6 +156,14 @@ module Gaudi
       name
     end
     private
+    def validate
+      platforms.each do |platform|
+        program_names=programs(platform).map{|program| program.name}
+        if program_names.uniq.size< program_names.size
+          raise GaudiError,"No duplicate program names allowed on the same platform. Found duplicates on platform #{platform}"
+        end
+      end
+    end
     def determine_directories(name,source_directories)
       Rake::FileList[*source_directories.pathmap("%p/deployments/#{name}")].existing
     end

@@ -2,6 +2,7 @@ $:.unshift(File.join(File.dirname(__FILE__),'..','lib'))
 require_relative 'helpers.rb'
 require "minitest/autorun"
 require "mocha/setup"
+require "rake/file_list"
 require "gaudi"
 
 class TestStandardPaths < MiniTest::Unit::TestCase
@@ -31,16 +32,19 @@ class TestStandardPaths < MiniTest::Unit::TestCase
 end
 
 class TestComponent< MiniTest::Unit::TestCase
+  attr_reader :src_dir,:system_config
   include TestHelpers
+  def setup
+    @src_dir=directory_fixture
+    @system_config=mock()
+    @system_config.expects(:source_directories).returns([src_dir])
+    @system_config.stubs(:header_extensions).returns('.h')
+  end
   def teardown
     rm_rf(File.join(File.dirname(__FILE__),'tmp'),:verbose=>false)
   end
   def test_component
-    system_config=mock()
-    src_dir=directory_fixture
-    system_config.expects(:source_directories).returns([src_dir])
     system_config.stubs(:source_extensions).returns('.c,.asm')
-    system_config.stubs(:header_extensions).returns('.h')
     comp=Gaudi::Component.new('FOO',system_config,'mingw')
     assert_equal('FOO', comp.name)
     assert_equal(2, comp.directories.size)
@@ -51,11 +55,7 @@ class TestComponent< MiniTest::Unit::TestCase
   end
 
   def test_component_mixed_mode
-    system_config=mock()
-    src_dir=directory_fixture
-    system_config.expects(:source_directories).returns([src_dir])
     system_config.stubs(:source_extensions).returns('.c,.cpp,.asm')
-    system_config.stubs(:header_extensions).returns('.h')
     comp=Gaudi::Component.new('FOO',system_config,'mingw')
     assert_equal('FOO', comp.name)
     assert_equal(2, comp.directories.size)
@@ -63,5 +63,28 @@ class TestComponent< MiniTest::Unit::TestCase
     assert_equal(2, comp.headers.size)
     assert_equal(7, comp.all.size)
     assert_equal(4, comp.test_files.size)
+  end
+end
+
+class TestDeployment< MiniTest::Unit::TestCase
+  attr_reader :src_dir,:system_config
+  include TestHelpers
+  def setup
+    @src_dir=directory_fixture
+    @system_config=mock()
+    @system_config.expects(:source_directories).returns(Rake::FileList[src_dir])
+    @system_config.stubs(:header_extensions).returns('.h')
+    @system_config.stubs(:source_extensions).returns('.c,.cpp,.asm')
+  end
+  def teardown
+    rm_rf(File.join(File.dirname(__FILE__),'tmp'),:verbose=>false)
+  end
+  def test_duplicate_program_name
+    assert_raises(GaudiError) { Gaudi::Deployment.new('BAR',system_config)}
+  end
+  def test_deployment
+    deployment=Gaudi::Deployment.new("FOO",system_config)
+    assert_equal(['foo'], deployment.platforms)
+    assert_equal(1, deployment.programs('foo').size)
   end
 end

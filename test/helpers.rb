@@ -26,6 +26,9 @@ module TestHelpers
     File.open("#{base}/tmp/common/FOO/build.cfg","wb"){|f| f.write(['prefix=FOO','deps=BAR','incs= ./inc','libs= foo.lib,bar.lib'].join("\n"))}
     mkdir_p("#{base}/tmp/deployments/FOO/foo",:verbose=>false)
     File.open("#{base}/tmp/deployments/FOO/foo/Pinky.cfg","wb"){|f| f.write(['prefix=Pinky','deps=FOO'].join("\n"))}
+    mkdir_p("#{base}/tmp/deployments/BAR/foo",:verbose=>false)
+    File.open("#{base}/tmp/deployments/BAR/foo/Pinky.cfg","wb"){|f| f.write(['prefix=Pinky','deps=FOO'].join("\n"))}
+    File.open("#{base}/tmp/deployments/BAR/foo/Brain.cfg","wb"){|f| f.write(['prefix=Pinky','deps=FOO'].join("\n"))}
     touch("#{base}/tmp/libs.yml",:verbose=>false)    
     File.open("#{base}/tmp/brain.cfg","wb"){|f| f.write(system_config_test_data.join("\n"))}
     File.open("#{base}/tmp/foo.cfg","wb"){|f| f.write(platform_config_test_data.join("\n"))}
