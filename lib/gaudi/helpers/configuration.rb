@@ -74,7 +74,10 @@ module Gaudi
         end
       end
 
-      attr_reader :config,:configuration_files
+      #Returns all the configuration files processed (e.g. those read with import and the platform configuration files)
+      #The main file (the one used in initialize) is always first in the collection
+      attr_reader :configuration_files
+      attr_reader :config
       def initialize filename
         @configuration_files=[File.expand_path(filename)]
         @config=read_configuration(File.expand_path(filename),*keys)
