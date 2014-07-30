@@ -1,3 +1,6 @@
+#0.7.0
+ * Platform configuration is now progressively extended by program and component configurations. Solves bugs #1 & #3
+
 #0.6.0
  * Removed command files from the dependency chain. 
  ** This removes some buggy edge cases and has minimal performance impact. Also makes creating build rules simpler
