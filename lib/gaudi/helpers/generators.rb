@@ -66,7 +66,8 @@ module Gaudi
         deps.uniq!
         options= linker_options(program,system_config)
         cmd_file=command_file(executable(program,system_config),system_config,program.platform)
-        file executable(program,system_config) => [commandfile_task(cmd_file,options,deps)]
+        write_file(cmd_file,options.join("\n"))
+        file executable(program,system_config) => deps
       end
       #Returns a task for building a library
       def library_task component,system_config
@@ -74,7 +75,8 @@ module Gaudi
         deps+=component.sources.map{|src| object_task(src,component,system_config)}
         options= librarian_options(component,system_config)
         cmd_file=command_file(library(component,system_config),system_config,component.platform)
-        file library(component,system_config) => [commandfile_task(cmd_file,options,deps)]
+        write_file(cmd_file,options.join("\n"))
+        file library(component,system_config) => deps
       end
       #Returns the task to create an object file from src
       def object_task src,component,system_config
@@ -88,11 +90,10 @@ module Gaudi
         end
         t=object_file(src,component,system_config)
         cmd_file=command_file(src,system_config,component.platform)
-        file t=> [commandfile_task(cmd_file,options,object_task_dependencies(src,component,system_config))]
+        write_file(cmd_file,options.join("\n"))
+        file t=> object_task_dependencies(src,component,system_config)
       end
-      #Returns a task for creating a command file
-      #
-      #This method is heavily used in creating other tasks
+      #:nodoc:
       def commandfile_task cmd_file,options,dependencies
         file cmd_file => dependencies do |t|
           puts "Writing #{t.name}"
