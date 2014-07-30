@@ -34,25 +34,35 @@ module Gaudi
       include Gaudi::Commandlines
       include Gaudi::PlatformOperations
       #Compiles a source file from a previously constructed command file
-      def compile cmd_file,system_config,platform
-        config=system_config.platform_config(platform)
-        if cmd_file.end_with?('.assembly')
-          cmdline = assembler(cmd_file,config)
+      def compile filetask,system_config,platform
+        cmd_file=command_file(filetask.prerequisites.first,system_config,platform)
+        if File.exists?(cmd_file)
+          mkdir_p(File.dirname(filetask.name))
+          config=system_config.platform_config(platform)
+          if cmd_file.end_with?('.assembly')
+            cmdline = assembler(cmd_file,config)
+          else
+            cmdline = compiler(cmd_file,config)
+          end
+          sh(cmdline.join(' '))
         else
-          cmdline = compiler(cmd_file,config)
+          raise GaudiError, "Missing command file for #{filetask.name}"
         end
-        sh(cmdline.join(' '))
       end
       #Links an executable or library using a previously constructed command file
-      def build cmd_file,system_config,platform
-        config=system_config.platform_config(platform)
-        mkdir_p(File.dirname(cmd_file),:verbose=>false)
-        if cmd_file.end_with?('.library')
-          cmdline = librarian(cmd_file,config)
+      def build filetask,system_config,platform
+        cmd_file=command_file(filetask.name,system_config,platform)
+        if File.exists?(cmd_file)
+          config=system_config.platform_config(platform)
+          if cmd_file.end_with?('.library')
+            cmdline = librarian(cmd_file,config)
+          else
+            cmdline = linker(cmd_file,config)
+          end
+          sh(cmdline.join(' '))
         else
-          cmdline = linker(cmd_file,config)
+          raise GaudiError, "Missing command file for #{filetask.name}"
         end
-        sh(cmdline.join(' '))
       end
     end
   end
