@@ -58,7 +58,9 @@ module Gaudi
         Gaudi::Configuration::PlatformConfiguration.extend(program,system_config) do
           deps+=program.sources.map{|src| object_task(src,program,system_config)}
           program.dependencies.each do |dep|
-            deps+=dep.sources.map{|src| object_task(src,dep,system_config)}
+            Gaudi::Configuration::PlatformConfiguration.extend(dep,system_config) do
+              deps+=dep.sources.map{|src| object_task(src,dep,system_config)}
+            end
           end
           program.shared_dependencies.each do |dep|
             deps<<library_task(dep,system_config)
@@ -85,17 +87,15 @@ module Gaudi
       #Returns the task to create an object file from src
       def object_task src,component,system_config
         options=[]
-        Gaudi::Configuration::PlatformConfiguration.extend(component,system_config) do
-          if is_source?(src)
-            if is_assembly?(src)
-              options= assembler_options(src,component,system_config)
-            else
-              options= compiler_options(src,component,system_config)
-            end
+        if is_source?(src)
+          if is_assembly?(src)
+            options= assembler_options(src,component,system_config)
+          else
+            options= compiler_options(src,component,system_config)
           end
-          cmd_file=command_file(src,system_config,component.platform)
-          write_file(cmd_file,options.join("\n"))
         end
+        cmd_file=command_file(src,system_config,component.platform)
+        write_file(cmd_file,options.join("\n"))
         t=object_file(src,component,system_config)
         file t => object_task_dependencies(src,component,system_config)
       end
