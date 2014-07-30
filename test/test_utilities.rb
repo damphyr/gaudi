@@ -9,7 +9,7 @@ class TestUtilities < MiniTest::Unit::TestCase
   def test_switch_configuration
     Gaudi::Configuration::SystemConfiguration.stubs(:load).returns([])
     ENV['GAUDI_CONFIG']='./bar.cfg'
-    switch_configuration('./foo.cfg') do
+    Gaudi::Configuration.switch_configuration('./foo.cfg') do
       assert_equal('./foo.cfg', ENV['GAUDI_CONFIG'])
     end
   end
@@ -19,7 +19,7 @@ class TestUtilities < MiniTest::Unit::TestCase
     File.expects(:readlines).returns(platform_config_test_data)
     File.expects(:readlines).returns(system_config_test_data)
     config=Gaudi::Configuration::SystemConfiguration.new('bar.cfg')
-    switch_platform_configuration './foo.cfg',config,'foo' do
+    Gaudi::Configuration.switch_platform_configuration './foo.cfg',config,'foo' do
       assert_equal('bar', config.platform_config('foo')['foo'])
     end
     assert_nil(config.platform_config('foo')['foo'])
