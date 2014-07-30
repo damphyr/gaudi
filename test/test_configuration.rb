@@ -64,7 +64,8 @@ class TestSystemConfiguration < MiniTest::Unit::TestCase
     cfg=Gaudi::Configuration::SystemConfiguration.load([config])
     assert_equal(['foo'], cfg.platforms)
     assert_equal({"source_extensions"=>".c,.cpp", "header_extensions"=>".h",
-        "object_extension"=>".o", "library_extension"=>".so", "executable_extension"=>".e","libs"=>"", "lib_cfg"=>"libs.yml","bar"=>"foo"}, cfg.platform_config('foo'))
+        "object_extension"=>".o", "library_extension"=>".so", "executable_extension"=>".e","libs"=>"", "lib_cfg"=>"libs.yml","bar"=>"foo",
+        'compiler_options'=>'-c','assembler_options'=>'-a','library_options'=>'-l','linker_options'=>'-e'}, cfg.platform_config('foo'))
   end
   
   def test_list_of_paths
@@ -159,7 +160,7 @@ class TestBuildConfiguration < MiniTest::Unit::TestCase
     assert_equal('TST', cfg.prefix)
     assert_equal(['COD','MOD'],cfg.deps)
     assert_equal(["#{File.dirname(__FILE__)}/inc"],cfg.incs)
-    assert_equal('FOO BAR', cfg.compiler_options)
+    assert_equal('FOO BAR', cfg.option('compiler_options'))
 
     system_cfg.expects(:external_libraries_config).returns({'foo'=>'foo.lib','bar'=>'bar.lib'})
     File.expects(:exists?).with(File.join(File.dirname(__FILE__),'foo.lib')).returns(false)
@@ -178,6 +179,13 @@ end
 class TestPlatformConfiguration < MiniTest::Unit::TestCase
   include TestHelpers
 
+  def setup
+    directory_fixture
+  end
+  def teardown
+    rm_rf(File.join(File.dirname(__FILE__),'tmp'),:verbose=>false)
+  end
+
   def test_platform_config
     assert_raises(GaudiConfigurationError) { Gaudi::Configuration::PlatformConfiguration.new 'foo',{'bar'=>'bla'} }
     assert_raises(GaudiConfigurationError) { Gaudi::Configuration::PlatformConfiguration.new 'foo',{'source_extensions'=>'bla'} }
@@ -187,5 +195,31 @@ class TestPlatformConfiguration < MiniTest::Unit::TestCase
     assert_equal('.c',pcfg['source_extensions'])
     assert_equal('.h', pcfg['header_extensions'])
     assert_equal([".o", ".so", ".e"], pcfg.extensions)
+  end
+
+  def test_platform_extend
+    system_config=Gaudi::Configuration::SystemConfiguration.new(File.join(File.dirname(__FILE__),'tmp/brain.cfg'))
+    component=mock
+    component.stubs(:platform).returns('foo')
+    component_config=mock
+    component_config.stubs(:option).returns('-o')
+    component.stubs(:configuration).returns(component_config)
+    
+    assert_equal('-c', system_config.platform_config('foo')['compiler_options'])
+    assert_equal('-a', system_config.platform_config('foo')['assembler_options'])
+    assert_equal('-l', system_config.platform_config('foo')['library_options'])
+    assert_equal('-e', system_config.platform_config('foo')['linker_options'])
+
+    Gaudi::Configuration::PlatformConfiguration.extend(component,system_config) do
+      assert_equal('-c -o', system_config.platform_config('foo')['compiler_options'])
+      assert_equal('-a -o', system_config.platform_config('foo')['assembler_options'])
+      assert_equal('-l -o', system_config.platform_config('foo')['library_options'])
+      assert_equal('-e -o', system_config.platform_config('foo')['linker_options'])
+    end
+    
+    assert_equal('-c', system_config.platform_config('foo')['compiler_options'])
+    assert_equal('-a', system_config.platform_config('foo')['assembler_options'])
+    assert_equal('-l', system_config.platform_config('foo')['library_options'])
+    assert_equal('-e', system_config.platform_config('foo')['linker_options'])
   end
 end

@@ -460,9 +460,11 @@ module Gaudi
         def external_libraries system_config,platform
           return interpret_library_tokens(@config.fetch('libs',[]),system_config.external_libraries_config(platform),system_config.config_base)
         end
-        #Compiler options. These are added to the platform configuration options, they do NOT override them
-        def compiler_options
-          return @config.fetch('compiler_options','')
+        #Option key can be one of compiler_options, assembler_options, lirbary_options or linker_options
+        #
+        #These are added to the platform configuration options, they do NOT override them
+        def option key
+          return @config.fetch(key,'')
         end
         #List of paths to resource files that are copied with the program build
         def resources
@@ -494,7 +496,39 @@ module Gaudi
       end
     end
 
+    #PlatformConfiguration encapsulates the platform specific part of Gaudi's configuration
+    #
+    #For more details check https://github.com/damphyr/gaudi/blob/master/doc/CONFIGURATION.md
     class PlatformConfiguration < DelegateClass(::Hash)
+      #PlatformCofiguration.extend extends the platform configuration 
+      #compiler_options, assembler_options, library_options and linker_options parameters
+      #with the values given in the component configuration for the code given in the block
+      #
+      # PlatformConfiguration.extend(component,system_config) do
+      #       perform build actions with extended platform options 
+      # end
+      def self.extend(component, system_config)
+        if block_given?
+          begin
+            current_config=system_config.platform_config(component.platform)
+            #extend the platform configuration with the component configuration settings
+            new_cfg=current_config.dup
+            new_cfg.merge!(current_config)
+            ['compiler_options','assembler_options','library_options','linker_options'].each do |key|
+              new_cfg[key]="#{current_config[key]} #{component.configuration.option(key)}"
+            end
+            system_config.set_platform_config(new_cfg,component.platform)
+            yield
+          rescue
+            raise
+          ensure
+            system_config.set_platform_config(current_config,component.platform)
+          end
+        else
+          raise GaudiError,"PlatformConfiguration.extend requires a block"
+        end
+      end
+
       attr_reader :name
 
       def initialize name,platform_data

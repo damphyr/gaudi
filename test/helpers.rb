@@ -37,7 +37,7 @@ module TestHelpers
 
   def platform_config_test_data
     ['source_extensions=.c,.cpp','header_extensions=.h','object_extension=.o', 'library_extension=.so','executable_extension=.e',
-      'libs=','lib_cfg=libs.yml'
+      'libs=','lib_cfg=libs.yml','compiler_options=-c','assembler_options=-a','library_options=-l','linker_options=-e'
     ]
   end
 

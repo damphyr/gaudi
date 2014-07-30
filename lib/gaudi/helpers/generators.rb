@@ -55,43 +55,49 @@ module Gaudi
       #Returns a task for building a Program
       def program_task program,system_config
         deps=component_task_dependencies(program,system_config)
-        deps+=program.sources.map{|src| object_task(src,program,system_config)}
-        program.dependencies.each do |dep|
-          deps+=dep.sources.map{|src| object_task(src,dep,system_config)}
+        Gaudi::Configuration::PlatformConfiguration.extend(program,system_config) do
+          deps+=program.sources.map{|src| object_task(src,program,system_config)}
+          program.dependencies.each do |dep|
+            deps+=dep.sources.map{|src| object_task(src,dep,system_config)}
+          end
+          program.shared_dependencies.each do |dep|
+            deps<<library_task(dep,system_config)
+          end
+          deps+=resource_tasks(program,system_config)
+          deps.uniq!
+          options= linker_options(program,system_config)
+          cmd_file=command_file(executable(program,system_config),system_config,program.platform)
+          write_file(cmd_file,options.join("\n"))
         end
-        program.shared_dependencies.each do |dep|
-          deps<<library_task(dep,system_config)
-        end
-        deps+=resource_tasks(program,system_config)
-        deps.uniq!
-        options= linker_options(program,system_config)
-        cmd_file=command_file(executable(program,system_config),system_config,program.platform)
-        write_file(cmd_file,options.join("\n"))
         file executable(program,system_config) => deps
       end
       #Returns a task for building a library
       def library_task component,system_config
         deps=component_task_dependencies(component,system_config)
-        deps+=component.sources.map{|src| object_task(src,component,system_config)}
-        options= librarian_options(component,system_config)
-        cmd_file=command_file(library(component,system_config),system_config,component.platform)
-        write_file(cmd_file,options.join("\n"))
+        Gaudi::Configuration::PlatformConfiguration.extend(component,system_config) do
+          deps+=component.sources.map{|src| object_task(src,component,system_config)}
+          options= librarian_options(component,system_config)
+          cmd_file=command_file(library(component,system_config),system_config,component.platform)
+          write_file(cmd_file,options.join("\n"))
+        end
         file library(component,system_config) => deps
       end
       #Returns the task to create an object file from src
       def object_task src,component,system_config
         options=[]
-        if is_source?(src)
-          if is_assembly?(src)
-            options= assembler_options(src,component,system_config)
-          else
-            options= compiler_options(src,component,system_config)
+        Gaudi::Configuration::PlatformConfiguration.extend(component,system_config) do
+          if is_source?(src)
+            if is_assembly?(src)
+              options= assembler_options(src,component,system_config)
+            else
+              options= compiler_options(src,component,system_config)
+            end
           end
+          cmd_file=command_file(src,system_config,component.platform)
+          write_file(cmd_file,options.join("\n"))
         end
         t=object_file(src,component,system_config)
-        cmd_file=command_file(src,system_config,component.platform)
-        write_file(cmd_file,options.join("\n"))
-        file t=> object_task_dependencies(src,component,system_config)
+        file t => object_task_dependencies(src,component,system_config)
       end
       #:nodoc:
       def commandfile_task cmd_file,options,dependencies
