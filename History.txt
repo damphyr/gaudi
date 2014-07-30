@@ -1,3 +1,8 @@
+#0.6.0
+ * Removed command files from the dependency chain. 
+ ** This removes some buggy edge cases and has minimal performance impact. Also makes creating build rules simpler
+ * switch_configuration and switch_platform_configuration are now in Gaudi::Configuration
+
 #0.5.0
  * Moved artifact naming methods over to custom/paths.rb
  * The configuration classes now enumerate all configuration files and respond to configuration_files() returning an Array
