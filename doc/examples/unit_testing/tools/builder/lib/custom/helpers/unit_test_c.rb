@@ -158,10 +158,11 @@ module UnitTestOperations
   end
 end
 
-class UnitTest < DelegateClass(Gaudi::Component)
+class UnitTest < DelegateClass(Gaudi::Program)
   include UnitTestOperations
   attr_reader :directories,:dependencies,:name
   def initialize component,system_config
+    @parent=self
     super(component)
     @directories=__getobj__.directories+__getobj__.test_directories
     unity=Gaudi::Component.new('Unity',system_config,platform)

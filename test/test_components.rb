@@ -12,8 +12,10 @@ class TestStandardPaths < MiniTest::Unit::TestCase
     system_config=mock()
     component.stubs(:platform).returns('gcc')
     component.stubs(:name).returns('foo')
+    component.stubs(:parent).returns(nil)
     system_config.stubs(:out).returns('out')
     system_config.stubs(:extensions).returns(['.o','.a','.e'])
+
     exe=executable(component,system_config)
     assert(exe.end_with?('.e'), "Not an exe.")
     lib=library(component,system_config)
@@ -72,7 +74,7 @@ class TestDeployment< MiniTest::Unit::TestCase
   def setup
     @src_dir=directory_fixture
     @system_config=mock()
-    @system_config.expects(:source_directories).returns(Rake::FileList[src_dir])
+    @system_config.stubs(:source_directories).returns(Rake::FileList[src_dir])
     @system_config.stubs(:header_extensions).returns('.h')
     @system_config.stubs(:source_extensions).returns('.c,.cpp,.asm')
   end
@@ -86,5 +88,9 @@ class TestDeployment< MiniTest::Unit::TestCase
     deployment=Gaudi::Deployment.new("FOO",system_config)
     assert_equal(['foo'], deployment.platforms)
     assert_equal(1, deployment.programs('foo').size)
+    pgm=deployment.programs('foo').first
+    pgm.dependencies.each do |dep| 
+      assert_equal("Pinky", dep.parent.name)
+    end
   end
 end

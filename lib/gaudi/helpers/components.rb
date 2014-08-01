@@ -44,7 +44,10 @@ module Gaudi
   class Component
     include StandardPaths
     attr_reader :identifier,:platform,:configuration,:name,:directories,:test_directories,:config_files
+    #This is set to the name of the program or library containing the component when building a deployment. Default is empty
+    attr_accessor :parent
     def initialize name,system_config,platform
+      @parent=""
       @directories= determine_directories(name,system_config.source_directories,platform)
       @test_directories= determine_test_directories(@directories)
       @config_files= Rake::FileList[*directories.pathmap('%p/build.cfg')].existing
@@ -105,6 +108,7 @@ module Gaudi
   #A Gaudi::Program is a collection of components built for a specific platform.
   class Program<Component
     def initialize config_file,deployment_name,system_config,platform
+      @parent=self
       @configuration=Configuration::BuildConfiguration.load([config_file])
       @name=@identifier= configuration.prefix
       @system_config= system_config
@@ -122,8 +126,19 @@ module Gaudi
     def resources
       @configuration.resources
     end
-    def  shared_dependencies
-      configuration.shared_dependencies.map{|dep| Component.new(dep,@system_config,platform)}
+    #All components upon which this Program depends on
+    def dependencies
+      deps=configuration.dependencies.map{|dep| program_dependency(dep)}
+    end
+    #All shared library components this Program depends on
+    def shared_dependencies
+      deps=configuration.shared_dependencies.map{|dep| program_dependency(dep)}
+    end
+    private
+    def program_dependency dep_name
+      c=Component.new(dep_name,@system_config,platform)
+      c.parent=self
+      return c
     end
   end
   #A Deployment is a collection of Programs compiled for multiple platforms

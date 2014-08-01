@@ -44,11 +44,7 @@ module Gaudi
     #Returns the path to the object output file corresponding to src
     def object_file src,component,system_config
       ext_obj,ext_lib,ext_exe = *system_config.extensions(component.platform)
-      if is_generated?(src,system_config)
-        src.pathmap("%X#{ext_obj}")
-      else
-        src.pathmap("#{system_config.out}/#{component.platform}/#{component.name}/%n#{ext_obj}")
-      end
+      src.pathmap("#{system_config.out}/#{component.platform}/#{component.parent ? component.parent.name : ''}/#{component.name}/%n#{ext_obj}")
     end
     #Returns the path to the unit test binary corresponding to the component
     def unit_test component,system_config
