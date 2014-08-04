@@ -4,6 +4,10 @@
 
 This gem provides setup, scaffolding and maintenance functions for [gaudi](http://github.com/damphyr/gaudi) installations.
 
+## USAGE
+
+gaudi -s project/root to create a directory structure for a Gaudi based project 
+
 ## INSTALL:
 
 * (sudo) gem install gaudi
