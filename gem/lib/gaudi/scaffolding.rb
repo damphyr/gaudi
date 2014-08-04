@@ -34,7 +34,7 @@ module Gaudi
           exit
         end
         opts.on_tail("--version", "Show version") do
-          puts Gaudi::Gem::Version::STRING
+          puts "Gaudi Gem v#{Gaudi::Gem::Version::STRING}"
           exit
         end
       end
