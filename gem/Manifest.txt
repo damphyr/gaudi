@@ -1,0 +1,9 @@
+History.txt
+Manifest.txt
+README.txt
+bin/gaudi
+lib/gaudi/templates/main.cfg.template
+lib/gaudi/templates/platform.cfg.template
+lib/gaudi/scaffolding.rb
+lib/gaudi/version.rb
+lib/gaudi.rb
