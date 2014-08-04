@@ -2,10 +2,12 @@
 
 tl:dr; Go to the [documentation](doc/README.md)
 
-This is not a gem nor is it a library. It's more like a bootstrap for creating a build system for C or C++ based projects using rake.
+This is not a gem<sup>1</sup> nor is it a library. It's more like a bootstrap for creating a build system for C or C++ based projects using rake.
 
 A couple of guidelines, a bit of supporting code, a lot of assumptions and conventions with fill-in-the-blanks space for creating a works-for-me build system.  
 You're lucky I didn't call it yabsir (Yet Another Build System In Ruby)
+
+<sup>1</sup>There is a gaudi gem. It's purpose is to help set up and maintain a Gaudi installation.
 
 ## Gaudi?
 
