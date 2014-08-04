@@ -20,6 +20,17 @@ And in stage III you have to build the thing from scratch because the evil manag
 
 ## Stage III: No guts, no glory
  
+### Quick Start
+
+To create a new project that uses Gaudi do
+
+```bash
+sudo gem install gaudi
+gaudi -s /path/to/project/root
+```
+
+This will create a basic directory structure and Rakefile and pull the current Gaudi version from GitHub
+
  * [Extending](EXTENDING.md) Gaudi
  * [Examples](examples/) 
 
@@ -39,7 +50,7 @@ project source files are saved under src/, documentation under doc/ etc.
 
 Additionally, third party tools are saved under tools/ and the default scaffolding task will copy the Gaudi sources under tools/build/lib.
 
-The following image shows the structure created by the new:project scaffolding task offered by Gaudi:
+The following image shows the structure created by the gaudi gem:
 
 ![directory structure](directory_structure.png)
 
