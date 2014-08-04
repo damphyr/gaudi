@@ -1,0 +1,12 @@
+##Relative paths are relative to the configuration file
+
+#the project root directory
+base=../../
+#the build output directory
+out=../../out
+#Comma separated list of directory to search for source files
+sources=../../src/
+#enumerate the platforms i.e. platforms=gcc,ms,arm
+#platforms= foo
+#add a platform=platform.cfg for each platform pointing to the platform configuration
+#foo=./foo.cfg
