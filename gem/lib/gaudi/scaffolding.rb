@@ -1,6 +1,9 @@
 require 'ostruct'
 require 'optparse'
 require 'fileutils'
+require 'tmpdir'
+require 'rubygems'
+require 'archive/tar/minitar'
 
 module Gaudi
   class Gem
@@ -13,6 +16,7 @@ module Gaudi
       options.project_root = Dir.pwd
       options.verbose = false
       options.scaffold=false
+      options.version="HEAD"
 
       opt_parser = OptionParser.new do |opts|
         opts.banner = "Usage: gaudi [options]"
@@ -45,7 +49,7 @@ module Gaudi
     def self.run args
       opts=options(args)
       if opts.scaffold
-        Gaudi::Gem.new(opts.project_root).project
+        Gaudi::Gem.new(opts.project_root).project(opts.version)
       end
     end
 
@@ -53,12 +57,13 @@ module Gaudi
       @project_root=project_root
     end
     
-    def project
+    def project version
       raise "#{project_root} already exists!" if File.exists?(project_root) && project_root != Dir.pwd
       directory_structure
       rakefile
       main_config
-      #platform_config
+      platform_config
+      gaudi(version)
     end
     #:nodoc:
     def directory_structure
@@ -103,6 +108,26 @@ module Gaudi
       else
         configuration_content=File.read(File.join(File.dirname(__FILE__),'templates/platform.cfg.template'))
         File.open(config_file, 'wb') {|f| f.write(configuration_content) }
+      end
+    end
+    #:nodoc:
+    def gaudi(version)
+      Dir.mktmpdir do |tmp|
+        if File.exists?('gaudi')
+          FileUtils.rm_rf('gaudi')
+        end
+        system 'git clone https://github.com/damphyr/gaudi gaudi'
+        Dir.chdir('gaudi') do |d|
+          puts "Packing #{version} gaudi version"
+          cmdline="git archive --format=tar -o #{project_root}/gaudilib.tar #{version} lib/"
+          system(cmdline)
+        end
+        puts "Unpacking in #{project_root}/tools/build"
+        Dir.chdir(project_root) do |d|
+          Archive::Tar::Minitar.unpack(File.join(project_root,'gaudilib.tar'), 'tools/build')
+        end
+        FileUtils.rm_rf(File.join(project_root,'gaudilib.tar'))
+        FileUtils.rm_rf(File.join(project_root,'tools/build/pax_global_header'))
       end
     end
   end
