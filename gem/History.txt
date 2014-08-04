@@ -1,4 +1,7 @@
-# 0.1.0
+#0.2.0
+* Pulls HEAD of gaudi from GitHub in the scaffold 
+
+#0.1.0
 * Scaffolding code for new projects
 ** Directory structure
 ** Example system configuration 
