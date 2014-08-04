@@ -18,6 +18,7 @@ Hoe.spec "gaudi" do |prj|
   prj.description=prj.paragraphs_of('README.txt',1..5).join("\n\n")
   prj.local_rdoc_dir='doc/rdoc'
   prj.readme_file="README.txt"
+  prj.extra_deps<<["archive-tar-minitar","~>0.5.2"]
   prj.spec_extras={:executables=>["gaudi"],:default_executable=>"gaudi"}
 end
 
