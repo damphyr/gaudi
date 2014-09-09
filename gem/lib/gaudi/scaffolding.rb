@@ -116,8 +116,8 @@ module Gaudi
         if File.exists?('gaudi')
           FileUtils.rm_rf('gaudi')
         end
-        system 'git clone https://github.com/damphyr/gaudi gaudi'
-        Dir.chdir('gaudi') do |d|
+        system "git clone https://github.com/damphyr/gaudi #{tmp}/gaudi"
+        Dir.chdir("#{tmp}/gaudi") do |d|
           puts "Packing #{version} gaudi version"
           cmdline="git archive --format=tar -o #{project_root}/gaudilib.tar #{version} lib/"
           system(cmdline)
