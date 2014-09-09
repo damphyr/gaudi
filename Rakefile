@@ -3,6 +3,9 @@ Rake.application.options.suppress_backtrace_pattern = /\.gem|ruby-2\.\d+\.\d+/
 require "hoe"
 require_relative('lib/gaudi/version')
 
+task :default => [:test]
+
+
 task :test do
   require 'coveralls'
   Coveralls.wear!
