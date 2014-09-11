@@ -47,7 +47,7 @@ module Gaudi
     #This is set to the name of the program or library containing the component when building a deployment. Default is empty
     attr_accessor :parent
     def initialize name,system_config,platform
-      @parent=""
+      @parent=nil
       @directories= determine_directories(name,system_config.source_directories,platform)
       @test_directories= determine_test_directories(@directories)
       @config_files= Rake::FileList[*directories.pathmap('%p/build.cfg')].existing
