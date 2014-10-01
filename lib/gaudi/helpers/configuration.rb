@@ -355,11 +355,11 @@ module Gaudi
         end
 
         def source_extensions platform
-          return platform_config(platform)['source_extensions']
+          return platform_config(platform)['source_extensions'].gsub(', ',',')
         end
 
         def header_extensions platform
-          return platform_config(platform)['header_extensions']
+          return platform_config(platform)['header_extensions'].gsub(', ',',')
         end
         #A list of paths to be used as include paths when compiling
         #
