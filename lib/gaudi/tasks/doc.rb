@@ -33,3 +33,9 @@ task :"graph:deployment" do
   include Gaudi::Documentation
   deployment=Gaudi::Deployment.new($configuration.deployment,$configuration)
 end
+
+desc "Lists all deployments"
+task :"list:deployments" do 
+  deployments=Rake::FileList[*$configuration.source_directories.pathmap("%p/deployments/*")].existing.pathmap("%f")
+  puts "\t#{deployments.join("\n\t")}"
+end
