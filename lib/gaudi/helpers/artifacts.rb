@@ -39,7 +39,7 @@ module Gaudi
         if File.exists?(cmd_file)
           mkdir_p(File.dirname(filetask.name))
           config=system_config.platform_config(platform)
-          if cmd_file.end_with?('.assembly')
+          if cmd_file.end_with?('.assemble')
             cmdline = assembler(cmd_file,config)
           else
             cmdline = compiler(cmd_file,config)
