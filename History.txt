@@ -1,3 +1,6 @@
+#0.7.4
+ * Fixed a bug with the assembler breadcrumb extension
+ * Fixed a bug where source and header extensions were not recognised if there were spaces in the configuration
 #0.7.3
  * Fixed a bug in naming object files using a parent component
 #0.7.2
