@@ -9,14 +9,15 @@ module Gaudi
   class Gem
     MAIN_CONFIG="system.cfg"
     PLATFORM_CONFIG="foo.cfg"
-    attr_reader :project_root
+    attr_reader :project_root,:gaudi_home
     #:nodoc:
     def self.options arguments
       options = OpenStruct.new
-      options.project_root = Dir.pwd
-      options.verbose = false
-      options.scaffold=false
-      options.version="HEAD"
+      options.project_root= Dir.pwd
+      options.verbose= false
+      options.scaffold= false
+      options.update= false
+      options.version= "HEAD"
 
       opt_parser = OptionParser.new do |opts|
         opts.banner = "Usage: gaudi [options]"
@@ -26,6 +27,12 @@ module Gaudi
         opts.on("-s", "--scaffold PATH","Create a Gaudi scaffold in PATH") do |proot|
           options.project_root=File.expand_path(proot)
           options.scaffold=true
+          options.update=false
+        end
+        opts.on("-u", "--update PATH","Update Gaudi core from GitHub on project at PATH") do |proot|
+          options.project_root=File.expand_path(proot)
+          options.update=true
+          options.scaffold=false
         end
         opts.separator ""
         opts.separator "Common options:"
@@ -50,11 +57,14 @@ module Gaudi
       opts=options(args)
       if opts.scaffold
         Gaudi::Gem.new(opts.project_root).project(opts.version)
+      elsif opts.update
+        Gaudi::Gem.new(opts.project_root).update(opts.version)
       end
     end
 
     def initialize project_root
       @project_root=project_root
+      @gaudi_home=File.join(project_root,"tools","build")
     end
     
     def project version
@@ -64,6 +74,12 @@ module Gaudi
       main_config
       platform_config
       gaudi(version)
+    end
+
+    def update version
+      raise "#{gaudi_home} is missing! Try creating a new Gaudi project first." unless File.exists?(gaudi_home)
+      FileUtils.rm_rf(File.join(gaudi_home,"lib/gaudi"))
+      core(version)
     end
     #:nodoc:
     def directory_structure
@@ -116,17 +132,40 @@ module Gaudi
         if File.exists?('gaudi')
           FileUtils.rm_rf('gaudi')
         end
+        if system "git clone https://github.com/damphyr/gaudi #{tmp}/gaudi"
+          Dir.chdir("#{tmp}/gaudi") do |d|
+            puts "Packing #{version} gaudi version"
+            cmdline="git archive --format=tar -o #{project_root}/gaudilib.tar #{version} lib/"
+            system(cmdline)
+          end
+          puts "Unpacking in #{gaudi_home}"
+          Dir.chdir(project_root) do |d|
+            Archive::Tar::Minitar.unpack(File.join(project_root,'gaudilib.tar'), 'tools/build')
+          end
+          FileUtils.rm_rf(File.join(project_root,'gaudilib.tar'))
+          FileUtils.rm_rf(File.join(project_root,'tools/build/pax_global_header'))
+        else
+          raise "Cloning the Gaudi repo failed. Check that git is on the PATH and that GitHub is accessible"
+        end
+      end
+    end
+    #:nodoc:
+    def core(version)
+      Dir.mktmpdir do |tmp|
+        if File.exists?('gaudi')
+          FileUtils.rm_rf('gaudi')
+        end
         system "git clone https://github.com/damphyr/gaudi #{tmp}/gaudi"
         Dir.chdir("#{tmp}/gaudi") do |d|
           puts "Packing #{version} gaudi version"
-          cmdline="git archive --format=tar -o #{project_root}/gaudilib.tar #{version} lib/"
+          cmdline="git archive --format=tar -o #{project_root}/gaudicore.tar #{version} lib/gaudi"
           system(cmdline)
         end
-        puts "Unpacking in #{project_root}/tools/build"
+        puts "Unpacking core in #{gaudi_home}/lib/gaudi"
         Dir.chdir(project_root) do |d|
-          Archive::Tar::Minitar.unpack(File.join(project_root,'gaudilib.tar'), 'tools/build')
+          Archive::Tar::Minitar.unpack(File.join(project_root,'gaudicore.tar'), 'tools/build')
         end
-        FileUtils.rm_rf(File.join(project_root,'gaudilib.tar'))
+        FileUtils.rm_rf(File.join(project_root,'gaudicore.tar'))
         FileUtils.rm_rf(File.join(project_root,'tools/build/pax_global_header'))
       end
     end

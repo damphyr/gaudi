@@ -1,3 +1,5 @@
+#0.2.2
+* Added update functionality
 #0.2.0
 * Pulls HEAD of gaudi from GitHub in the scaffold 
 
