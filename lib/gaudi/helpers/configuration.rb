@@ -513,7 +513,6 @@ module Gaudi
             current_config=system_config.platform_config(component.platform)
             #extend the platform configuration with the component configuration settings
             new_cfg=current_config.dup
-            new_cfg.merge!(current_config)
             ['compiler_options','assembler_options','library_options','linker_options'].each do |key|
               new_cfg[key]="#{current_config[key]} #{component.configuration.option(key)}"
             end
