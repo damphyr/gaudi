@@ -29,7 +29,9 @@ module Gaudi
     end
 
     def is_assembly? filename
-      filename.downcase.end_with?('.asm') || filename.downcase.end_with?('.src') 
+      filename.downcase.end_with?('.asm') || 
+      filename.downcase.end_with?('.src') ||
+      filename.downcase.end_with?('.s')
     end
 
     def is_header? filename
