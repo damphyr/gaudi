@@ -532,7 +532,7 @@ module Gaudi
 
       def initialize name,platform_data
         super(platform_data)
-        __getobj__.merge(platform_data)
+        __getobj__.merge!(platform_data)
         validate
       end
 
