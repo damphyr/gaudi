@@ -1,5 +1,6 @@
 #0.7.6
  * .s are assembly files
+ * fixed option setting for assembler to accomodate IAR
 #0.7.5
  * Added list:deployments task
 #0.7.4
