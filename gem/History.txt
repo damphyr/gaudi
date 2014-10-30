@@ -1,3 +1,7 @@
+#0.2.3
+* Check for git presence before removing old install when updating
+* Check for git presence before attempting to create a new project
+* Help message now indicates that https access and git are required
 #0.2.2
 * Added update functionality
 #0.2.0

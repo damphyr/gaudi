@@ -1,5 +1,5 @@
 module Gaudi
-  #Gaudi follows SemVer even so does it's gem, but the're two separate things
+  #Gaudi follows SemVer and so does it's gem, but they're two separate things
   class Gem
     module Version
       #Major version
@@ -7,7 +7,7 @@ module Gaudi
       #Minor version
       MINOR=2
       #Tiny version
-      TINY=2
+      TINY=3
       #All-in-one
       STRING=[MAJOR,MINOR,TINY].join('.')
     end

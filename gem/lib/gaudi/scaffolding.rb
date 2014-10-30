@@ -6,6 +6,8 @@ require 'rubygems'
 require 'archive/tar/minitar'
 
 module Gaudi
+  class Error <RuntimeError
+  end
   class Gem
     MAIN_CONFIG="system.cfg"
     PLATFORM_CONFIG="foo.cfg"
@@ -21,15 +23,16 @@ module Gaudi
 
       opt_parser = OptionParser.new do |opts|
         opts.banner = "Usage: gaudi [options]"
+        opts.separator "Make sure GitHub is accessible via https and git is on the PATH environment"
         opts.separator ""
         opts.separator "Commands:"
 
-        opts.on("-s", "--scaffold PATH","Create a Gaudi scaffold in PATH") do |proot|
+        opts.on("-s", "--scaffold PROJECT_PATH","Create a Gaudi scaffold in PROJECT_PATH") do |proot|
           options.project_root=File.expand_path(proot)
           options.scaffold=true
           options.update=false
         end
-        opts.on("-u", "--update PATH","Update Gaudi core from GitHub on project at PATH") do |proot|
+        opts.on("-u", "--update PROJECT_PATH","Update Gaudi core from GitHub on project at PROJECT_PATH") do |proot|
           options.project_root=File.expand_path(proot)
           options.update=true
           options.scaffold=false
@@ -55,10 +58,15 @@ module Gaudi
     #:nodoc:
     def self.run args
       opts=options(args)
-      if opts.scaffold
-        Gaudi::Gem.new(opts.project_root).project(opts.version)
-      elsif opts.update
-        Gaudi::Gem.new(opts.project_root).update(opts.version)
+      begin
+        if opts.scaffold
+          Gaudi::Gem.new(opts.project_root).project(opts.version)
+        elsif opts.update
+          Gaudi::Gem.new(opts.project_root).update(opts.version)
+        end
+      rescue Gaudi::Error
+        puts $!.message
+        exit 1
       end
     end
 
@@ -68,7 +76,8 @@ module Gaudi
     end
     
     def project version
-      raise "#{project_root} already exists!" if File.exists?(project_root) && project_root != Dir.pwd
+      raise Error, "#{project_root} already exists!" if File.exists?(project_root) && project_root != Dir.pwd
+      check_for_git
       directory_structure
       rakefile
       main_config
@@ -77,9 +86,15 @@ module Gaudi
     end
 
     def update version
-      raise "#{gaudi_home} is missing! Try creating a new Gaudi project first." unless File.exists?(gaudi_home)
+      raise Error, "#{gaudi_home} is missing! Try creating a new Gaudi project first." unless File.exists?(gaudi_home)
+      check_for_git
+      puts "Removing old gaudi installation"
       FileUtils.rm_rf(File.join(gaudi_home,"lib/gaudi"))
       core(version)
+    end
+    #:nodoc:
+    def check_for_git
+      raise Error, "Could not find git. Make sure it is in the PATH" unless system("git --version")
     end
     #:nodoc:
     def directory_structure
@@ -145,7 +160,7 @@ module Gaudi
           FileUtils.rm_rf(File.join(project_root,'gaudilib.tar'))
           FileUtils.rm_rf(File.join(project_root,'tools/build/pax_global_header'))
         else
-          raise "Cloning the Gaudi repo failed. Check that git is on the PATH and that GitHub is accessible"
+          raise Error, "Cloning the Gaudi repo failed. Check that git is on the PATH and that GitHub is accessible"
         end
       end
     end
