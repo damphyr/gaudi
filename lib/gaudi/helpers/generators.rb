@@ -18,6 +18,7 @@ module Gaudi
       def component_task_dependencies component,system_config
         deps=system_config.configuration_files
         deps+=component.configuration.configuration_files
+        deps+=component.headers
         ###TODO: here any change in a dependency's interface header will trigger a build which slows incremental builds down.
         #The solution is to parse the code and add the dependencies per file
         #this is one more file task chain (obj->headers_info->c). Zukunftsmusik!
