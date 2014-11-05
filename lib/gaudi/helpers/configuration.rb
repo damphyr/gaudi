@@ -224,7 +224,7 @@ module Gaudi
       end
       #:nodoc:
       def absolute_path path,cfg_dir
-        if Pathname.new(path).absolute?
+        if Pathname.new(path.gsub("\"","")).absolute?
           path
         else
           File.expand_path(File.join(cfg_dir,path))
