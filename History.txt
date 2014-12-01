@@ -1,3 +1,6 @@
+#0.7.9
+ * Expose the name of the deployment in a Gaudi::Program instance
+ * Bugfix in graph:deployment
 #0.7.8
  * Allow quotes in paths within configuration parameters
 #0.7.7
