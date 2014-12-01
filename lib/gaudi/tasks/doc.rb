@@ -5,7 +5,7 @@ module Gaudi::Documentation
     require 'graph'
     digraph do
       boxes
-      graph_deployment(deployment)
+      graph_details(deployment)
       mkdir_p(File.join(system_config.out_dir,'graphs'),:verbose=>false)
       save File.join(system_config.out_dir,'graphs',deployment.name), "png"
     end#graph
@@ -32,6 +32,7 @@ desc "Creates a component dependency graph for DEPLOYMENT.\n rake graph:deployme
 task :"graph:deployment" do
   include Gaudi::Documentation
   deployment=Gaudi::Deployment.new($configuration.deployment,$configuration)
+  graph_deployment(deployment,$configuration)
 end
 
 desc "Lists all deployments"
