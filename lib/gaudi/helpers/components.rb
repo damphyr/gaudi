@@ -107,6 +107,7 @@ module Gaudi
   end
   #A Gaudi::Program is a collection of components built for a specific platform.
   class Program<Component
+    attr_reader :deployment_name
     def initialize config_file,deployment_name,system_config,platform
       @parent=self
       @configuration=Configuration::BuildConfiguration.load([config_file])
@@ -116,7 +117,7 @@ module Gaudi
       @directories= Rake::FileList.new
       @test_directories= determine_test_directories(@directories)
       @config_files= Rake::FileList[config_file]
-      @deployment=deployment_name
+      @deployment_name=deployment_name
     end
     #External (additional) libraries the Program depends on.
     def external_libraries
