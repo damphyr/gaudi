@@ -95,9 +95,9 @@ module Gaudi
             options= compiler_options(src,component,system_config)
           end
         end
-        cmd_file=command_file(src,system_config,component.platform)
-        write_file(cmd_file,options.join("\n"))
         t=object_file(src,component,system_config)
+        cmd_file=command_file(t,system_config,component.platform)
+        write_file(cmd_file,options.join("\n"))
         file t => object_task_dependencies(src,component,system_config)
       end
       #:nodoc:

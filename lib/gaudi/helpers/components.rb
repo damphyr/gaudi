@@ -13,19 +13,13 @@ module Gaudi
     include Gaudi::PlatformOperations
     #Returns the path to the file containing the commands for the given target
     def command_file tgt,system_config,platform
-      ext="_#{platform}"
+      ext=""
       if is_library?(tgt,system_config,platform)
-        ext<<".library"
+        ext<<"_#{platform}.library"
       elsif is_exe?(tgt,system_config,platform)
-        ext<<".link"
-      elsif is_source?(tgt)
-        if is_assembly?(tgt)
-          ext<<'.assemble'
-        else
-          ext<<'.compile'
-        end
+        ext<<"_#{platform}.link"
       else
-        raise GaudiError,"Don't know how to name a command file for #{tgt}"
+          ext<<'.breadcrumb'
       end
       return tgt.pathmap("%X#{ext}")
     end

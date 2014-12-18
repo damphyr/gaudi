@@ -27,9 +27,9 @@ class TestStandardPaths < MiniTest::Unit::TestCase
     cmd_file=command_file(lib,system_config,'gcc')
     assert(cmd_file.end_with?('.library'), "Not a librarian cmd file.")
     cmd_file=command_file("foo.c",system_config,component.platform)
-    assert(cmd_file.end_with?('.compile'), "Not a compiler cmd file.")
+    assert(cmd_file.end_with?('.breadcrumb'), "Not a compiler cmd file.")
     cmd_file=command_file("foo.asm",system_config,component.platform)
-    assert(cmd_file.end_with?('.assemble'), "Not a compiler cmd file.")
+    assert(cmd_file.end_with?('.breadcrumb'), "Not a compiler cmd file.")
   end
 end
 

@@ -31,7 +31,7 @@ class TestTaskGenerators < MiniTest::Unit::TestCase
     system_config=system_configuration_mock
     component=Gaudi::Component.new('FOO',system_config,'mingw')
     deps=component_task_dependencies(component,system_config)
-    assert_equal(2, deps.size)
+    assert_equal(4, deps.size)
   end
 
   def test_object_dependencies
@@ -39,7 +39,7 @@ class TestTaskGenerators < MiniTest::Unit::TestCase
     system_config.stubs(:extensions).returns(['.o','.a','.e'])
     component=Gaudi::Component.new('FOO',system_config,'mingw')
     deps=object_task_dependencies(component.sources.first,component,system_config)
-    assert_equal(3, deps.size)
+    assert_equal(5, deps.size)
     assert(deps.include?(component.sources.first))
   end
 

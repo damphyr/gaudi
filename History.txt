@@ -1,9 +1,13 @@
+#0.8.0
+ * Breadcrumb files for compilation no longer created next to the sources (created next to the output)
+ * Breadcrumb extension is now .breadcrumb in the generic case (.link and .library are still used)
+
 #0.7.9
  * Expose the name of the deployment in a Gaudi::Program instance
  * Bugfix in graph:deployment
 #0.7.8
  * Allow quotes in paths within configuration parameters
-#0.7.7
+#0.7.7 
  * Component dependencies now include all headers not just the public ones
 #0.7.6
  * .s are assembly files

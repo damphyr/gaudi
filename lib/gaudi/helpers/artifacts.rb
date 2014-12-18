@@ -35,11 +35,11 @@ module Gaudi
       include Gaudi::PlatformOperations
       #Compiles a source file from a previously constructed command file
       def compile filetask,system_config,platform
-        cmd_file=command_file(filetask.prerequisites.first,system_config,platform)
+        cmd_file=command_file(filetask.name,system_config,platform)
         if File.exists?(cmd_file)
           mkdir_p(File.dirname(filetask.name))
           config=system_config.platform_config(platform)
-          if cmd_file.end_with?('.assemble')
+          if is_assembly?(filetask.prerequisites.first)
             cmdline = assembler(cmd_file,config)
           else
             cmdline = compiler(cmd_file,config)
