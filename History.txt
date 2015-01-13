@@ -1,3 +1,5 @@
+#0.8.1
+ * Gaudi::Program now looks for sources in a like-named code component
 #0.8.0
  * Breadcrumb files for compilation no longer created next to the sources (created next to the output)
  * Breadcrumb extension is now .breadcrumb in the generic case (.link and .library are still used)

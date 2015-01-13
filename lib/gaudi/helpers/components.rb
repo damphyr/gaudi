@@ -108,7 +108,11 @@ module Gaudi
       @name=@identifier= configuration.prefix
       @system_config= system_config
       @platform= platform
-      @directories= Rake::FileList.new
+      begin
+        @directories= determine_directories(@name,system_config.source_directories,platform)
+      rescue GaudiError
+        @directories= FileList.new
+      end
       @test_directories= determine_test_directories(@directories)
       @config_files= Rake::FileList[config_file]
       @deployment_name=deployment_name
