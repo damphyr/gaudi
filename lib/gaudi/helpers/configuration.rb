@@ -11,7 +11,7 @@ module Gaudi
       cfg_file=File.expand_path()
       ENV['GAUDI_CONFIG']=cfg_file
       puts "Reading main configuration from \n\t#{cfg_file}"
-      system_config=SystemConfiguration.new(cfg_file)
+      system_config=SystemConfiguration.new(cfg_file)s
       return system_config
     else
       raise "No configuration file (GAUDI_CONFIG is empty)"
@@ -48,13 +48,15 @@ module Gaudi
     def self.switch_platform_configuration configuration_file,system_config,platform
       if block_given?
         begin
+          puts "Switching platform configuration for #{platform} to #{configuration_file}"
           current_config=system_config.platform_config(platform)
-          new_cfg=system_config.read_configuration(configuration_file,[],[])
-          system_config.set_platform_config(new_cfg,platform)
+          new_cfg_data=system_config.read_configuration(configuration_file,*system_config.keys)
+          system_config.set_platform_config(PlatformConfiguration.new(platform,new_cfg_data),platform)
           yield
         rescue
           raise
         ensure
+          puts "Switching back platform configuration for #{platform}"
           system_config.set_platform_config(current_config,platform)
         end
       end
