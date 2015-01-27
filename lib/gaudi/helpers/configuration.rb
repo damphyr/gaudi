@@ -11,7 +11,7 @@ module Gaudi
       cfg_file=File.expand_path()
       ENV['GAUDI_CONFIG']=cfg_file
       puts "Reading main configuration from \n\t#{cfg_file}"
-      system_config=SystemConfiguration.new(cfg_file)s
+      system_config=SystemConfiguration.new(cfg_file)
       return system_config
     else
       raise "No configuration file (GAUDI_CONFIG is empty)"
