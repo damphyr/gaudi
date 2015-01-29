@@ -28,6 +28,18 @@ class TestLoader < MiniTest::Unit::TestCase
     assert(!cfg.config.empty?, "Configuration should not be empty")
     assert_equal('bar', cfg.config['foo'])
   end
+  def test_property_reference
+    config=mock_configuration('system.cfg',['foo=bar','bar=%{foo}'])
+    cfg=Gaudi::Configuration::Loader.new(config)
+    assert(!cfg.config.empty?, "Configuration should not be empty")
+    assert_equal('bar', cfg.config['foo'])
+  end
+  def test_property_self_reference
+    config=mock_configuration('system.cfg',['foo=bar','foo=%{foo}*%{foo}'])
+    cfg=Gaudi::Configuration::Loader.new(config)
+    assert(!cfg.config.empty?, "Configuration should not be empty")
+    assert_equal('bar*bar', cfg.config['foo'])
+  end
   def test_environment
     config=mock_configuration('system.cfg',['setenv GAUDI = brilliant builder'])
     Gaudi::Configuration::Loader.new(config)
@@ -168,6 +180,12 @@ class TestBuildConfiguration < MiniTest::Unit::TestCase
     assert_equal(['foo.lib','bar.lib'],cfg.libs(system_cfg,'gcc'))
   end
 
+  def test_property_reference
+    config=mock_configuration('build.cfg',['prefix=TST','deps=COD,MOD','incs= ./inc','compiler_options= -DMODULE=%{prefix}'])
+    cfg=Gaudi::Configuration::BuildConfiguration.load([config])
+    assert_equal('-DMODULE=TST',cfg.option('compiler_options'))
+  end
+  
   def test_load
     config=mock_configuration('build.cfg',['prefix=TST','deps=COD,MOD','incs= ./inc','libs= foo.lib,bar.lib'])
     assert_raises(GaudiConfigurationError) { Gaudi::Configuration::BuildConfiguration.load([])}

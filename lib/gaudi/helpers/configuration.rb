@@ -48,13 +48,15 @@ module Gaudi
     def self.switch_platform_configuration configuration_file,system_config,platform
       if block_given?
         begin
+          puts "Switching platform configuration for #{platform} to #{configuration_file}"
           current_config=system_config.platform_config(platform)
-          new_cfg=system_config.read_configuration(configuration_file,[],[])
-          system_config.set_platform_config(new_cfg,platform)
+          new_cfg_data=system_config.read_configuration(configuration_file,*system_config.keys)
+          system_config.set_platform_config(PlatformConfiguration.new(platform,new_cfg_data),platform)
           yield
         rescue
           raise
         ensure
+          puts "Switching back platform configuration for #{platform}"
           system_config.set_platform_config(current_config,platform)
         end
       end
@@ -175,7 +177,7 @@ module Gaudi
               elsif /^import\s+(?<path>.*)/ =~ l
                 cfg.merge!(import_config(path,cfg_dir))
               elsif /^(?<key>.*?)\s*=\s*(?<v>.*)/ =~ l
-                cfg[key]=handle_key(key,v,cfg_dir,list_keys,path_keys)
+                cfg[key]=handle_key(key,v,cfg_dir,list_keys,path_keys,cfg)
               else
                 raise GaudiConfigurationError,"Configuration syntax error in #{filename}:\n'#{l}'"
               end
@@ -203,8 +205,11 @@ module Gaudi
       #in the format we want to have.
       #
       #This means keys in list_keys come back as an Array, keys in path_keys come back as full paths
-      def handle_key key,value,cfg_dir,list_keys,path_keys
+      def handle_key key,value,cfg_dir,list_keys,path_keys,cfg
         final_value=value
+        # replace %{symbol} with values from already existing config values
+        final_value=final_value % Hash[cfg.map{|k,v| [k.to_sym,v]}] if final_value.include? "%{"
+
         if list_keys.include?(key) && path_keys.include?(key)
           final_value=Rake::FileList[*(value.gsub(/\s*,\s*/,',').split(',').uniq.map{|d| absolute_path(d.strip,cfg_dir)})]
         elsif list_keys.include?(key)
