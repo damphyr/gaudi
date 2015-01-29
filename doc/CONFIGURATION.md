@@ -20,6 +20,24 @@ setenv FOO=bar
 import ./extra_options.cfg
 ```
 
+Property values can use earlier defined properties as variables within their value with a simple percentage syntax. Example:
+
+```bash
+# Set some properties
+appname=MyApplication
+version_major=1
+version_minor=3
+# Use already defined properties within other properties
+version_string=%{appname} %{version_major}.%{version_minor}
+```
+This will also work when reassign a the value of an already existing property. Example
+```bash
+path=/bin;/usr/bin;/usr/local/bin
+# prepend something to path
+path=/home/myuser/bin;%{path}
+```
+
+
 Extending the available configuration properties is done by adding modules to Gaudi::Configuration::SystemModules (for more details check [EXTENDING](EXTENDING.md))
 
 ### Precedence order
