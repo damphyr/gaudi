@@ -1,3 +1,6 @@
+#0.9.0
+ * Allow interpolation of values in configuration files with %{value}
+
 #0.8.1
  * Gaudi::Program now looks for sources in a like-named code component
 #0.8.0
