@@ -8,10 +8,9 @@ module Gaudi
   def self.configuration
     if ENV['GAUDI_CONFIG']
       #Load the system configuration
-      cfg_file=File.expand_path()
-      ENV['GAUDI_CONFIG']=cfg_file
-      puts "Reading main configuration from \n\t#{cfg_file}"
-      system_config=SystemConfiguration.new(cfg_file)
+      ENV['GAUDI_CONFIG']=File.expand_path(ENV['GAUDI_CONFIG'])
+      puts "Reading main configuration from \n\t#{ENV['GAUDI_CONFIG']}"
+      system_config=Configuration::SystemConfiguration.new(ENV['GAUDI_CONFIG'])
       return system_config
     else
       raise "No configuration file (GAUDI_CONFIG is empty)"
