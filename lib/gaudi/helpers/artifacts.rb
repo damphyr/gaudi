@@ -37,7 +37,7 @@ module Gaudi
       def compile filetask,system_config,platform
         cmd_file=command_file(filetask.name,system_config,platform)
         if File.exists?(cmd_file)
-          mkdir_p(File.dirname(filetask.name))
+          mkdir_p(File.dirname(filetask.name),:verbose=>false)
           config=system_config.platform_config(platform)
           if is_assembly?(filetask.prerequisites.first)
             cmdline = assembler(cmd_file,config)
