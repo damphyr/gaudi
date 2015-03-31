@@ -192,7 +192,7 @@ module Gaudi
       def required_path fname
         if fname && !fname.empty?
           if File.exists?(fname)
-            return fname
+            return File.expand_path(fname)
           else
             raise GaudiConfigurationError, "Missing required file #{fname}"
           end
@@ -229,7 +229,7 @@ module Gaudi
       #:nodoc:
       def absolute_path path,cfg_dir
         if Pathname.new(path.gsub("\"","")).absolute?
-          path
+          File.expand_path(path)
         else
           File.expand_path(File.join(cfg_dir,path))
         end
@@ -485,14 +485,29 @@ module Gaudi
     #For each set of sources we identify as a unit/component/group BuildConfiguration corresponds
     #to the configuration file that describe the dependencies to the rest of the system.
     class BuildConfiguration<Loader
+      attr_writer :configuration_files,:config
       #I guess this is what you call a Factory Method?
       def self.load configuration_files
-        super(configuration_files,self)
+        cfg=nil
+        configuration_files.each do |cfg_file|
+          if cfg
+            cfg.merge(cfg_file)
+          else
+            ld=Loader.new(cfg_file)
+            raise GaudiConfigurationError, "No prefix in configuration #{cfg_file}" unless ld.config['prefix']
+            cfg=BuildConfiguration.new(ld.config['prefix'])
+            cfg.merge(cfg_file)
+            cfg.configuration_files<<cfg_file
+          end
+        end
+        raise GaudiConfigurationError, "No BuildConfiguration configuration files in '#{configuration_files}'" unless cfg
+        return cfg
       end
 
-      def initialize filename
-        super(filename)
-        raise GaudiConfigurationError,"Missing prefix= option in '#{filename}'" if prefix.empty?
+      def initialize prefix
+        @config={'prefix'=>prefix}
+        @configuration_files=Rake::FileList.new  
+        keys   
       end
 
       def keys

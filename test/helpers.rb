@@ -1,8 +1,8 @@
 module TestHelpers
   def mock_configuration filename,lines
     fname=File.join(File.dirname(__FILE__),filename)
-    File.expects(:exists?).with(fname).returns(true)
-    File.expects(:readlines).with(fname).returns(lines)
+    File.stubs(:exists?).with(fname).returns(true)
+    File.stubs(:readlines).with(fname).returns(lines)
     fname
   end
   def directory_fixture

@@ -57,8 +57,8 @@ class TestSystemConfiguration < MiniTest::Unit::TestCase
   def test_basic_configuration
     config=mock_configuration('system.cfg',['base=.','out=out/'])
     cfg=Gaudi::Configuration::SystemConfiguration.new(config)
-    assert_equal(File.dirname(__FILE__), cfg.base_dir)
-    assert_equal(File.join(File.dirname(__FILE__),'out'), cfg.out_dir)
+    assert_equal(File.expand_path(File.dirname(__FILE__)), cfg.base_dir)
+    assert_equal(File.expand_path(File.join(File.dirname(__FILE__),'out')), cfg.out_dir)
   end
 
   def test_load
@@ -160,23 +160,22 @@ class TestBuildConfiguration < MiniTest::Unit::TestCase
   include TestHelpers
   def test_empty_configuration
     config=mock_configuration('build.cfg',[])
-    assert_raises(GaudiConfigurationError) {  Gaudi::Configuration::BuildConfiguration.new(config) }
+    assert_raises(GaudiConfigurationError) {  p Gaudi::Configuration::BuildConfiguration.load([config]) }
   end
 
   def test_basic_configuration
     system_cfg=mock('system')
     system_cfg.stubs(:config_base).returns(File.dirname(__FILE__))
     config=mock_configuration('build.cfg',['prefix=TST','deps=COD,MOD','incs= ./inc','libs= foo,bar','compiler_options= FOO BAR'])
-    
-    cfg=Gaudi::Configuration::BuildConfiguration.new(config)
+    cfg=Gaudi::Configuration::BuildConfiguration.load([config])
     assert_equal('TST', cfg.prefix)
     assert_equal(['COD','MOD'],cfg.deps)
-    assert_equal(["#{File.dirname(__FILE__)}/inc"],cfg.incs)
+    assert_equal(["#{File.expand_path(File.dirname(__FILE__))}/inc"],cfg.incs)
     assert_equal('FOO BAR', cfg.option('compiler_options'))
 
     system_cfg.expects(:external_libraries_config).returns({'foo'=>'foo.lib','bar'=>'bar.lib'})
-    File.expects(:exists?).with(File.join(File.dirname(__FILE__),'foo.lib')).returns(false)
-    File.expects(:exists?).with(File.join(File.dirname(__FILE__),'bar.lib')).returns(false)
+    File.expects(:exists?).with(File.expand_path(File.join(File.dirname(__FILE__),'foo.lib'))).returns(false)
+    File.expects(:exists?).with(File.expand_path(File.join(File.dirname(__FILE__),'bar.lib'))).returns(false)
     assert_equal(['foo.lib','bar.lib'],cfg.libs(system_cfg,'gcc'))
   end
 

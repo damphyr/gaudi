@@ -1,3 +1,7 @@
+#0.10.0
+ * Allow for missing build.cfg files
+ * Returned paths are now absolute
+ 
 #0.9.2
  * Log reduction
 #0.9.1
