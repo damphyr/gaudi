@@ -46,7 +46,7 @@ module Gaudi
       @test_directories= determine_test_directories(@directories)
       @config_files= Rake::FileList[*directories.pathmap('%p/build.cfg')].existing
       if @config_files.empty? 
-        raise GaudiConfigurationError,"No configuration files for #{name}" unless @configuration
+        @configuration = Configuration::BuildConfiguration.new(name)
       else
         @configuration = Configuration::BuildConfiguration.load(@config_files)
       end
