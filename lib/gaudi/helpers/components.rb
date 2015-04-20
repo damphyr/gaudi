@@ -64,7 +64,7 @@ module Gaudi
     end
     #The headers the component exposes
     def interface
-      Rake::FileList[*interface_paths.pathmap("%p/**/*#{@system_config.header_extensions(platform)}")]
+      Rake::FileList[*interface_paths.pathmap("%p/**/*{#{@system_config.header_extensions(platform)}}")]
     end
     #The include paths for this Component
     def interface_paths

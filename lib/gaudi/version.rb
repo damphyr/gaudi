@@ -6,7 +6,7 @@ module Gaudi
     #Minor version
     MINOR=10
     #Tiny version
-    TINY=2
+    TINY=3
     #All-in-one
     STRING=[MAJOR,MINOR,TINY].join('.')
   end

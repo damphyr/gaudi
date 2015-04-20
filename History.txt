@@ -1,3 +1,5 @@
+#0.10.3
+ * Bugfix Gaudi::COmponent#interface now handles multiple header extensions correctly
 #0.10.2
  * Actually allow a Component to instantiate with no build.cfg
 #0.10.1
