@@ -1,6 +1,6 @@
 # Gaudi - A Builder [![Build Status](https://travis-ci.org/damphyr/gaudi.png)](https://travis-ci.org/damphyr/gaudi) [![Coverage Status](https://coveralls.io/repos/damphyr/gaudi/badge.png)](https://coveralls.io/r/damphyr/gaudi) [![Code Climate](https://codeclimate.com/github/damphyr/gaudi.png)](https://codeclimate.com/github/damphyr/gaudi) [![doc status](http://inch-ci.org/github/damphyr/gaudi.svg?branch=master)](http://inch-ci.org/github/damphyr/gaudi)
 
-tl:dr; Go to the [documentation](doc/README.md) 
+tl:dr; Go to the [documentation](http://www.rubydoc.info/github/damphyr/gaudi/master/index) 
 
 This is not a gem<sup>1</sup> nor is it a library. It's more like a bootstrap for creating a build system for C or C++ based projects using rake.
 
