@@ -430,12 +430,17 @@ module Gaudi
     module BuildModules
       #Configuration directoves for simple components
       module ComponentConfiguration
+        #:stopdoc:
         def self.list_keys
           ['deps','incs']
         end
         def self.path_keys
           ['incs']
         end
+        #:startdoc:
+        #The prefix is the name of the component
+        #
+        #It's called prefix for historical reasons ;)
         def prefix
           return @config.fetch('prefix',"")
         end
@@ -459,12 +464,14 @@ module Gaudi
       #For a Gaudi::Program instance these are added in addition to the ComponentConfiguration directives
       module ProgramConfiguration
         include ConfigurationOperations
+        #:stopdoc:
         def self.list_keys
           ['libs','resources','shared_deps']
         end
         def self.path_keys
           ['resources']
         end
+        #:startdoc:
         #A list of library files to be added when linking
         #
         #Relative paths are interpreted relative to the configuration file's location
