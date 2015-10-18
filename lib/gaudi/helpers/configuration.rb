@@ -304,12 +304,14 @@ module Gaudi
       #The absolute basics for configuration
       module BaseConfiguration
         include ConfigurationOperations
+        #:stopdoc:
         def self.list_keys
           ['platforms','sources']
         end
         def self.path_keys
           ['base','out','sources']
         end
+        #:startdoc:
         #The root path.
         #Every path in the system can be defined relative to this
         def base
@@ -332,10 +334,13 @@ module Gaudi
           return @config['platform_data'][platform]
         end
         #Sets the platform configuration hash
+        #
+        #The standard platform specific configuration options
+        #are described in PlatformConfiguration
         def set_platform_config(platform_data,platform)
           @config['platform_data'][platform]=platform_data
         end
-
+        #Returns the file extensions for the given platform
         def extensions platform
           if @config['platform_data'].keys.include?(platform)
             return @config['platform_data'][platform].extensions
@@ -351,17 +356,19 @@ module Gaudi
       #Platform configuration methods that proide more control over the raw Hash platform data
       module PlatformConfiguration
         include ConfigurationOperations
+        #:stopdoc:
         def self.list_keys
           []
         end
         def self.path_keys
           []
         end
-
+        #:startdoc:
+        #Source file extensions
         def source_extensions platform
           return platform_config(platform)['source_extensions'].gsub(', ',',')
         end
-
+        #Header file extensions
         def header_extensions platform
           return platform_config(platform)['header_extensions'].gsub(', ',',')
         end
