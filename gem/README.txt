@@ -7,7 +7,8 @@ This gem provides setup, scaffolding and maintenance functions for [gaudi](http:
 ## USAGE
 
 gaudi -s project/root to create a directory structure for a Gaudi based project 
-
+gaudi -u project/root to update an existing Gaudi installation
+    
 ## INSTALL:
 
 * (sudo) gem install gaudi
