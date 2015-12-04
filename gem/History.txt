@@ -1,3 +1,6 @@
+#0.2.4
+* Fix bug when project root contains spaces
+* DRYed the code
 #0.2.3
 * Check for git presence before removing old install when updating
 * Check for git presence before attempting to create a new project
