@@ -11,6 +11,8 @@ module Gaudi
   class Gem
     MAIN_CONFIG="system.cfg"
     PLATFORM_CONFIG="foo.cfg"
+    REPO="https://github.com/damphyr/gaudi"
+
     attr_reader :project_root,:gaudi_home
     #:nodoc:
     def self.options arguments
@@ -82,7 +84,7 @@ module Gaudi
       rakefile
       main_config
       platform_config
-      gaudi(version)
+      core(version)
     end
 
     def update version
@@ -112,9 +114,9 @@ module Gaudi
         puts "Rakefile exists, skipping generation"
       else
         rakefile_content=<<-EOT
-  require_relative 'tools/build/lib/gaudi'
-  env_setup(File.dirname(__FILE__))
-  require_relative 'tools/build/lib/gaudi/tasks'
+require_relative 'tools/build/lib/gaudi'
+env_setup(File.dirname(__FILE__))
+require_relative 'tools/build/lib/gaudi/tasks'
         EOT
         File.open(rakefile, 'wb') {|f| f.write(rakefile_content) }
       end
@@ -142,47 +144,39 @@ module Gaudi
       end
     end
     #:nodoc:
-    def gaudi(version)
+    def core(version)
       Dir.mktmpdir do |tmp|
-        if File.exists?('gaudi')
-          FileUtils.rm_rf('gaudi')
-        end
-        if system "git clone https://github.com/damphyr/gaudi #{tmp}/gaudi"
-          Dir.chdir("#{tmp}/gaudi") do |d|
-            puts "Packing #{version} gaudi version"
-            cmdline="git archive --format=tar -o #{project_root}/gaudilib.tar #{version} lib/"
-            system(cmdline)
-          end
-          puts "Unpacking in #{gaudi_home}"
-          Dir.chdir(project_root) do |d|
-            Archive::Tar::Minitar.unpack(File.join(project_root,'gaudilib.tar'), 'tools/build')
-          end
-          FileUtils.rm_rf(File.join(project_root,'gaudilib.tar'))
-          FileUtils.rm_rf(File.join(project_root,'tools/build/pax_global_header'))
+        if pull_from_repo(tmp)
+          pkg=archive(version,File.join(tmp,"gaudi"),project_root)
+          unpack(pkg,gaudi_home)
         else
-          raise Error, "Cloning the Gaudi repo failed. Check that git is on the PATH and that GitHub is accessible"
+          raise Error, "Cloning the Gaudi repo failed. Check that git is on the PATH and that #{REPO} is accessible"
         end
       end
     end
     #:nodoc:
-    def core(version)
-      Dir.mktmpdir do |tmp|
-        if File.exists?('gaudi')
-          FileUtils.rm_rf('gaudi')
-        end
-        system "git clone https://github.com/damphyr/gaudi #{tmp}/gaudi"
-        Dir.chdir("#{tmp}/gaudi") do |d|
-          puts "Packing #{version} gaudi version"
-          cmdline="git archive --format=tar -o #{project_root}/gaudicore.tar #{version} lib/gaudi"
-          system(cmdline)
-        end
-        puts "Unpacking core in #{gaudi_home}/lib/gaudi"
-        Dir.chdir(project_root) do |d|
-          Archive::Tar::Minitar.unpack(File.join(project_root,'gaudicore.tar'), 'tools/build')
-        end
-        FileUtils.rm_rf(File.join(project_root,'gaudicore.tar'))
-        FileUtils.rm_rf(File.join(project_root,'tools/build/pax_global_header'))
+    def pull_from_repo tmp
+      FileUtils.rm_rf('gaudi') if File.exists?('gaudi')
+      system "git clone #{REPO} \"#{tmp}/gaudi\""
+    end
+    #:nodoc:
+    def archive version,clone_path,prj_root
+      pkg=File.expand_path(File.join(prj_root,"gaudipkg.tar"))
+      Dir.chdir(clone_path) do |d|
+        puts "Packing #{version} gaudi version in #{pkg}"
+        cmdline="git archive --format=tar -o \"#{pkg}\" #{version} lib/gaudi"
+        system(cmdline)
       end
+      return pkg
+    end
+    #:nodoc:
+    def unpack pkg,home
+      puts "Unpacking in #{home}"
+      Dir.chdir(home) do |d|
+        Archive::Tar::Minitar.unpack(pkg, home)
+      end
+      FileUtils.rm_rf(pkg)
+      FileUtils.rm_rf(File.join(home,'pax_global_header'))
     end
   end
 end
