@@ -84,7 +84,7 @@ module Gaudi
       rakefile
       main_config
       platform_config
-      core(version)
+      core(version,"lib")
     end
 
     def update version
@@ -92,7 +92,7 @@ module Gaudi
       check_for_git
       puts "Removing old gaudi installation"
       FileUtils.rm_rf(File.join(gaudi_home,"lib/gaudi"))
-      core(version)
+      core(version,"lib/gaudi lib/gaudi.rb")
     end
     #:nodoc:
     def check_for_git
@@ -144,10 +144,10 @@ require_relative 'tools/build/lib/gaudi/tasks'
       end
     end
     #:nodoc:
-    def core(version)
+    def core(version,lib_items)
       Dir.mktmpdir do |tmp|
         if pull_from_repo(tmp)
-          pkg=archive(version,File.join(tmp,"gaudi"),project_root)
+          pkg=archive(version,File.join(tmp,"gaudi"),project_root,lib_items)
           unpack(pkg,gaudi_home)
         else
           raise Error, "Cloning the Gaudi repo failed. Check that git is on the PATH and that #{REPO} is accessible"
@@ -160,11 +160,11 @@ require_relative 'tools/build/lib/gaudi/tasks'
       system "git clone #{REPO} \"#{tmp}/gaudi\""
     end
     #:nodoc:
-    def archive version,clone_path,prj_root
+    def archive version,clone_path,prj_root,lib_items
       pkg=File.expand_path(File.join(prj_root,"gaudipkg.tar"))
       Dir.chdir(clone_path) do |d|
         puts "Packing #{version} gaudi version in #{pkg}"
-        cmdline="git archive --format=tar -o \"#{pkg}\" #{version} lib/gaudi"
+        cmdline="git archive --format=tar -o \"#{pkg}\" #{version} #{lib_items}"
         system(cmdline)
       end
       return pkg
