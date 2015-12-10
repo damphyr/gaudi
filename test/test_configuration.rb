@@ -73,9 +73,9 @@ class TestSystemConfiguration < MiniTest::Unit::TestCase
     platform_cfg=File.join(File.dirname(__FILE__),'foo.cfg')
     File.expects(:exists?).with(platform_cfg).returns(true)
     File.expects(:readlines).with(platform_cfg).returns(platform_config_test_data+['bar=foo'])
-    cfg=Gaudi::Configuration::SystemConfiguration.load([config])
+    cfg=Gaudi::Configuration::SystemConfiguration.load([config])  
     assert_equal(['foo'], cfg.platforms)
-    assert_equal({"source_extensions"=>".c,.cpp", "header_extensions"=>".h",
+    assert_equal({"source_directories"=>"common,foo","source_extensions"=>".c,.cpp", "header_extensions"=>".h",
         "object_extension"=>".o", "library_extension"=>".so", "executable_extension"=>".e","libs"=>"", "lib_cfg"=>"libs.yml","bar"=>"foo",
         'compiler_options'=>'-c','assembler_options'=>'-a','library_options'=>'-l','linker_options'=>'-e'}, cfg.platform_config('foo'))
   end

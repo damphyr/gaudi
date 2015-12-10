@@ -59,7 +59,7 @@ rake task FOO=bar
 Gaudi supports a set of environment variables as a way for passing options and exposes these as attributes of the system configuration
 
  * GAUDI_CONFIG - points to the cofniguration file. This needs to be set, Gaudi will exit with an error if it's empty or the file does not exist
- * DEPLOYMENT - passes the deployment name 
+ * DEPLOYMENT - passes the deployment name
  * COMPONENT - passes the component name
  * USER - passes the user name
 
@@ -102,46 +102,50 @@ header_extensions= .h #comma separated list of file extensions
 object_extension= .o #single entry
 library_extension= .so #single entry
 executable_extension= .e #single entry
+#The source subdirectories to use when combining code components
+#
+#By default this is common and the name of the platform
+source_directories=common,foo
 ######Compiler settings
 #Compiler executable (gcc etc.)
-compiler= 
+compiler=
 #command line options for the compiler (-o2 etc.)
-compiler_options= 
+compiler_options=
 #Output flag
 compiler_out=
-#Command file flag (to make the compiler read the prameters from a file) 
-compiler_commandfile_prefix= 
+#Command file flag (to make the compiler read the prameters from a file)
+compiler_commandfile_prefix=
 #Include path flag
-compiler_include= 
+compiler_include=
 #### Basically the set above is repeated the for the linker (libraries and executables) and the assembler
 #####Assembler settings
-assembler= 
-assembler_options= 
-assembler_commandfile_prefix= 
-assembler_out= 
-assembler_include= 
+assembler=
+assembler_options=
+assembler_commandfile_prefix=
+assembler_out=
+assembler_include=
 #####Settings for linking libraries
-librarian= 
-library_options= 
-library_in= 
-library_out= 
-library_commandfile_prefix= 
+librarian=
+library_options=
+library_in=
+library_out=
+library_commandfile_prefix=
 #####Settings for linking executables
-linker= 
-linker_options= 
+linker=
+linker_options=
 #input files flag (some linkers do have it. You prefix every object file with it, yes you do)
-linker_in= 
+linker_in=
 linker_out=
 #Flag for dynamically linked libraries
-linker_lib= 
-linker_commandfile_prefix= 
+linker_lib=
+linker_commandfile_prefix=
 ```
 
 ### Third party
 
-It gets a bit more complicated. In many projects it is not uncommon to use third party libraries, which sometimes are only available in binary form. These libraries are accompanied by headers and the whole thing needs to be integrated somehow. 
+It gets a bit more complicated. In many projects it is not uncommon to use third party libraries, which sometimes are only available in binary form. These libraries are accompanied by headers and the whole thing needs to be integrated somehow.
 
-So in each platform configuration you can use 
+So in each platform configuration you can use
 
 ```bash
 #A comma separated list of paths to use as include paths
@@ -160,7 +164,7 @@ foo: lib/foo/foo.lib
 bar: lib/bar/bar.lib
 ```
 
-Now this might seem one layer of abstraction too much at first glance. It comes in handy if for example you use GCC and decide to use the system libraries. In that case you will set linker_lib=-l and then you can add 
+Now this might seem one layer of abstraction too much at first glance. It comes in handy if for example you use GCC and decide to use the system libraries. In that case you will set linker_lib=-l and then you can add
 
 ```yaml
 ---

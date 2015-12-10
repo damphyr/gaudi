@@ -1,5 +1,9 @@
+#0.11.0
+ * Allow multiple source subdirectories per platform configuration
+ * Allow compiler options specific to the file extension
+
 #0.10.3
- * Bugfix Gaudi::COmponent#interface now handles multiple header extensions correctly
+ * Bugfix Gaudi::Component#interface now handles multiple header extensions correctly
 #0.10.2
  * Actually allow a Component to instantiate with no build.cfg
 #0.10.1
@@ -26,7 +30,7 @@
  * Bugfix in graph:deployment
 #0.7.8
  * Allow quotes in paths within configuration parameters
-#0.7.7 
+#0.7.7
  * Component dependencies now include all headers not just the public ones
 #0.7.6
  * .s are assembly files
@@ -41,24 +45,24 @@
 #0.7.2
  * Removed scaffolding code (new:project task)
 #0.7.1
- * Gaudi:Component now has a reference to parent Program or Library if it exists 
+ * Gaudi:Component now has a reference to parent Program or Library if it exists
 #0.7.0
  * Platform configuration is now progressively extended by program and component configurations. Solves bugs #1 & #3
 
 #0.6.0
- * Removed command files from the dependency chain. 
+ * Removed command files from the dependency chain.
  ** This removes some buggy edge cases and has minimal performance impact. Also makes creating build rules simpler
  * switch_configuration and switch_platform_configuration are now in Gaudi::Configuration
 
 #0.5.0
  * Moved artifact naming methods over to custom/paths.rb
  * The configuration classes now enumerate all configuration files and respond to configuration_files() returning an Array
- * removed config_file from the configuration classes. Use configuration_files.first to get the main file 
+ * removed config_file from the configuration classes. Use configuration_files.first to get the main file
  * Deployments don't allow programs of the same name in the same platform
 #0.4.0
  * Binary extensions now part of the platform configuration
  * Platform configuration now shared library aware. Archiver renamed to Librarian
- 
+
 # 0.3.0
  * Source file extensions now part of the platform configuration
  * The directory structure methods are now in custom/helpers/paths.rb

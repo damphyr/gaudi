@@ -12,7 +12,7 @@ module Gaudi
     #Determine which directories correspond to the given name
     #
     #This method maps the repository directory structure to the component names
-    def determine_directories name,source_directories,platform
+    def determine_directories name,source_directories,system_config,platform
       paths=source_directories.map{|source_dir| Rake::FileList["#{source_dir}/{#{platform},common}/#{name}"].existing}.inject(&:+)
       raise GaudiError,"Cannot find source directories for '#{name}' in #{source_directories.join(',')}" if paths.empty?
       return paths
