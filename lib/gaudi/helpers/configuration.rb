@@ -546,7 +546,7 @@ module Gaudi
             current_config=system_config.platform_config(component.platform)
             #extend the platform configuration with the component configuration settings
             new_cfg=current_config.dup
-            ['compiler_options','assembler_options','library_options','linker_options'].each do |key|
+            system_config.source_extensions(component.platform).split(",").map{|ext| "compiler_options_#{ext.strip}"}+['compiler_options','assembler_options','library_options','linker_options'].each do |key|
               new_cfg[key]="#{current_config[key]} #{component.configuration.option(key)}"
             end
             system_config.set_platform_config(new_cfg,component.platform)
@@ -565,6 +565,7 @@ module Gaudi
 
       def initialize name,platform_data
         super(platform_data)
+        @name=name
         __getobj__.merge!(platform_data)
         validate
       end
@@ -576,6 +577,9 @@ module Gaudi
       def validate
         ['source_extensions','header_extensions','object_extension','library_extension','executable_extension'].each do |key|
           raise GaudiConfigurationError, "Define #{key} for platform #{name}" unless self.keys.include?(key)
+        end
+        unless self.keys.include?("source_directories")
+          self["source_directories"]="common,#{name}"
         end
       end
     end

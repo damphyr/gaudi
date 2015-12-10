@@ -42,7 +42,7 @@ module Gaudi
     attr_accessor :parent
     def initialize name,system_config,platform
       @parent=nil
-      @directories= determine_directories(name,system_config.source_directories,platform)
+      @directories= determine_directories(name,system_config.source_directories,system_config,platform)
       @test_directories= determine_test_directories(@directories)
       @config_files= Rake::FileList[*directories.pathmap('%p/build.cfg')].existing
       if @config_files.empty? 
@@ -109,7 +109,7 @@ module Gaudi
       @system_config= system_config
       @platform= platform
       begin
-        @directories= determine_directories(@name,system_config.source_directories,platform)
+        @directories= determine_directories(@name,system_config.source_directories,system_config,platform)
       rescue GaudiError
         @directories= FileList.new
       end
