@@ -6,7 +6,7 @@ require 'rubygems'
 require 'archive/tar/minitar'
 
 module Gaudi
-  class Error <RuntimeError
+  class GemError <RuntimeError
   end
   class Gem
     MAIN_CONFIG="system.cfg"
@@ -21,6 +21,7 @@ module Gaudi
       options.verbose= false
       options.scaffold= false
       options.update= false
+      options.library= false
       options.version= "HEAD"
 
       opt_parser = OptionParser.new do |opts|
@@ -39,6 +40,19 @@ module Gaudi
           options.update=true
           options.scaffold=false
         end
+        opts.on("-l", "--lib NAME URL PROJECT_PATH","Pull/Update Gaudi library from URL on project at PROJECT_PATH") do |name|
+          options.library=true
+          options.update=false
+          options.scaffold=false
+          options.lib=name
+          if ARGV.size<2
+            raise GemError, "Missing parameters!"
+          end
+          url=ARGV.shift
+          proot=ARGV.shift
+          options.url=url
+          options.project_root=File.expand_path(proot)
+        end
         opts.separator ""
         opts.separator "Common options:"
         # Boolean switch.
@@ -54,7 +68,12 @@ module Gaudi
           exit
         end
       end
-      opt_parser.parse!(arguments)
+      begin
+        opt_parser.parse!(arguments)
+      rescue GemError
+        puts $!.message
+        exit 1
+      end
       return options
     end
     #:nodoc:
@@ -65,8 +84,10 @@ module Gaudi
           Gaudi::Gem.new(opts.project_root).project(opts.version)
         elsif opts.update
           Gaudi::Gem.new(opts.project_root).update(opts.version)
+        elsif opts.library
+          Gaudi::Gem.new(opts.project_root).library(opts.lib,opts.url,opts.version)
         end
-      rescue Gaudi::Error
+      rescue Gaudi::GemError
         puts $!.message
         exit 1
       end
@@ -78,26 +99,35 @@ module Gaudi
     end
     
     def project version
-      raise Error, "#{project_root} already exists!" if File.exists?(project_root) && project_root != Dir.pwd
+      raise GemError, "#{project_root} already exists!" if File.exists?(project_root) && project_root != Dir.pwd
       check_for_git
       directory_structure
       rakefile
       main_config
       platform_config
       lib_config
-      core(version,"lib")
+      core("gaudi",REPO,version,"lib")
     end
 
     def update version
-      raise Error, "#{gaudi_home} is missing! Try creating a new Gaudi project first." unless File.exists?(gaudi_home)
+      raise GemError, "#{gaudi_home} is missing! Try creating a new Gaudi project first." unless File.exists?(gaudi_home)
       check_for_git
       puts "Removing old gaudi installation"
       FileUtils.rm_rf(File.join(gaudi_home,"lib/gaudi"))
-      core(version,"lib/gaudi lib/gaudi.rb")
+      core(version,REPO,"lib/gaudi lib/gaudi.rb")
+    end
+
+    def library lib,source_url,version
+      raise GemError, "#{gaudi_home} is missing! Try creating a new Gaudi project first." unless File.exists?(gaudi_home)
+      #check_for_git
+      puts "Removing old #{lib} installation"
+      FileUtils.rm_rf(File.join(gaudi_home,"lib/#{lib}"))
+      puts "Pulling #{version} from #{source_url}"
+      core(lib,source_url,version,"lib/#{lib}")
     end
     #:stopdoc:
     def check_for_git
-      raise Error, "Could not find git. Make sure it is in the PATH" unless system("git --version")
+      raise GemError, "Could not find git. Make sure it is in the PATH" unless system("git --version")
     end
     
     def directory_structure
@@ -144,7 +174,7 @@ require_relative 'tools/build/lib/gaudi/tasks'
         File.open(config_file, 'wb') {|f| f.write(configuration_content) }
       end
     end
-
+    
     def lib_config
       puts "Generating example library configuration file"
       config_file=File.join(project_root,"tools/build/libs.yaml")
@@ -156,20 +186,20 @@ require_relative 'tools/build/lib/gaudi/tasks'
       end
     end
 
-    def core(version,lib_items)
+    def core(lib,url,version,lib_items)
       Dir.mktmpdir do |tmp|
-        if pull_from_repo(tmp)
+        if pull_from_repo(url,tmp)
           pkg=archive(version,File.join(tmp,"gaudi"),project_root,lib_items)
           unpack(pkg,gaudi_home)
         else
-          raise Error, "Cloning the Gaudi repo failed. Check that git is on the PATH and that #{REPO} is accessible"
+          raise GemError, "Cloning the Gaudi repo failed. Check that git is on the PATH and that #{REPO} is accessible"
         end
       end
     end
 
-    def pull_from_repo tmp
+    def pull_from_repo repository,tmp
       FileUtils.rm_rf('gaudi') if File.exists?('gaudi')
-      system "git clone #{REPO} \"#{tmp}/gaudi\""
+      system "git clone #{repository} \"#{tmp}/gaudi\""
     end
     
     def archive version,clone_path,prj_root,lib_items
