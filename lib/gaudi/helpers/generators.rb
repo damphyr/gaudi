@@ -119,4 +119,36 @@ module Gaudi
       end
     end
   end
+
+  module Rules
+    module Build
+      #Creates all rake rules for the given platform
+      def all system_config
+        system_config.platforms.each do |platform|
+          exe_build_rule(system_config,platform)
+          obj_build_rule(system_config,platform)
+        end
+      end
+      #Creates a rake rule for executables files of the given platform
+      def executable system_config,platform
+        platform_config=system_config.platform_config(platform)
+        _,_,exe=platform_config.extensions
+
+        rule(/#{platform}\/.*\.#{exe}/) do |t|
+          include Gaudi::ArtifactAdapters::Build
+          build(t,system_config,platform)
+        end
+      end
+      #Creates a rake rule for object files of the given platform
+      def object system_config,platform
+        platform_config=system_config.platform_config(platform)
+        obj,_,_=platform_config.extensions
+
+        rule(/#{platform}\/.*\.#{obj}/) do |t|
+          include Gaudi::ArtifactAdapters::Build
+          build(t,system_config,platform)
+        end
+      end
+    end
+  end
 end
