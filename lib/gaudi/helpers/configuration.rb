@@ -1,4 +1,5 @@
 require_relative '../version'
+require_relative 'errors'
 require 'pathname'
 require 'yaml'
 require 'delegate'
@@ -306,7 +307,7 @@ module Gaudi
         include ConfigurationOperations
         #:stopdoc:
         def self.list_keys
-          ['platforms','sources']
+          ['platforms','sources','gaudi_modules']
         end
         def self.path_keys
           ['base','out','sources']
@@ -328,6 +329,13 @@ module Gaudi
         #List of directories containing sources
         def sources
           @config["sources"].map{|d| File.expand_path(d)}
+        end
+        #A list of module names (directories) to automatically require next to core when loading Gaudi
+        #
+        #For backward compatibility reasons "custom" is always added to the list of modules
+        def gaudi_modules
+          @config["gaudi_modules"]<<"custom" unless @config["gaudi_modules"].include?("custom")
+          return @config["gaudi_modules"]
         end
         #returns the platform configuration hash
         def platform_config platform

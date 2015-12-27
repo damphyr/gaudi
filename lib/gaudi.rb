@@ -7,8 +7,6 @@ include Gaudi::Utilities
 
 #load every file you find in the helpers directory
 mass_require(Rake::FileList["#{File.join(File.dirname(__FILE__),'gaudi/helpers')}/*.rb"].exclude("utilities.rb"))
-mass_require(Rake::FileList["#{File.join(File.dirname(__FILE__),'custom/helpers')}/*.rb"])
-mass_require(Rake::FileList["#{File.join(File.dirname(__FILE__),'custom/rules')}/*.rb"])
 
 module Gaudi::Utilities
   #Reads the configuration and sets the environment up
@@ -29,6 +27,7 @@ module Gaudi::Utilities
           include Gaudi::Rules::Build
           all_rules(system_config)
         end
+        require_modules(system_config)
         $configuration=system_config
       else
         raise GaudiError,"Did not specify a configuration.\n Add GAUDI_CONFIG=path/to/config to the commandline or specify the GAUDI_CONFIG environment variable"

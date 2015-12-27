@@ -14,6 +14,13 @@ module Gaudi
         end
       end
     end
+    #Iterates over system_config.gaudi_modules and requires all files
+    def require_modules system_config
+      system_config.gaudi_modules.each do |gm|
+        mass_require(Rake::FileList["#{system_config.base}/tools/build/lib/#{gm}/helpers')}/*.rb"])
+        mass_require(Rake::FileList["#{system_config.base}/tools/build/lib/#{gm}/rules')}/*.rb"])
+      end
+    end
     #Writes a file making sure the directory is created
     def write_file filename,content
       mkdir_p(File.dirname(filename),:verbose=>false)
