@@ -1,11 +1,14 @@
-$:.unshift(File.join(File.dirname(__FILE__),'..','lib'))
+require_relative '../lib/custom/helpers/paths'
+require_relative '../lib/gaudi/helpers/generators'
 require_relative 'helpers.rb'
 require "minitest/autorun"
 require "mocha/setup"
 require "rake/file_list"
 require "gaudi"
+require "rake"
+include Rake::DSL
 
-class TestStandardPaths < MiniTest::Unit::TestCase
+class TestStandardPaths < Minitest::Test
   include Gaudi::StandardPaths
   def test_filenames
     component=mock()
@@ -33,7 +36,7 @@ class TestStandardPaths < MiniTest::Unit::TestCase
   end
 end
 
-class TestComponent< MiniTest::Unit::TestCase
+class TestComponent< Minitest::Test
   attr_reader :src_dir,:system_config
   include TestHelpers
   def setup
@@ -68,7 +71,7 @@ class TestComponent< MiniTest::Unit::TestCase
   end
 end
 
-class TestDeployment< MiniTest::Unit::TestCase
+class TestDeployment< Minitest::Test
   attr_reader :src_dir,:system_config
   include TestHelpers
   def setup

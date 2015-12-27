@@ -1,10 +1,9 @@
-$:.unshift(File.join(File.dirname(__FILE__),'..','lib'))
 require_relative 'helpers'
 require "minitest/autorun"
 require "mocha/setup"
 require "gaudi"
 
-class TestUtilities < MiniTest::Unit::TestCase
+class TestUtilities < Minitest::Test
   include TestHelpers
   def test_switch_configuration
     Gaudi::Configuration::SystemConfiguration.stubs(:load).returns([])

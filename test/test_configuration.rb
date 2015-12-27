@@ -1,10 +1,12 @@
-$:.unshift(File.join(File.dirname(__FILE__),'..','lib'))
+require_relative '../lib/custom/helpers/paths'
+require_relative '../lib/gaudi/helpers/configuration'
 require_relative 'helpers'
 require "minitest/autorun"
 require "mocha/setup"
 require "gaudi"
+require "rake"
 
-class TestLoader < MiniTest::Unit::TestCase
+class TestLoader < Minitest::Test
   include TestHelpers
   def test_empty_configuration
     config=mock_configuration('system.cfg',[])
@@ -47,7 +49,7 @@ class TestLoader < MiniTest::Unit::TestCase
   end
 end
 
-class TestSystemConfiguration < MiniTest::Unit::TestCase
+class TestSystemConfiguration < Minitest::Test
   include TestHelpers
   def test_empty_configuration
     config=mock_configuration('system.cfg',[])
@@ -157,7 +159,7 @@ class TestSystemConfiguration < MiniTest::Unit::TestCase
   end
 end
 
-class TestBuildConfiguration < MiniTest::Unit::TestCase
+class TestBuildConfiguration < Minitest::Test
   include TestHelpers
   def test_empty_configuration
     config=mock_configuration('build.cfg',[])
@@ -194,7 +196,7 @@ class TestBuildConfiguration < MiniTest::Unit::TestCase
   end
 end
 
-class TestPlatformConfiguration < MiniTest::Unit::TestCase
+class TestPlatformConfiguration < Minitest::Test
   include TestHelpers
 
   def setup

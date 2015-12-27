@@ -1,10 +1,9 @@
-$:.unshift(File.join(File.dirname(__FILE__),'..','lib'))
 require_relative 'helpers'
 require "minitest/autorun"
 require "mocha/setup"
 require "gaudi"
 
-class TestPlatformOperations < MiniTest::Unit::TestCase
+class TestPlatformOperations < Minitest::Test
   include Gaudi::PlatformOperations
   def test_source_detection
     assert(is_source?('foo.c'), "It's a source file dummy")
