@@ -58,7 +58,7 @@ rake task FOO=bar
 
 Gaudi supports a set of environment variables as a way for passing options and exposes these as attributes of the system configuration
 
- * GAUDI_CONFIG - points to the cofniguration file. This needs to be set, Gaudi will exit with an error if it's empty or the file does not exist
+ * GAUDI_CONFIG - points to the configuration file. This needs to be set, Gaudi will exit with an error if it's empty or the file does not exist
  * DEPLOYMENT - passes the deployment name
  * COMPONENT - passes the component name
  * USER - passes the user name
