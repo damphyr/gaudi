@@ -1,5 +1,6 @@
 #0.12.0
  * Auto-generated build rules per target platform (makes running off-the-shelf a little bit easier)
+* Modules concept allows us to place code in directories other than custom
 
 #0.11.0
  * Allow multiple source subdirectories per platform configuration
