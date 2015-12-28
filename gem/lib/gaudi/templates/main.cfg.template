@@ -10,3 +10,6 @@ sources=../../src/
 #platforms= foo
 #add a platform=platform.cfg for each platform pointing to the platform configuration
 #foo=./foo.cfg
+#Instead of specifying build rules manually, uncomment this line
+#and gaudi will create rake rules for objects and executables for each target platform
+#auto_rules=true

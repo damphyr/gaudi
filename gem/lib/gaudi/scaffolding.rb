@@ -84,6 +84,7 @@ module Gaudi
       rakefile
       main_config
       platform_config
+      lib_config
       core(version,"lib")
     end
 
@@ -94,19 +95,19 @@ module Gaudi
       FileUtils.rm_rf(File.join(gaudi_home,"lib/gaudi"))
       core(version,"lib/gaudi lib/gaudi.rb")
     end
-    #:nodoc:
+    #:stopdoc:
     def check_for_git
       raise Error, "Could not find git. Make sure it is in the PATH" unless system("git --version")
     end
-    #:nodoc:
+    
     def directory_structure
       puts "Creating Gaudi filesystem structure at #{project_root}"
-      structure=["doc","lib","src","test","tools/build","tools/templates"]
+      structure=["doc","lib","src/deployments","src/common","test","tools/build","tools/templates"]
       structure.each do |dir|
         FileUtils.mkdir_p File.join(project_root,dir),:verbose=>false
       end
     end
-    #:nodoc:
+    
     def rakefile
       puts "Generating main Rakefile"
       rakefile=File.join(project_root,"Rakefile")
@@ -121,7 +122,7 @@ require_relative 'tools/build/lib/gaudi/tasks'
         File.open(rakefile, 'wb') {|f| f.write(rakefile_content) }
       end
     end
-    #:nodoc:
+    
     def main_config
       puts "Generating initial configuration file"
       config_file=File.join(project_root,"tools/build/#{MAIN_CONFIG}")
@@ -132,7 +133,7 @@ require_relative 'tools/build/lib/gaudi/tasks'
         File.open(config_file, 'wb') {|f| f.write(configuration_content) }
       end
     end
-    #:nodoc:
+    
     def platform_config
       puts "Generating example platform configuration file"
       config_file=File.join(project_root,"tools/build/#{PLATFORM_CONFIG}")
@@ -143,7 +144,18 @@ require_relative 'tools/build/lib/gaudi/tasks'
         File.open(config_file, 'wb') {|f| f.write(configuration_content) }
       end
     end
-    #:nodoc:
+
+    def lib_config
+      puts "Generating example library configuration file"
+      config_file=File.join(project_root,"tools/build/libs.yaml")
+      if File.exists?(config_file)
+        puts "libs.yaml exists, skipping generation"
+      else
+        configuration_content="---\n"
+        File.open(config_file, 'wb') {|f| f.write(configuration_content) }
+      end
+    end
+
     def core(version,lib_items)
       Dir.mktmpdir do |tmp|
         if pull_from_repo(tmp)
@@ -154,12 +166,12 @@ require_relative 'tools/build/lib/gaudi/tasks'
         end
       end
     end
-    #:nodoc:
+
     def pull_from_repo tmp
       FileUtils.rm_rf('gaudi') if File.exists?('gaudi')
       system "git clone #{REPO} \"#{tmp}/gaudi\""
     end
-    #:nodoc:
+    
     def archive version,clone_path,prj_root,lib_items
       pkg=File.expand_path(File.join(prj_root,"gaudipkg.tar"))
       Dir.chdir(clone_path) do |d|
@@ -169,7 +181,7 @@ require_relative 'tools/build/lib/gaudi/tasks'
       end
       return pkg
     end
-    #:nodoc:
+    
     def unpack pkg,home
       puts "Unpacking in #{home}"
       Dir.chdir(home) do |d|
@@ -178,5 +190,6 @@ require_relative 'tools/build/lib/gaudi/tasks'
       FileUtils.rm_rf(pkg)
       FileUtils.rm_rf(File.join(home,'pax_global_header'))
     end
+    #:startdoc:
   end
 end
