@@ -350,9 +350,9 @@ module Gaudi
         end
         #Return the auto_rules flag.
         #
-        #This is true by default
+        #This is false by default
         def auto_rules?
-          @config.fetch("auto_rules",true)
+          @config.fetch("auto_rules",false)
         end
 
         alias_method :base_dir,:base
