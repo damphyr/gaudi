@@ -25,7 +25,7 @@ module Gaudi::Utilities
         system_config=Gaudi::Configuration::SystemConfiguration.load([ENV['GAUDI_CONFIG']])
         system_config.workspace=File.expand_path(work_dir)
         if system_config.auto_rules? 
-          include Rules::Build
+          include Gaudi::Rules::Build
           all_rules(system_config)
         end
         $configuration=system_config
