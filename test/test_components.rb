@@ -1,10 +1,9 @@
 require_relative '../lib/custom/helpers/paths'
-require_relative '../lib/gaudi/helpers/generators'
-require_relative 'helpers.rb'
+require_relative '../lib/gaudi'
+require_relative 'helpers'
 require "minitest/autorun"
 require "mocha/setup"
 require "rake/file_list"
-require "gaudi"
 require "rake"
 include Rake::DSL
 

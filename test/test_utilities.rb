@@ -1,7 +1,7 @@
 require_relative 'helpers'
+require_relative '../lib/gaudi'
 require "minitest/autorun"
 require "mocha/setup"
-require "gaudi"
 
 class TestUtilities < Minitest::Test
   include TestHelpers

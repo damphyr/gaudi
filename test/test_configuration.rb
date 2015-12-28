@@ -1,9 +1,8 @@
 require_relative '../lib/custom/helpers/paths'
-require_relative '../lib/gaudi/helpers/configuration'
+require_relative '../lib/gaudi'
 require_relative 'helpers'
 require "minitest/autorun"
 require "mocha/setup"
-require "gaudi"
 require "rake"
 
 class TestLoader < Minitest::Test

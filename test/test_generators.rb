@@ -1,12 +1,8 @@
 require_relative 'helpers'
 require_relative '../lib/custom/helpers/paths'
-require_relative '../lib/gaudi/helpers/utilities'
-require_relative '../lib/gaudi/helpers/generators'
-require_relative '../lib/gaudi/helpers/components'
-
+require_relative '../lib/gaudi'
 require "minitest/autorun"
 require "mocha/setup"
-require "gaudi"
 require 'rake'
 
 class TestTaskGenerators < Minitest::Test
