@@ -348,6 +348,12 @@ module Gaudi
             raise GaudiConfigurationError,"Unknown platform #{platform}"
           end
         end
+        #Return the auto_rules flag.
+        #
+        #This is false by default
+        def auto_rules?
+          @config.fetch("auto_rules",false)
+        end
 
         alias_method :base_dir,:base
         alias_method :out_dir,:out

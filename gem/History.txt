@@ -1,3 +1,8 @@
+#0.3.0
+* Added *deployments* and *common* subdirectories when scaffolding src
+* Added an empty library configuration file and the platform config reference
+* Added the *auto_rules* option in the system configuration
+
 #0.2.4
 * Fix bug when project root contains spaces
 * DRYed the code
@@ -8,10 +13,10 @@
 #0.2.2
 * Added update functionality
 #0.2.0
-* Pulls HEAD of gaudi from GitHub in the scaffold 
+* Pulls HEAD of gaudi from GitHub in the scaffold
 
 #0.1.0
 * Scaffolding code for new projects
 ** Directory structure
-** Example system configuration 
+** Example system configuration
 ** Example platform configuration

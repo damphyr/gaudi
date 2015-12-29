@@ -38,3 +38,5 @@ linker_out=
 #Flag for linked libraries (shared or dynamic)
 linker_lib= 
 linker_commandfile_prefix= 
+#The library configuration file
+lib_cfg=libs.yaml

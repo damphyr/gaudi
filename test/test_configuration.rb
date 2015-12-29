@@ -59,6 +59,7 @@ class TestSystemConfiguration < MiniTest::Unit::TestCase
     cfg=Gaudi::Configuration::SystemConfiguration.new(config)
     assert_equal(File.expand_path(File.dirname(__FILE__)), cfg.base_dir)
     assert_equal(File.expand_path(File.join(File.dirname(__FILE__),'out')), cfg.out_dir)
+    assert(!cfg.auto_rules?)
   end
 
   def test_load

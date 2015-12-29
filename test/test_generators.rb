@@ -49,3 +49,42 @@ class TestTaskGenerators < MiniTest::Unit::TestCase
     assert(deployment_task(deployment,system_config))
   end
 end
+class TestRuleGenerators < MiniTest::Unit::TestCase
+  include TestHelpers
+  include Rake::DSL
+  include Gaudi::Tasks::Build
+  include Gaudi::Rules::Build
+  
+
+  def one_rule_mock
+    platform_config=mock()
+    platform_config.expects(:extensions).returns([".o",".a",".elf"])
+    system_config=mock()
+    system_config.expects(:platform_config).returns(platform_config)
+    system_config
+  end
+
+  def all_rules_mock
+    platform_config=mock()
+    platform_config.expects(:extensions).returns([".o",".a",".elf"]).times(4)
+    system_config=mock()
+    system_config.expects(:platform_config).returns(platform_config).times(4)
+    system_config.stubs(:platforms).returns(["foo","bar"])
+    system_config
+  end
+
+  def test_object_rule
+    system_config=one_rule_mock
+    assert(object_rule(system_config,"foo"))
+  end
+
+  def test_executable_rule
+    system_config=one_rule_mock
+    assert(executable_rule(system_config,"foo"))
+  end
+
+  def test_all_rules
+    system_config=all_rules_mock
+    assert(all_rules(system_config))
+  end
+end

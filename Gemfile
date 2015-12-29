@@ -9,4 +9,5 @@ group :development do
   gem 'coveralls', :require => false
   gem 'hoe','~>3.12.0', :require  => false
   gem 'mocha','~>0.14.0', :require  => false
+  gem 'minitest','~>5.8.3',:require => false
 end
