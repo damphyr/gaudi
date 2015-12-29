@@ -6,7 +6,7 @@ So this document outlines where you have to replace or add stuff to get the job 
 
 Where defaults work and Gaudi would profit from extension we use namespaced modules:
 
-There is a clear definition of the extension point (e.g. Gaudi::PlatformOperations) and the extension will be a module implementing an interface and sometimes following a naming convention.
+There is a clear definition of the extension point (e.g. Gaudi::PlatformOperations) and the extension will be a module implementing an interface and following a naming convention.
 
 There is one case where if the defaults don't work, you should replace the code and that is the Gaudi::StandardPaths module. This module encapsulates the directory structure for the sources. Consequently, if you like to arrange your files differently you will have to replace it. You will find the Gaudi::StandardPaths module in the custom/helpers/paths.rb file.
 
@@ -22,19 +22,51 @@ lib/
       |-rules/
   |-gaudi.rb
 
-Don't mix tasks and helpers, the load sequence ensures that all code in the helpers/ directory is available before loading any tasks
+Don't mix tasks and helpers, the load sequence ensures that all code in the helpers/ directory is available before loading any tasks.
+
+For maximum reuse the [module concept](MODULES.md) allows us to reuse custom code.
 
 ##Rakefiles
 
-You only need one rakefile at the root of your repository (assuming a standard directory structure. See [CONVENTIONS.md](CONVENTIONS.md) for details)
+You only need one rakefile at the root of your repository (assuming a standard directory structure) and it looks like the following:
 
 ```ruby
-$:.unshift('path/to/build/system/lib')
-require 'gaudi'
+require_relative 'tools/build/lib/gaudi'
 env_setup(File.dirname(__FILE__))
-#add the custom stuff here
+require_relative 'tools/build/lib/gaudi/tasks'
 ```
+
+If you use the gaudi gem to scaffold your project then the Rakefile is already there.
 
 ##Configuration
 
-Coming Soon...
+One of gaudi's core goals is to centralize configuration in a readable, diffable and versionable format. Cosequently we need a way to add new parameters to the configuration files.
+
+This is done using Ruby modules with a naming convention:
+
+```ruby
+module Gaudi::Configuration::SystemModules::MoarConfig
+  def self.list_keys
+    ['moar_list']
+  end
+  def self.path_keys
+    ['moar_path']
+  end
+  def moar_list
+    @config['moar_list']
+  end
+  def moar_path
+    return required_path(@config['moar_path'])
+  end
+end
+```
+
+*path_keys* and *list_keys* are simple arrays of the parameter names that tell gaudi to handle these parameters in a special way.
+
+When in *path_keys* then the value of the parameter is treated as a path and expanded to it's absolute value
+
+When in *list_keys* then the value of the parameter is assumed to be a comma separated list of values and is parsed into an Array.
+
+*required_path* is a helper method that will raise an error if the path is missing.
+
+The methods are available as methods of the gaudi system configuration instance.

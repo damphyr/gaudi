@@ -4,11 +4,11 @@
 
 Gaudi exposes the system configuration in a global variable called $configuration.
 
-We refer to $configuration **only** within tasks. NO gaudi helper module or method with EVER access $configuration directly. The system configuration is always passed to the method as a parameter names system_config.
+We refer to $configuration **only** within tasks. NO gaudi helper module or method with EVER access $configuration directly. The system configuration is always passed to the method as a parameter named system_config.
 
 ##Method parameters
 
-Method parameters are defined from specific to generic and the last two are always system_config,platform (when the method is platform independent, then system_sonfig is the last parameter).
+Method parameters are defined from specific to generic and the last two are always system_config,platform (when the method is platform independent, then system_config is the last parameter).
 
 ```ruby
 def determine_directories name,source_directories,system_config,platform
