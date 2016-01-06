@@ -50,7 +50,7 @@ module Gaudi
         begin
           puts "Switching platform configuration for #{platform} to #{configuration_file}"
           current_config=system_config.platform_config(platform)
-          new_cfg_data=system_config.read_configuration(configuration_file)
+          new_cfg_data=system_config.read_configuration(File.expand_path(configuration_file))
           system_config.set_platform_config(PlatformConfiguration.new(platform,new_cfg_data),platform)
           yield
         rescue
@@ -303,11 +303,11 @@ module Gaudi
       #before we start reading the configuration to ensure that extension modules work correctly
       def load_gaudi_modules main_config_file
           lines=File.readlines(main_config_file)
-          lines.select! do |ln|
+          relevant_lines=lines.select do |ln|
             /base=/=~ln || /gaudi_modules=/=~ln
           end
-          cfg=parse_content(lines,File.dirname(main_config_file),*keys)
-          require_modules(cfg["gaudi_modules"],cfg["base"])
+          cfg=parse_content(relevant_lines,File.dirname(main_config_file),*keys)
+          require_modules(cfg.fetch("gaudi_modules",[]),cfg["base"])
       end
       #Iterates over system_config.gaudi_modules and requires all helper files
       def require_modules module_list,base_directory

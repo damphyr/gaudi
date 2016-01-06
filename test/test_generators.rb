@@ -50,7 +50,7 @@ class TestTaskGenerators < Minitest::Test
     assert(deployment_task(deployment,system_config))
   end
 end
-class TestRuleGenerators < MiniTest::Unit::TestCase
+class TestRuleGenerators < MiniTest::Test
   include TestHelpers
   include Rake::DSL
   include Gaudi::Tasks::Build
