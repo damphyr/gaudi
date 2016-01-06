@@ -162,7 +162,7 @@ class TestBuildConfiguration < Minitest::Test
   include TestHelpers
   def test_empty_configuration
     config=mock_system_configuration('build.cfg',[])
-    assert_raises(GaudiConfigurationError) {  p Gaudi::Configuration::BuildConfiguration.load([config]) }
+    assert_raises(GaudiConfigurationError) {  Gaudi::Configuration::BuildConfiguration.load([config]) }
   end
 
   def test_basic_configuration
