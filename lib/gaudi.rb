@@ -27,7 +27,6 @@ module Gaudi::Utilities
           include Gaudi::Rules::Build
           all_rules(system_config)
         end
-        require_modules(system_config)
         $configuration=system_config
       else
         raise GaudiError,"Did not specify a configuration.\n Add GAUDI_CONFIG=path/to/config to the commandline or specify the GAUDI_CONFIG environment variable"

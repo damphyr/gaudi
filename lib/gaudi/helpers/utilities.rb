@@ -14,13 +14,6 @@ module Gaudi
         end
       end
     end
-    #Iterates over system_config.gaudi_modules and requires all helper files
-    def require_modules system_config
-      system_config.gaudi_modules.each do |gm|
-        mass_require(Rake::FileList["#{system_config.base}/tools/build/lib/#{gm}/helpers/*.rb"])
-        mass_require(Rake::FileList["#{system_config.base}/tools/build/lib/#{gm}/rules/*.rb"])
-      end
-    end
     #Iterates over system_config.gaudi_modules and requires all tasks
     def require_tasks system_config
       system_config.gaudi_modules.each do |gm|
