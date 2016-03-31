@@ -1,27 +1,28 @@
-$:.unshift(File.join(File.dirname(__FILE__),'..','lib'))
+require_relative '../lib/custom/helpers/paths'
+require_relative '../lib/gaudi'
 require_relative 'helpers'
 require "minitest/autorun"
 require "mocha/setup"
-require "gaudi"
+require "rake"
 
-class TestLoader < MiniTest::Unit::TestCase
+class TestLoader < Minitest::Test
   include TestHelpers
   def test_empty_configuration
-    config=mock_configuration('system.cfg',[])
+    config=mock_system_configuration('system.cfg',[])
     cfg=Gaudi::Configuration::Loader.new(config)
     assert_equal([config], cfg.configuration_files)
   end
   def test_syntax_error
-    config=mock_configuration('system.cfg',['foo'])
+    config=mock_system_configuration('system.cfg',['foo'])
     assert_raises(GaudiConfigurationError) { Gaudi::Configuration::Loader.new(config) }
   end
   def test_comments
-    config=mock_configuration('system.cfg',['','#comment'])
+    config=mock_system_configuration('system.cfg',['','#comment'])
     cfg=Gaudi::Configuration::Loader.new(config)
     assert(cfg.config.empty?, "Configuration should be empty")
   end
   def test_import
-    config=mock_configuration('system.cfg',['import import.cfg'])
+    config=mock_system_configuration('system.cfg',['import import.cfg'])
     File.expects(:exists?).with(File.join(File.dirname(config),"import.cfg")).returns(true).times(2)
     File.expects(:readlines).with(File.join(File.dirname(config),"import.cfg")).returns(['foo=bar'])
     cfg=Gaudi::Configuration::Loader.new(config)
@@ -29,33 +30,33 @@ class TestLoader < MiniTest::Unit::TestCase
     assert_equal('bar', cfg.config['foo'])
   end
   def test_property_reference
-    config=mock_configuration('system.cfg',['foo=bar','bar=%{foo}'])
+    config=mock_system_configuration('system.cfg',['foo=bar','bar=%{foo}'])
     cfg=Gaudi::Configuration::Loader.new(config)
     assert(!cfg.config.empty?, "Configuration should not be empty")
     assert_equal('bar', cfg.config['foo'])
   end
   def test_property_self_reference
-    config=mock_configuration('system.cfg',['foo=bar','foo=%{foo}*%{foo}'])
+    config=mock_system_configuration('system.cfg',['foo=bar','foo=%{foo}*%{foo}'])
     cfg=Gaudi::Configuration::Loader.new(config)
     assert(!cfg.config.empty?, "Configuration should not be empty")
     assert_equal('bar*bar', cfg.config['foo'])
   end
   def test_environment
-    config=mock_configuration('system.cfg',['setenv GAUDI = brilliant builder'])
+    config=mock_system_configuration('system.cfg',['setenv GAUDI = brilliant builder'])
     Gaudi::Configuration::Loader.new(config)
     assert_equal('brilliant builder',ENV['GAUDI'])
   end
 end
 
-class TestSystemConfiguration < MiniTest::Unit::TestCase
+class TestSystemConfiguration < Minitest::Test
   include TestHelpers
   def test_empty_configuration
-    config=mock_configuration('system.cfg',[])
+    config=mock_system_configuration('system.cfg',[])
     assert_raises(GaudiConfigurationError) {  Gaudi::Configuration::SystemConfiguration.new(config)}
   end
 
   def test_basic_configuration
-    config=mock_configuration('system.cfg',['base=.','out=out/'])
+    config=mock_system_configuration('system.cfg',['base=.','out=out/'])
     cfg=Gaudi::Configuration::SystemConfiguration.new(config)
     assert_equal(File.expand_path(File.dirname(__FILE__)), cfg.base_dir)
     assert_equal(File.expand_path(File.join(File.dirname(__FILE__),'out')), cfg.out_dir)
@@ -64,13 +65,13 @@ class TestSystemConfiguration < MiniTest::Unit::TestCase
 
   def test_load
     assert_raises(GaudiConfigurationError) { Gaudi::Configuration::SystemConfiguration.load([])}
-    config=mock_configuration('system.cfg',['base=.','out=out/'])
+    config=mock_system_configuration('system.cfg',['base=.','out=out/'])
     cfg=Gaudi::Configuration::SystemConfiguration.load([config])
     assert_equal(File.dirname(__FILE__),cfg.base)
   end
 
   def test_platforms
-    config=mock_configuration('system.cfg',system_config_test_data)
+    config=mock_system_configuration('system.cfg',system_config_test_data)
     platform_cfg=File.join(File.dirname(__FILE__),'foo.cfg')
     File.expects(:exists?).with(platform_cfg).returns(true)
     File.expects(:readlines).with(platform_cfg).returns(platform_config_test_data+['bar=foo'])
@@ -82,14 +83,14 @@ class TestSystemConfiguration < MiniTest::Unit::TestCase
   end
   
   def test_list_of_paths
-    config=mock_configuration('system.cfg',['base=.','out=out/','sources= src,tmp,../out'])
+    config=mock_system_configuration('system.cfg',['base=.','out=out/','sources= src,tmp,../out'])
     cfg=Gaudi::Configuration::SystemConfiguration.new(config)
     paths=[File.join(File.dirname(config),'src'),File.join(File.dirname(config),'tmp'),File.expand_path(File.join(File.dirname(config),'..','out'))]
     assert_equal(paths,cfg.sources)
   end
 
   def test_external_libraries
-    config=mock_configuration('system.cfg',system_config_test_data)
+    config=mock_system_configuration('system.cfg',system_config_test_data)
     platform_cfg=File.join(File.dirname(__FILE__),'foo.cfg')
     File.expects(:exists?).with(platform_cfg).returns(true)
     File.expects(:readlines).with(platform_cfg).returns(platform_config_test_data+['libs=foo','lib_cfg=libs.yml'])
@@ -103,7 +104,7 @@ class TestSystemConfiguration < MiniTest::Unit::TestCase
   end
 
   def test_external_libraries_missing_lib_cfg
-    config=mock_configuration('system.cfg',system_config_test_data)
+    config=mock_system_configuration('system.cfg',system_config_test_data)
     platform_cfg=File.join(File.dirname(__FILE__),'foo.cfg')
     File.expects(:exists?).with(platform_cfg).returns(true)
     File.expects(:readlines).with(platform_cfg).returns(['source_extensions=.c,.cpp','header_extensions=.h',
@@ -116,7 +117,7 @@ class TestSystemConfiguration < MiniTest::Unit::TestCase
   end
 
   def test_external_libraries_missing_token
-    config=mock_configuration('system.cfg',system_config_test_data)
+    config=mock_system_configuration('system.cfg',system_config_test_data)
     platform_cfg=File.join(File.dirname(__FILE__),'foo.cfg')
     File.expects(:exists?).with(platform_cfg).returns(true)
     File.expects(:readlines).with(platform_cfg).returns(platform_config_test_data+[
@@ -130,7 +131,7 @@ class TestSystemConfiguration < MiniTest::Unit::TestCase
   end
 
   def test_external_includes
-    config=mock_configuration('system.cfg',system_config_test_data)
+    config=mock_system_configuration('system.cfg',system_config_test_data)
     platform_cfg=File.join(File.dirname(__FILE__),'foo.cfg')
     File.expects(:exists?).with(platform_cfg).returns(true)
     File.expects(:readlines).with(platform_cfg).returns(platform_config_test_data+['incs=./foo,./bar'])
@@ -139,7 +140,7 @@ class TestSystemConfiguration < MiniTest::Unit::TestCase
     assert_equal(["#{File.dirname(__FILE__)}/foo", "#{File.dirname(__FILE__)}/bar"],cfg.external_includes('foo'))
   end
   def test_external_includes_empty
-    config=mock_configuration('system.cfg',system_config_test_data)
+    config=mock_system_configuration('system.cfg',system_config_test_data)
     platform_cfg=File.join(File.dirname(__FILE__),'foo.cfg')
     File.expects(:exists?).with(platform_cfg).returns(true)
     File.expects(:readlines).with(platform_cfg).returns(platform_config_test_data)
@@ -148,7 +149,7 @@ class TestSystemConfiguration < MiniTest::Unit::TestCase
   end
 
   def test_extensions
-    config=mock_configuration('system.cfg',system_config_test_data)
+    config=mock_system_configuration('system.cfg',system_config_test_data)
     platform_cfg=File.join(File.dirname(__FILE__),'foo.cfg')
     File.expects(:exists?).with(platform_cfg).returns(true)
     File.expects(:readlines).with(platform_cfg).returns(platform_config_test_data)
@@ -157,17 +158,17 @@ class TestSystemConfiguration < MiniTest::Unit::TestCase
   end
 end
 
-class TestBuildConfiguration < MiniTest::Unit::TestCase
+class TestBuildConfiguration < Minitest::Test
   include TestHelpers
   def test_empty_configuration
-    config=mock_configuration('build.cfg',[])
-    assert_raises(GaudiConfigurationError) {  p Gaudi::Configuration::BuildConfiguration.load([config]) }
+    config=mock_system_configuration('build.cfg',[])
+    assert_raises(GaudiConfigurationError) {  Gaudi::Configuration::BuildConfiguration.load([config]) }
   end
 
   def test_basic_configuration
     system_cfg=mock('system')
     system_cfg.stubs(:config_base).returns(File.dirname(__FILE__))
-    config=mock_configuration('build.cfg',['prefix=TST','deps=COD,MOD','incs= ./inc','libs= foo,bar','compiler_options= FOO BAR'])
+    config=mock_system_configuration('build.cfg',['prefix=TST','deps=COD,MOD','incs= ./inc','libs= foo,bar','compiler_options= FOO BAR'])
     cfg=Gaudi::Configuration::BuildConfiguration.load([config])
     assert_equal('TST', cfg.prefix)
     assert_equal(['COD','MOD'],cfg.deps)
@@ -181,20 +182,20 @@ class TestBuildConfiguration < MiniTest::Unit::TestCase
   end
 
   def test_property_reference
-    config=mock_configuration('build.cfg',['prefix=TST','deps=COD,MOD','incs= ./inc','compiler_options= -DMODULE=%{prefix}'])
+    config=mock_system_configuration('build.cfg',['prefix=TST','deps=COD,MOD','incs= ./inc','compiler_options= -DMODULE=%{prefix}'])
     cfg=Gaudi::Configuration::BuildConfiguration.load([config])
     assert_equal('-DMODULE=TST',cfg.option('compiler_options'))
   end
   
   def test_load
-    config=mock_configuration('build.cfg',['prefix=TST','deps=COD,MOD','incs= ./inc','libs= foo.lib,bar.lib'])
+    config=mock_system_configuration('build.cfg',['prefix=TST','deps=COD,MOD','incs= ./inc','libs= foo.lib,bar.lib'])
     assert_raises(GaudiConfigurationError) { Gaudi::Configuration::BuildConfiguration.load([])}
     cfg=Gaudi::Configuration::BuildConfiguration.load([config])
     assert_equal('TST',cfg.prefix)
   end
 end
 
-class TestPlatformConfiguration < MiniTest::Unit::TestCase
+class TestPlatformConfiguration < Minitest::Test
   include TestHelpers
 
   def setup

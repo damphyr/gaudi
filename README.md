@@ -1,43 +1,43 @@
 # Gaudi - A Builder [![Build Status](https://travis-ci.org/damphyr/gaudi.png)](https://travis-ci.org/damphyr/gaudi) [![Coverage Status](https://coveralls.io/repos/damphyr/gaudi/badge.png)](https://coveralls.io/r/damphyr/gaudi) [![Code Climate](https://codeclimate.com/github/damphyr/gaudi.png)](https://codeclimate.com/github/damphyr/gaudi) [![doc status](http://inch-ci.org/github/damphyr/gaudi.svg?branch=master)](http://inch-ci.org/github/damphyr/gaudi)
 
-tl:dr; Go to the [documentation](http://www.rubydoc.info/github/damphyr/gaudi/master/index) 
+tl:dr; Go to the [documentation](http://www.rubydoc.info/github/damphyr/gaudi/master/index)
 
-This is not a gem<sup>1</sup> nor is it a library. It's more like a bootstrap for creating a build system for C or C++ based projects using rake.
+This is not a gem<sup>1</sup> nor is it a library. It's more like a bootstrap for a build system for C or C++ based projects using rake.
 
-A couple of guidelines, a bit of supporting code, a lot of assumptions and conventions with fill-in-the-blanks space for creating a works-for-me build system.  
+A couple of guidelines, a bit of supporting code, a lot of assumptions and conventions with fill-in-the-blanks space for creating a works-for-me build system.
 You're lucky I didn't call it yabsir (Yet Another Build System In Ruby)
 
 <sup>1</sup>There is a gaudi gem. It's purpose is to help set up and maintain a Gaudi installation.
-
-## Gaudi?
-
-Well, if you know who [Gaudi](http://en.wikipedia.org/wiki/Antoni_Gaud%C3%AD) was you should concentrate on the fact that he rarely produced detailed plans of his works, he created models. 
-
-Gaudi was very much a builder and a craftsman, each of his buildings unique yet based on his knowledge of the materials and the techniques for working with them.
-
-Fat chance this code is going to be a masterpiece, but you have to aspire to something.
-
-## Whatever for?
-
-Well, I've done this 4 times now and some things keep getting reused and some things are improved and I have reached the point where it is easier to clone a base repository with properly tested code and fill in the blanks than actually find the previous system and remove project specific stuff.
-
-## Will it make coffee?
-
-Under specific circumstances, yes!
-
-Gaudi is ostensibly a build system for component-based, multi-platform, statically linked C or C++ projects of the kind you usually get when you are creating embedded systems. In truth it's an all dancing, all singing automation tool that happens to know how to compile code.
-
-It probably won't scale down. It's hodge-podge predecessors have been servicing teams of 7+, with projects running for longer than a year and LOC counts in the high 100Ks. Then again if you follow the default conventions it will work out of the box for any code size.
 
 ## Goals
 
 The main goals for Gaudi are:
 
  * Provide a simple, centralized way for configuring a development environment beginning with the build
- * Codify a set of conventions for projects targeting multiple platforms. 
+ * Codify a set of conventions for projects targeting multiple platforms.
  * Form the basis for a consistent CLI interface between the developers and the development environment
 
 Check the [documentation](doc/README.md) for more details.
+
+## Will it make coffee?
+
+Under specific circumstances, yes!
+
+Gaudi is ostensibly a build system for component-based, multi-platform, statically linked C or C++ projects of the kind you usually get when you are creating embedded systems.
+
+In truth the build system is rake and gaudi is a set of conventions and helper code for a consistent command line interface aimed at controlling every aspect of the development environment, from compile and link to test, package, release and deployment.
+
+The open source core just happens to know how to build C/C++ programs.
+
+## Whatever for?
+
+Well, I've done this several times now and some things keep getting reused and some things are improved and I have reached the point where it is easier to clone a base repository with properly tested code and fill in the blanks than actually find the previous system and remove project specific stuff.
+
+## Gaudi?
+
+Well, if you know who [Gaudi](http://en.wikipedia.org/wiki/Antoni_Gaud%C3%AD) was you should concentrate on the fact that he rarely produced detailed plans of his works, he created models.
+
+Gaudi was very much a builder and a craftsman, each of his buildings unique yet based on his knowledge of the materials and the techniques for working with them.
 
 ## LICENSE:
 

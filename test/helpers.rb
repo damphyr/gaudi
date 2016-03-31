@@ -1,5 +1,5 @@
 module TestHelpers
-  def mock_configuration filename,lines
+  def mock_system_configuration filename,lines
     fname=File.join(File.dirname(__FILE__),filename)
     File.stubs(:exists?).with(fname).returns(true)
     File.stubs(:readlines).with(fname).returns(lines)

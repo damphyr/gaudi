@@ -1,4 +1,5 @@
 require_relative '../version'
+require_relative 'errors'
 require 'pathname'
 require 'yaml'
 require 'delegate'
@@ -49,7 +50,7 @@ module Gaudi
         begin
           puts "Switching platform configuration for #{platform} to #{configuration_file}"
           current_config=system_config.platform_config(platform)
-          new_cfg_data=system_config.read_configuration(configuration_file,*system_config.keys)
+          new_cfg_data=system_config.read_configuration(File.expand_path(configuration_file))
           system_config.set_platform_config(PlatformConfiguration.new(platform,new_cfg_data),platform)
           yield
         rescue
@@ -122,7 +123,7 @@ module Gaudi
       attr_reader :config
       def initialize filename
         @configuration_files=[File.expand_path(filename)]
-        @config=read_configuration(File.expand_path(filename),*keys)
+        @config=read_configuration(File.expand_path(filename))
       end
       #Returns an Array containing two arrays.
       #
@@ -143,7 +144,7 @@ module Gaudi
       #Merges the parameters from cfg_file into this instance
       def merge cfg_file
         begin
-          cfg=read_configuration(cfg_file,*keys)
+          cfg=read_configuration(cfg_file)
           list_keys,path_keys=*keys
           cfg.keys.each do |k|
             if @config.keys.include?(k) && list_keys.include?(k)
@@ -159,36 +160,43 @@ module Gaudi
       end
       #Reads a configuration file and returns a hash with the
       #configuration as key-value pairs
-      def read_configuration filename,list_keys,path_keys
+      def read_configuration filename
         if File.exists?(filename)
           lines=File.readlines(filename)
-          cfg={}
           cfg_dir=File.dirname(filename)
-
-          lines.each do |l|
-            l.gsub!("\t","")
-            l.chomp!
-            #ignore if it starts with a hash
-            unless l=~/^#/ || l.empty?
-              if /^setenv\s+(?<envvar>.+?)\s*=\s*(?<val>.*)/ =~ l
-                environment_variable(envvar,val)
-              #if it starts with an import get a new config file
-              elsif /^import\s+(?<path>.*)/ =~ l
-                cfg.merge!(import_config(path,cfg_dir))
-              elsif /^(?<key>.*?)\s*=\s*(?<v>.*)/ =~ l
-                cfg[key]=handle_key(key,v,cfg_dir,list_keys,path_keys,cfg)
-              else
-                raise GaudiConfigurationError,"Configuration syntax error in #{filename}:\n'#{l}'"
-              end
-            end#unless
-          end#lines.each
+          begin
+            cfg=parse_content(lines,cfg_dir,*keys)
+          rescue GaudiConfigurationError
+            raise GaudiConfigurationError,"In #{filename} - #{$!.message}"
+          end
         else
           raise GaudiConfigurationError,"Cannot load configuration.'#{filename}' not found"
         end
         return cfg
       end
       private
-      #:nodoc:
+      #:stopdoc:
+      def parse_content lines,cfg_dir,list_keys,path_keys
+        cfg={}
+        lines.each do |l|
+          l.gsub!("\t","")
+          l.chomp!
+          #ignore if it starts with a hash
+          unless l=~/^#/ || l.empty?
+            if /^setenv\s+(?<envvar>.+?)\s*=\s*(?<val>.*)/ =~ l
+              environment_variable(envvar,val)
+            #if it starts with an import get a new config file
+            elsif /^import\s+(?<path>.*)/ =~ l
+              cfg.merge!(import_config(path,cfg_dir))
+            elsif /^(?<key>.*?)\s*=\s*(?<v>.*)/ =~ l
+              cfg[key]=handle_key(key,v,cfg_dir,list_keys,path_keys,cfg)
+            else
+              raise GaudiConfigurationError,"Syntax error: '#{l}'"
+            end
+          end#unless
+        end#lines.each
+        return cfg
+      end
       def required_path fname
         if fname && !fname.empty?
           if File.exists?(fname)
@@ -219,14 +227,12 @@ module Gaudi
         end
         return final_value
       end
-      #:nodoc:
       def import_config path,cfg_dir
         path=absolute_path(path.strip,cfg_dir)
         raise GaudiConfigurationError,"Cannot find #{path} to import" unless File.exists?(path)
         @configuration_files<<path
-        read_configuration(path,*keys)
+        read_configuration(path)
       end
-      #:nodoc:
       def absolute_path path,cfg_dir
         if Pathname.new(path.gsub("\"","")).absolute?
           path
@@ -234,11 +240,10 @@ module Gaudi
           File.expand_path(File.join(cfg_dir,path.gsub("\"","")))
         end
       end
-      #:nodoc:
       def environment_variable(envvar,value)
         ENV[envvar]=value
       end
-      #:nodoc:
+      
       def load_key_modules module_const
         list_keys=[]
         path_keys=[]
@@ -252,6 +257,7 @@ module Gaudi
         end
         return list_keys,path_keys
       end
+      #:startdoc:
     end
     #The central configuration for the system
     #
@@ -266,6 +272,7 @@ module Gaudi
 
       attr_accessor :config_base,:workspace,:timestamp
       def initialize filename
+        load_gaudi_modules(File.expand_path(filename))
         super(filename)
         @config_base=File.dirname(configuration_files.first)
         raise GaudiConfigurationError, "Setting 'base' must be defined" unless base
@@ -280,18 +287,37 @@ module Gaudi
       end
 
       private
-      #:nodoc:
+      #:stopdoc:
       def load_platform_configurations
         @config['platform_data']={}
         @config['platforms']||=[]
         platforms.each do |platform_name|
           path=@config[platform_name]
           path=File.expand_path(File.join(@config_base,path)) if !Pathname.new(path).absolute?
-          pdata=read_configuration(path,*keys)
+          pdata=read_configuration(path)
           @configuration_files<<path
           @config['platform_data'][platform_name]=PlatformConfiguration.new(platform_name,pdata)
         end
       end
+      #makes sure we require the helper from any modules defined in the configuration
+      #before we start reading the configuration to ensure that extension modules work correctly
+      def load_gaudi_modules main_config_file
+          lines=File.readlines(main_config_file)
+          relevant_lines=lines.select do |ln|
+            /base=/=~ln || /gaudi_modules=/=~ln
+          end
+          cfg=parse_content(relevant_lines,File.dirname(main_config_file),*keys)
+          require_modules(cfg.fetch("gaudi_modules",[]),cfg["base"])
+      end
+      #Iterates over system_config.gaudi_modules and requires all helper files
+      def require_modules module_list,base_directory
+        module_list.each do |gm|
+          mass_require(Rake::FileList["#{base_directory}/tools/build/lib/#{gm}/helpers/*.rb"])
+          mass_require(Rake::FileList["#{base_directory}/tools/build/lib/#{gm}/rules/*.rb"])
+        end
+      end
+
+      #:startdoc:
     end
     #Adding modules in this module allows SystemConfiguration to extend it's functionality
     #
@@ -306,7 +332,7 @@ module Gaudi
         include ConfigurationOperations
         #:stopdoc:
         def self.list_keys
-          ['platforms','sources']
+          ['platforms','sources','gaudi_modules']
         end
         def self.path_keys
           ['base','out','sources']
@@ -328,6 +354,14 @@ module Gaudi
         #List of directories containing sources
         def sources
           @config["sources"].map{|d| File.expand_path(d)}
+        end
+        #A list of module names (directories) to automatically require next to core when loading Gaudi
+        #
+        #For backward compatibility reasons "custom" is always added to the list of modules
+        def gaudi_modules
+          @config["gaudi_modules"]||=[]
+          @config["gaudi_modules"]<<"custom" unless @config["gaudi_modules"].include?("custom")
+          return @config["gaudi_modules"]
         end
         #returns the platform configuration hash
         def platform_config platform

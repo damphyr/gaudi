@@ -7,8 +7,6 @@ include Gaudi::Utilities
 
 #load every file you find in the helpers directory
 mass_require(Rake::FileList["#{File.join(File.dirname(__FILE__),'gaudi/helpers')}/*.rb"].exclude("utilities.rb"))
-mass_require(Rake::FileList["#{File.join(File.dirname(__FILE__),'custom/helpers')}/*.rb"])
-mass_require(Rake::FileList["#{File.join(File.dirname(__FILE__),'custom/rules')}/*.rb"])
 
 module Gaudi::Utilities
   #Reads the configuration and sets the environment up

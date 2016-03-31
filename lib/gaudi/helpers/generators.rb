@@ -133,8 +133,9 @@ module Gaudi
       def executable_rule system_config,platform
         platform_config=system_config.platform_config(platform)
         _,_,exe=platform_config.extensions
-
-        rule(/#{platform}\/.*#{exe}/) do |t|
+        #we configure them with dots which messes the regexp up
+        ext=exe.gsub(".","")
+        rule(/#{platform}\/.*\.#{ext}$/) do |t|
           include Gaudi::ArtifactAdapters::Build
           build(t,system_config,platform)
         end
@@ -143,8 +144,9 @@ module Gaudi
       def object_rule system_config,platform
         platform_config=system_config.platform_config(platform)
         obj,_,_=platform_config.extensions
-
-        rule(/#{platform}\/.*#{obj}/) do |t|
+        #we configure them with dots which messes the regexp up
+        ext=obj.gsub(".","")
+        rule(/#{platform}\/.*\.#{ext}$/) do |t|
           include Gaudi::ArtifactAdapters::Build
           compile(t,system_config,platform)
         end

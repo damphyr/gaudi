@@ -1,14 +1,15 @@
-$:.unshift(File.join(File.dirname(__FILE__),'..','lib'))
 require_relative 'helpers'
+require_relative '../lib/custom/helpers/paths'
+require_relative '../lib/gaudi'
 require "minitest/autorun"
 require "mocha/setup"
-require "gaudi"
 require 'rake'
 
-class TestTaskGenerators < MiniTest::Unit::TestCase
+class TestTaskGenerators < Minitest::Test
   include TestHelpers
   include Rake::DSL
   include Gaudi::Tasks::Build
+  include Gaudi::Utilities
   def setup
     directory_fixture
   end
@@ -49,7 +50,7 @@ class TestTaskGenerators < MiniTest::Unit::TestCase
     assert(deployment_task(deployment,system_config))
   end
 end
-class TestRuleGenerators < MiniTest::Unit::TestCase
+class TestRuleGenerators < MiniTest::Test
   include TestHelpers
   include Rake::DSL
   include Gaudi::Tasks::Build
