@@ -188,6 +188,8 @@ module Gaudi
             #if it starts with an import get a new config file
             elsif /^import\s+(?<path>.*)/ =~ l
               cfg.merge!(import_config(path,cfg_dir))
+           elsif /^(?<key>.*?)\s*\+=\s*(?<v>.*)/ =~ l
+              handle_key_append(key,v,cfg_dir,list_keys,path_keys,cfg)
             elsif /^(?<key>.*?)\s*=\s*(?<v>.*)/ =~ l
               cfg[key]=handle_key(key,v,cfg_dir,list_keys,path_keys,cfg)
             else
@@ -208,6 +210,16 @@ module Gaudi
           raise GaudiConfigurationError,"Empty value for required path"
         end
       end
+      # Appends data to a key that is defined as list key
+      def handle_key_append key,value,cfg_dir,list_keys,path_keys,cfg
+        thisValue=handle_key(key,value,cfg_dir,list_keys,path_keys,cfg)
+        cfg[key] = [] unless cfg.has_key?(key)
+        
+        begin
+            cfg[key].concat(thisValue).uniq!
+        rescue 
+        end
+      end
       #checks a key against the set of path or list keys and returns the value
       #in the format we want to have.
       #
@@ -216,7 +228,7 @@ module Gaudi
         final_value=value
         # replace %{symbol} with values from already existing config values
         final_value=final_value % Hash[cfg.map{|k,v| [k.to_sym,v]}] if final_value.include? "%{"
-
+        
         if list_keys.include?(key) && path_keys.include?(key)
           final_value=Rake::FileList[*(value.gsub(/\s*,\s*/,',').split(',').uniq.map{|d| absolute_path(d.strip,cfg_dir)})]
         elsif list_keys.include?(key)
