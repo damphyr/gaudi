@@ -180,6 +180,22 @@ class TestBuildConfiguration < Minitest::Test
     File.expects(:exists?).with(File.expand_path(File.join(File.dirname(__FILE__),'bar.lib'))).returns(false)
     assert_equal(['foo.lib','bar.lib'],cfg.libs(system_cfg,'gcc'))
   end
+  
+  def test_append_to_list_param
+    system_cfg=mock('system')
+    system_cfg.stubs(:config_base).returns(File.dirname(__FILE__))
+    config=mock_system_configuration('build.cfg',['prefix=TST','deps=COD,MOD', 'deps+=ABC', 'deps+=COD,DEF','incs= ./inc','libs= foo,bar','compiler_options= FOO BAR'])
+    cfg=Gaudi::Configuration::BuildConfiguration.load([config])
+    assert_equal('TST', cfg.prefix)
+    assert_equal(['COD','MOD', 'ABC', 'DEF'],cfg.deps)
+    assert_equal(["#{File.expand_path(File.dirname(__FILE__))}/inc"],cfg.incs)
+    assert_equal('FOO BAR', cfg.option('compiler_options'))
+
+    system_cfg.expects(:external_libraries_config).returns({'foo'=>'foo.lib','bar'=>'bar.lib'})
+    File.expects(:exists?).with(File.expand_path(File.join(File.dirname(__FILE__),'foo.lib'))).returns(false)
+    File.expects(:exists?).with(File.expand_path(File.join(File.dirname(__FILE__),'bar.lib'))).returns(false)
+    assert_equal(['foo.lib','bar.lib'],cfg.libs(system_cfg,'gcc'))
+  end
 
   def test_property_reference
     config=mock_system_configuration('build.cfg',['prefix=TST','deps=COD,MOD','incs= ./inc','compiler_options= -DMODULE=%{prefix}'])
