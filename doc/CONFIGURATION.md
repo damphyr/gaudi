@@ -30,13 +30,14 @@ version_minor=3
 # Use already defined properties within other properties
 version_string=%{appname} %{version_major}.%{version_minor}
 ```
-This will also work when reassign a the value of an already existing property. Example
+
+This will also work when reassigning the value of an already existing property. Example
+
 ```bash
 path=/bin;/usr/bin;/usr/local/bin
 # prepend something to path
 path=/home/myuser/bin;%{path}
 ```
-
 
 Extending the available configuration properties is done by adding modules to Gaudi::Configuration::SystemModules (for more details check [EXTENDING](EXTENDING.md))
 
@@ -65,7 +66,7 @@ Gaudi supports a set of environment variables as a way for passing options and e
 
 Adding methods to Gaudi::Configuration::EnvironmentOptions is the recommended way to expose environment variables to Gaudi. This is pure convention but results in pulling the documentation of environment options together in one rdoc page.
 
-In some cases there are two versions of the reader method for the environment variables. The bang version (i.e. user! ) will raise a GaudiConfigurationError if the requested value is nil or the empty string. When there is only one version the current choice is to raise the exception by default. In the case of - for example - DEPLOYMENT it rarely makes sense to work with a nil or empty value so...no bang. That is the convention, even though working with the nil returning methods is more error-prone than otherwise.
+In some cases there are two versions of the reader method for the environment variables. The bang version (i.e. user! ) will raise a GaudiConfigurationError if the requested value is nil or the empty string. When there is only one version the current choice is to raise the exception by default. In the case of - for example - DEPLOYMENT it rarely makes sense to work with a nil or empty value so...no bang.
 
 ## System Configuration
 
@@ -90,7 +91,7 @@ rx=./rx.cfg
 
 ## Platform Configuration
 
-Configuring different toolchains varies wildly so the compiler platform configuration is returned as a Hash. There is a basic set of configuration properties that are fixed at this time, but handling the configuration as a Hash allows you to arbitrarily add new properties.
+Configuring different toolchains varies wildly so the compiler platform configuration is a thin wrapper around Hash. There is a basic set of configuration properties that are fixed at this time, but handling the configuration as a Hash allows you to arbitrarily add new properties.
 
 A platform configuration is accessed by SystemConfiguration#platform_config(platform), where _platform_ is one of the values defined in the _platforms_ property.
 
