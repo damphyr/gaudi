@@ -1,3 +1,5 @@
+#0.3.1
+* Fixed bug that would delete my gaudi repo for being stupid
 #0.3.0
 * Added *deployments* and *common* subdirectories when scaffolding src
 * Added an empty library configuration file and the platform config reference

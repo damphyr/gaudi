@@ -198,8 +198,9 @@ require_relative 'tools/build/lib/gaudi/tasks'
     end
 
     def pull_from_repo repository,tmp
-      FileUtils.rm_rf('gaudi') if File.exists?('gaudi')
-      system "git clone #{repository} \"#{tmp}/gaudi\""
+      tmp_dir=File.join(tmp,'gaudi')
+      FileUtils.rm_rf(tmp_dir) if File.exists?(tmp_dir)
+      system "git clone #{repository} \"#{tmp_dir}\""
     end
     
     def archive version,clone_path,prj_root,lib_items
