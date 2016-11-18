@@ -1,3 +1,5 @@
+require "shellwords"
+require_relative 'utilities'
 module Gaudi
   #Functions that return platform dependent information
   #
@@ -42,6 +44,7 @@ module Gaudi
   end
   #Methods for creating and managing tool command lines
   module ToolOperations
+    include Gaudi::Utilities
     #Returns the compiler command line options merging the options from all
     #cofniguration files
     def compiler_options src,component,system_config
@@ -90,13 +93,26 @@ module Gaudi
     end
     #returns the commandline for cmd as an Array
     def command_line cmd,cmdfile,prefix
-      cmdline= [cmd]
+      if windows?
+        cmdline= ["\"#{cmd}\""]
+      else
+        cmdline=[cmd]
+      end
       if prefix && !prefix.empty?
-        cmdline<< "#{prefix}#{cmdfile}"
+        cmdline<< "#{prefix}"
+        if windows?
+          cmdline<<"\"#{cmdfile}\""
+        else
+          cmdline<<cmdfile
+        end
       else
         cmdline+= File.readlines(cmdfile).map{|l| l.strip}
       end
-      cmdline
+      if windows?
+        return cmdline
+      else
+        Shellwords.escape(cmdline)
+      end
     end
     #adds a prefix to a list of filenames/objects
     def prefixed_objects objects,prefix_flag

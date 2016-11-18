@@ -25,5 +25,13 @@ module Gaudi
       mkdir_p(File.dirname(filename),:verbose=>false)
       File.open(filename, 'wb') {|f| f.write(content) }
     end
+    #Returns true if we are on a windows platform
+    def windows?
+      case RbConfig::CONFIG['host_os']
+       when /mingw|mswin/ then return true
+      else 
+        return false
+      end
+    end
   end
 end
