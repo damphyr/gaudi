@@ -3,7 +3,7 @@ require 'optparse'
 require 'fileutils'
 require 'tmpdir'
 require 'rubygems'
-require 'archive/tar/minitar'
+require 'minitar'
 
 module Gaudi
   class GemError <RuntimeError
@@ -216,7 +216,7 @@ require_relative 'tools/build/lib/gaudi/tasks'
     def unpack pkg,home
       puts "Unpacking in #{home}"
       Dir.chdir(home) do |d|
-        Archive::Tar::Minitar.unpack(pkg, home)
+        Minitar.unpack(pkg, home)
       end
       FileUtils.rm_rf(pkg)
       FileUtils.rm_rf(File.join(home,'pax_global_header'))
