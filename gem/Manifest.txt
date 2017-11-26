@@ -1,9 +1,10 @@
 History.txt
 Manifest.txt
-README.txt
+README.md
 bin/gaudi
 lib/gaudi.rb
 lib/gaudi/scaffolding.rb
+lib/gaudi/templates/doc.md.template
 lib/gaudi/templates/main.cfg.template
 lib/gaudi/templates/platform.cfg.template
 lib/gaudi/version.rb

@@ -106,6 +106,7 @@ module Gaudi
       main_config
       platform_config
       lib_config
+      api_doc
       core("gaudi",REPO,version,"lib")
     end
 
@@ -132,7 +133,7 @@ module Gaudi
     
     def directory_structure
       puts "Creating Gaudi filesystem structure at #{project_root}"
-      structure=["doc","lib","src/deployments","src/common","test","tools/build","tools/templates"]
+      structure=["doc","tools/build/config","tools/templates"]
       structure.each do |dir|
         FileUtils.mkdir_p File.join(project_root,dir),:verbose=>false
       end
@@ -182,6 +183,17 @@ require_relative 'tools/build/lib/gaudi/tasks'
         puts "libs.yaml exists, skipping generation"
       else
         configuration_content="---\n"
+        File.open(config_file, 'wb') {|f| f.write(configuration_content) }
+      end
+    end
+
+    def api_doc
+      puts "Generating build system API doc"
+      config_file=File.join(project_root,"doc/BUILDSYSTEM.md")
+      if File.exists?(config_file)
+        puts "BUILDSYSTEM.md exists, skipping generation"
+      else
+        configuration_content=File.read(File.join(File.dirname(__FILE__),'templates/doc.md.template'))
         File.open(config_file, 'wb') {|f| f.write(configuration_content) }
       end
     end
