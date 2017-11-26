@@ -20,7 +20,7 @@ class TestSystemConfiguration < Minitest::Test
     cfg=Gaudi::Configuration::SystemConfiguration.new(config)
     assert_equal(File.expand_path(File.dirname(__FILE__)), cfg.base_dir)
     assert_equal(File.expand_path(File.join(File.dirname(__FILE__),'out')), cfg.out_dir)
-    assert_equal(cfg.gaudi_modules,["custom"],"Module list does not include custom")
+    assert_equal(cfg.gaudi_modules,[],"Module list includes stuff")
   end
 
   def test_load

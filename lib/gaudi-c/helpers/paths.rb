@@ -1,4 +1,4 @@
-require_relative '../../gaudi-c/helpers/operations'
+require_relative 'operations'
 module Gaudi
   #This is the default directory layout:
   # src/platform

@@ -307,11 +307,8 @@ module Gaudi
           return @config["out"]
         end
         #A list of module names (directories) to automatically require next to core when loading Gaudi
-        #
-        #For backward compatibility reasons "custom" is always added to the list of modules
         def gaudi_modules
           @config["gaudi_modules"]||=[]
-          @config["gaudi_modules"]<<"custom" unless @config["gaudi_modules"].include?("custom")
           return @config["gaudi_modules"]
         end
 
