@@ -5,7 +5,7 @@ require "mocha/setup"
 class TestLoader < Minitest::Test
   def mock_system_configuration filename,lines
     fname=File.expand_path(File.join(File.dirname(__FILE__),filename))
-    File.stubs(:exists?).with(fname).returns(true)
+    File.stubs(:exist?).with(fname).returns(true)
     File.stubs(:readlines).with(fname).returns(lines)
     fname
   end
@@ -26,7 +26,7 @@ class TestLoader < Minitest::Test
   end
   def test_import
     config=mock_system_configuration('system.cfg',['import import.cfg'])
-    File.expects(:exists?).with(File.join(File.dirname(config),"import.cfg")).returns(true).times(2)
+    File.expects(:exist?).with(File.join(File.dirname(config),"import.cfg")).returns(true).times(2)
     File.expects(:readlines).with(File.join(File.dirname(config),"import.cfg")).returns(['foo=bar'])
     cfg=Gaudi::Configuration::Loader.new(config)
     assert(!cfg.config.empty?, "Configuration should not be empty")

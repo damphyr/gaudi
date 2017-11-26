@@ -6,7 +6,7 @@ require 'yaml'
 
 module Gaudi
   #The path to the defualt configuration file relative to the main rakefile
-  DEFAULT_CONFIGURATION_FILE="tools/build.system.cfg"
+  DEFAULT_CONFIGURATION_FILE=File.expand_path(File.join(File.dirname(__FILE__),"../../../system.cfg"))
   #Loads and returns the system configuration
   def self.configuration
     if ENV['GAUDI_CONFIG']
@@ -15,7 +15,7 @@ module Gaudi
       if File.exist?(DEFAULT_CONFIGURATION_FILE)
         ENV['GAUDI_CONFIG']=File.expand_path(DEFAULT_CONFIGURATION_FILE)
       else
-        raise "No configuration file (GAUDI_CONFIG is empty)"
+        raise "No configuration file (GAUDI_CONFIG is initially empty and #{DEFAULT_CONFIGURATION_FILE} is missing)"
       end
     end
     #Load the system configuration
@@ -124,7 +124,7 @@ module Gaudi
       #Reads a configuration file and returns a hash with the
       #configuration as key-value pairs
       def read_configuration filename
-        if File.exists?(filename)
+        if File.exist?(filename)
           lines=File.readlines(filename)
           cfg_dir=File.dirname(filename)
           begin
@@ -164,7 +164,7 @@ module Gaudi
       end
       def required_path fname
         if fname && !fname.empty?
-          if File.exists?(fname)
+          if File.exist?(fname)
             return File.expand_path(fname)
           else
             raise GaudiConfigurationError, "Missing required file #{fname}"
@@ -204,7 +204,7 @@ module Gaudi
       end
       def import_config path,cfg_dir
         path=absolute_path(path.strip,cfg_dir)
-        raise GaudiConfigurationError,"Cannot find #{path} to import" unless File.exists?(path)
+        raise GaudiConfigurationError,"Cannot find #{path} to import" unless File.exist?(path)
         @configuration_files<<path
         read_configuration(path)
       end

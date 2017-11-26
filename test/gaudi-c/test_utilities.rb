@@ -13,7 +13,7 @@ class TestUtilities < Minitest::Test
     end
   end
   def test_switch_platform_configuration
-    File.stubs(:exists?).returns(true)
+    File.stubs(:exist?).returns(true)
     
     mock_config=File.expand_path('system.cfg')
     File.stubs(:readlines).with(mock_config).returns(system_config_test_data)

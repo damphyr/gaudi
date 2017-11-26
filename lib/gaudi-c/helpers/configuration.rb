@@ -111,7 +111,7 @@ module Gaudi
           raise GaudiConfigurationError,"Missing lib_cfg entry for platform #{platform}" if lib_config.empty?
           external_lib_cfg=absolute_path(lib_config,config_base)
           raise GaudiConfigurationError,"No external library configuration for platform #{platform}" unless external_lib_cfg
-          if File.exists?(external_lib_cfg)
+          if File.exist?(external_lib_cfg)
             return YAML.load(File.read(external_lib_cfg))
           else
             raise GaudiConfigurationError,"Cannot find external library configuration #{external_lib_cfg} for platform #{platform}"

@@ -26,5 +26,6 @@ module Gaudi::Utilities
       end
       $configuration=system_config
     end
+    return $configuration
   end
 end

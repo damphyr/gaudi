@@ -5,7 +5,7 @@ require "mocha/setup"
 class TestSystemConfiguration < Minitest::Test
   def mock_system_configuration filename,lines
     fname=File.expand_path(File.join(File.dirname(__FILE__),filename))
-    File.stubs(:exists?).with(fname).returns(true)
+    File.stubs(:exist?).with(fname).returns(true)
     File.stubs(:readlines).with(fname).returns(lines)
     fname
   end

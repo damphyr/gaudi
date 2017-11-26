@@ -99,7 +99,7 @@ module Gaudi
     end
     
     def project version
-      raise GemError, "#{project_root} already exists!" if File.exists?(project_root) && project_root != Dir.pwd
+      raise GemError, "#{project_root} already exists!" if File.exist?(project_root) && project_root != Dir.pwd
       check_for_git
       directory_structure
       rakefile
@@ -111,7 +111,7 @@ module Gaudi
     end
 
     def update version
-      raise GemError, "#{gaudi_home} is missing! Try creating a new Gaudi project first." unless File.exists?(gaudi_home)
+      raise GemError, "#{gaudi_home} is missing! Try creating a new Gaudi project first." unless File.exist?(gaudi_home)
       check_for_git
       puts "Removing old gaudi installation"
       FileUtils.rm_rf(File.join(gaudi_home,"lib/gaudi"))
@@ -119,7 +119,7 @@ module Gaudi
     end
 
     def library lib,source_url,version
-      raise GemError, "#{gaudi_home} is missing! Try creating a new Gaudi project first." unless File.exists?(gaudi_home)
+      raise GemError, "#{gaudi_home} is missing! Try creating a new Gaudi project first." unless File.exist?(gaudi_home)
       #check_for_git
       puts "Removing old #{lib} installation"
       FileUtils.rm_rf(File.join(gaudi_home,"lib/#{lib}"))
@@ -142,7 +142,7 @@ module Gaudi
     def rakefile
       puts "Generating main Rakefile"
       rakefile=File.join(project_root,"Rakefile")
-      if File.exists?(rakefile)
+      if File.exist?(rakefile)
         puts "Rakefile exists, skipping generation"
       else
         rakefile_content=<<-EOT
@@ -157,7 +157,7 @@ require_relative 'tools/build/lib/gaudi/tasks'
     def main_config
       puts "Generating initial configuration file"
       config_file=File.join(project_root,"tools/build/#{MAIN_CONFIG}")
-      if File.exists?(config_file)
+      if File.exist?(config_file)
         puts "#{MAIN_CONFIG} exists, skipping generation"
       else
         configuration_content=File.read(File.join(File.dirname(__FILE__),'templates/main.cfg.template'))
@@ -168,7 +168,7 @@ require_relative 'tools/build/lib/gaudi/tasks'
     def platform_config
       puts "Generating example platform configuration file"
       config_file=File.join(project_root,"tools/build/#{PLATFORM_CONFIG}")
-      if File.exists?(config_file)
+      if File.exist?(config_file)
         puts "#{PLATFORM_CONFIG} exists, skipping generation"
       else
         configuration_content=File.read(File.join(File.dirname(__FILE__),'templates/platform.cfg.template'))
@@ -179,7 +179,7 @@ require_relative 'tools/build/lib/gaudi/tasks'
     def lib_config
       puts "Generating example library configuration file"
       config_file=File.join(project_root,"tools/build/libs.yaml")
-      if File.exists?(config_file)
+      if File.exist?(config_file)
         puts "libs.yaml exists, skipping generation"
       else
         configuration_content="---\n"
@@ -190,7 +190,7 @@ require_relative 'tools/build/lib/gaudi/tasks'
     def api_doc
       puts "Generating build system API doc"
       config_file=File.join(project_root,"doc/BUILDSYSTEM.md")
-      if File.exists?(config_file)
+      if File.exist?(config_file)
         puts "BUILDSYSTEM.md exists, skipping generation"
       else
         configuration_content=File.read(File.join(File.dirname(__FILE__),'templates/doc.md.template'))
@@ -211,7 +211,7 @@ require_relative 'tools/build/lib/gaudi/tasks'
 
     def pull_from_repo repository,tmp
       tmp_dir=File.join(tmp,'gaudi')
-      FileUtils.rm_rf(tmp_dir) if File.exists?(tmp_dir)
+      FileUtils.rm_rf(tmp_dir) if File.exist?(tmp_dir)
       system "git clone #{repository} \"#{tmp_dir}\""
     end
     

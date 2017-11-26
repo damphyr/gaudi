@@ -23,7 +23,7 @@ class TestLoader < Minitest::Test
   end
   def test_import
     config=mock_system_configuration('system.cfg',['import import.cfg'])
-    File.expects(:exists?).with(File.join(File.dirname(config),"import.cfg")).returns(true).times(2)
+    File.expects(:exist?).with(File.join(File.dirname(config),"import.cfg")).returns(true).times(2)
     File.expects(:readlines).with(File.join(File.dirname(config),"import.cfg")).returns(['foo=bar'])
     cfg=Gaudi::Configuration::Loader.new(config)
     assert(!cfg.config.empty?, "Configuration should not be empty")
@@ -73,7 +73,7 @@ class TestSystemConfiguration < Minitest::Test
   def test_platforms
     config=mock_system_configuration('system.cfg',system_config_test_data)
     platform_cfg=File.join(File.dirname(__FILE__),'foo.cfg')
-    File.expects(:exists?).with(platform_cfg).returns(true)
+    File.expects(:exist?).with(platform_cfg).returns(true)
     File.expects(:readlines).with(platform_cfg).returns(platform_config_test_data+['bar=foo'])
     cfg=Gaudi::Configuration::SystemConfiguration.load([config])  
     assert_equal(['foo'], cfg.platforms)
@@ -92,12 +92,12 @@ class TestSystemConfiguration < Minitest::Test
   def test_external_libraries
     config=mock_system_configuration('system.cfg',system_config_test_data)
     platform_cfg=File.join(File.dirname(__FILE__),'foo.cfg')
-    File.expects(:exists?).with(platform_cfg).returns(true)
+    File.expects(:exist?).with(platform_cfg).returns(true)
     File.expects(:readlines).with(platform_cfg).returns(platform_config_test_data+['libs=foo','lib_cfg=libs.yml'])
     lib_yml=File.join(File.dirname(__FILE__),'libs.yml')
-    File.expects(:exists?).with(lib_yml).returns(true)
+    File.expects(:exist?).with(lib_yml).returns(true)
     File.expects(:read).with(lib_yml).returns(YAML.dump({'foo'=>'foo.lib'}))
-    File.expects(:exists?).with(File.join(File.dirname(__FILE__),'foo.lib')).returns(false)
+    File.expects(:exist?).with(File.join(File.dirname(__FILE__),'foo.lib')).returns(false)
 
     cfg=Gaudi::Configuration::SystemConfiguration.new(config)
     assert_equal(['foo.lib'], cfg.external_libraries('foo'))
@@ -106,11 +106,11 @@ class TestSystemConfiguration < Minitest::Test
   def test_external_libraries_missing_lib_cfg
     config=mock_system_configuration('system.cfg',system_config_test_data)
     platform_cfg=File.join(File.dirname(__FILE__),'foo.cfg')
-    File.expects(:exists?).with(platform_cfg).returns(true)
+    File.expects(:exist?).with(platform_cfg).returns(true)
     File.expects(:readlines).with(platform_cfg).returns(['source_extensions=.c,.cpp','header_extensions=.h',
       'object_extension=.o', 'library_extension=.so','executable_extension=','libs=foo','lib_cfg=libs.yml'])
     lib_yml=File.join(File.dirname(__FILE__),'libs.yml')
-    File.expects(:exists?).with(lib_yml).returns(false)
+    File.expects(:exist?).with(lib_yml).returns(false)
     
     cfg=Gaudi::Configuration::SystemConfiguration.new(config)
     assert_raises(GaudiConfigurationError){cfg.external_libraries('foo')}
@@ -119,11 +119,11 @@ class TestSystemConfiguration < Minitest::Test
   def test_external_libraries_missing_token
     config=mock_system_configuration('system.cfg',system_config_test_data)
     platform_cfg=File.join(File.dirname(__FILE__),'foo.cfg')
-    File.expects(:exists?).with(platform_cfg).returns(true)
+    File.expects(:exist?).with(platform_cfg).returns(true)
     File.expects(:readlines).with(platform_cfg).returns(platform_config_test_data+[
       'libs=foo','lib_cfg=libs.yml'])
     lib_yml=File.join(File.dirname(__FILE__),'libs.yml')
-    File.expects(:exists?).with(lib_yml).returns(true)
+    File.expects(:exist?).with(lib_yml).returns(true)
     File.expects(:read).with(lib_yml).returns(YAML.dump({'bar'=>'bar.lib'}))
     
     cfg=Gaudi::Configuration::SystemConfiguration.new(config)
@@ -133,7 +133,7 @@ class TestSystemConfiguration < Minitest::Test
   def test_external_includes
     config=mock_system_configuration('system.cfg',system_config_test_data)
     platform_cfg=File.join(File.dirname(__FILE__),'foo.cfg')
-    File.expects(:exists?).with(platform_cfg).returns(true)
+    File.expects(:exist?).with(platform_cfg).returns(true)
     File.expects(:readlines).with(platform_cfg).returns(platform_config_test_data+['incs=./foo,./bar'])
 
     cfg=Gaudi::Configuration::SystemConfiguration.new(config)
@@ -142,7 +142,7 @@ class TestSystemConfiguration < Minitest::Test
   def test_external_includes_empty
     config=mock_system_configuration('system.cfg',system_config_test_data)
     platform_cfg=File.join(File.dirname(__FILE__),'foo.cfg')
-    File.expects(:exists?).with(platform_cfg).returns(true)
+    File.expects(:exist?).with(platform_cfg).returns(true)
     File.expects(:readlines).with(platform_cfg).returns(platform_config_test_data)
     cfg=Gaudi::Configuration::SystemConfiguration.new(config)
     assert(cfg.external_includes('foo').empty?)
@@ -151,7 +151,7 @@ class TestSystemConfiguration < Minitest::Test
   def test_extensions
     config=mock_system_configuration('system.cfg',system_config_test_data)
     platform_cfg=File.join(File.dirname(__FILE__),'foo.cfg')
-    File.expects(:exists?).with(platform_cfg).returns(true)
+    File.expects(:exist?).with(platform_cfg).returns(true)
     File.expects(:readlines).with(platform_cfg).returns(platform_config_test_data)
     cfg=Gaudi::Configuration::SystemConfiguration.new(config)
     assert_equal([".o", ".so", ".e"], cfg.extensions('foo'))
@@ -176,8 +176,8 @@ class TestBuildConfiguration < Minitest::Test
     assert_equal('FOO BAR', cfg.option('compiler_options'))
 
     system_cfg.expects(:external_libraries_config).returns({'foo'=>'foo.lib','bar'=>'bar.lib'})
-    File.expects(:exists?).with(File.expand_path(File.join(File.dirname(__FILE__),'foo.lib'))).returns(false)
-    File.expects(:exists?).with(File.expand_path(File.join(File.dirname(__FILE__),'bar.lib'))).returns(false)
+    File.expects(:exist?).with(File.expand_path(File.join(File.dirname(__FILE__),'foo.lib'))).returns(false)
+    File.expects(:exist?).with(File.expand_path(File.join(File.dirname(__FILE__),'bar.lib'))).returns(false)
     assert_equal(['foo.lib','bar.lib'],cfg.libs(system_cfg,'gcc'))
   end
   
@@ -192,8 +192,8 @@ class TestBuildConfiguration < Minitest::Test
     assert_equal('FOO BAR', cfg.option('compiler_options'))
 
     system_cfg.expects(:external_libraries_config).returns({'foo'=>'foo.lib','bar'=>'bar.lib'})
-    File.expects(:exists?).with(File.expand_path(File.join(File.dirname(__FILE__),'foo.lib'))).returns(false)
-    File.expects(:exists?).with(File.expand_path(File.join(File.dirname(__FILE__),'bar.lib'))).returns(false)
+    File.expects(:exist?).with(File.expand_path(File.join(File.dirname(__FILE__),'foo.lib'))).returns(false)
+    File.expects(:exist?).with(File.expand_path(File.join(File.dirname(__FILE__),'bar.lib'))).returns(false)
     assert_equal(['foo.lib','bar.lib'],cfg.libs(system_cfg,'gcc'))
   end
 
