@@ -19,18 +19,12 @@ module Gaudi::Utilities
     #Tell rake not to truncate it's task output
     Rake.application.terminal_columns = 999
     unless $configuration
-      #we're looking for the configuration
-      if ENV['GAUDI_CONFIG']
-        system_config=Gaudi::Configuration::SystemConfiguration.load([ENV['GAUDI_CONFIG']])
-        system_config.workspace=File.expand_path(work_dir)
-        if system_config.auto_rules? 
-          include Gaudi::Rules::Build
-          all_rules(system_config)
-        end
-        $configuration=system_config
-      else
-        raise GaudiError,"Did not specify a configuration.\n Add GAUDI_CONFIG=path/to/config to the commandline or specify the GAUDI_CONFIG environment variable"
+      system_config=Gaudi.configuration()
+      system_config.workspace=File.expand_path(work_dir)
+      if Rake::application.respond_to?(:start_time=)
+        Rake.application.start_time=Time.now
       end
+      $configuration=system_config
     end
   end
 end

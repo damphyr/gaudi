@@ -1,3 +1,8 @@
+if $configuration.auto_rules? 
+  include Gaudi::Rules::Build
+  all_rules($configuration)
+end
+
 namespace :build do
   desc "Builds the deployment specified with DEPLOYMENT.\n rake build:deployment DEPLOYMENT=Foo"
   task :deployment do
