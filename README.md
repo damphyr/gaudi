@@ -33,7 +33,7 @@ gaudi -s gaudi_project
 Add the gaudi-c module:
 
 ```
-gaudi -l gaudi-c https://github.com/damphyr/gaudi/tree/master/lib/gaudi-c gaudi_project
+gaudi -l gaudi-c https://github.com/damphyr/gaudi.git gaudi_project
 ```
 
 ## Gaudi?
