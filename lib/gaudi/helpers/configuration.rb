@@ -24,6 +24,20 @@ module Gaudi
     return system_config
   end
   module Configuration
+    module Helpers
+      #Raises GaudiConfigurationError
+      def required_path fname
+        if fname && !fname.empty?
+          if File.exist?(fname)
+            return File.expand_path(fname)
+          else
+            raise GaudiConfigurationError, "Missing required file #{fname}"
+          end
+        else
+          raise GaudiConfigurationError,"Empty value for required path"
+        end
+      end
+    end
     #Switches the configuration for the given block
     #
     #It switches the system configuration by reading a completely different file.
@@ -63,6 +77,7 @@ module Gaudi
     #
     # setenv GAUDI=brilliant builder
     class Loader
+      include Helpers
       #Goes through a list of configuration files and returns the resulting merged configuration
       def self.load configuration_files,klass
         cfg=nil
@@ -162,17 +177,6 @@ module Gaudi
         end#lines.each
         return cfg
       end
-      def required_path fname
-        if fname && !fname.empty?
-          if File.exist?(fname)
-            return File.expand_path(fname)
-          else
-            raise GaudiConfigurationError, "Missing required file #{fname}"
-          end
-        else
-          raise GaudiConfigurationError,"Empty value for required path"
-        end
-      end
       # Appends data to a key that is defined as list key
       def handle_key_append key,value,cfg_dir,list_keys,path_keys,cfg
         thisValue=handle_key(key,value,cfg_dir,list_keys,path_keys,cfg)
@@ -218,7 +222,6 @@ module Gaudi
       def environment_variable(envvar,value)
         ENV[envvar]=value
       end
-      
       def load_key_modules module_const
         list_keys=[]
         path_keys=[]
