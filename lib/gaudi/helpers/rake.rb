@@ -1,3 +1,4 @@
+#:stopdoc:
 require 'rake'
 module Rake
   class Application
@@ -13,3 +14,4 @@ module Rake
     end
   end
 end
+#:startdoc:
