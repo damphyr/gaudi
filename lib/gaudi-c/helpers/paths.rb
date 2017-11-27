@@ -1,4 +1,5 @@
 require_relative 'operations'
+require 'rake'
 module Gaudi
   #This is the default directory layout:
   # src/platform
@@ -58,6 +59,23 @@ module Gaudi
     #implement this accordingly.
     def is_unit_test? filename
       filename.pathmap('%n').end_with?('Test')
+    end
+    #Returns the path to the file containing the commands for the given target
+    def command_file tgt,system_config,platform
+      ext=""
+      if is_library?(tgt,system_config,platform)
+        ext<<"_#{platform}.library"
+      elsif is_exe?(tgt,system_config,platform)
+        ext<<"_#{platform}.link"
+      else
+          ext<<'.breadcrumb'
+      end
+      return tgt.pathmap("%X#{ext}")
+    end
+    #Gaudi supports code generation under the convention that all generated files
+    #are created in the output directory.
+    def is_generated? filename,system_config
+      /#{system_config.out}/=~File.expand_path(filename)
     end
   end
 end

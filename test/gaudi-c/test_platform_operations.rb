@@ -1,5 +1,5 @@
 require_relative 'helpers'
-require_relative '../lib/gaudi'
+require_relative '../../lib/gaudi-c/helpers/operations'
 require "minitest/autorun"
 require "mocha/setup"
 

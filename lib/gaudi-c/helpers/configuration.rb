@@ -1,4 +1,5 @@
 require 'delegate'
+require_relative 'operations'
 module Gaudi
   module Configuration
     #Switches platform configuration replacing platform with the contents of the file
@@ -232,6 +233,11 @@ module Gaudi
       end
     end
     class SystemConfiguration<Loader
+      alias_method :_original_init,:initialize
+      def initialize filename
+        _original_init(filename)
+        load_platform_configurations()
+      end
       #:stopdoc:
       def load_platform_configurations
         @config['platform_data']={}

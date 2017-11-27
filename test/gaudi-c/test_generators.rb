@@ -1,17 +1,17 @@
+require_relative '../../lib/gaudi'
 require_relative 'helpers'
-require_relative '../lib/custom/helpers/paths'
-require_relative '../lib/gaudi'
+require_relative '../../lib/gaudi-c/helpers/components'
+require_relative '../../lib/gaudi-c/helpers/generators'
 require "minitest/autorun"
 require "mocha/setup"
-require 'rake'
+
 
 class TestTaskGenerators < Minitest::Test
-  include TestHelpers
   include Rake::DSL
   include Gaudi::Tasks::Build
   include Gaudi::Utilities
   def setup
-    directory_fixture
+    TestHelpers.directory_fixture
   end
   def teardown
     rm_rf(File.join(File.dirname(__FILE__),'tmp'),:verbose=>false)

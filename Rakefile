@@ -13,6 +13,16 @@ task :"test:gaudi" do
     require_relative "test/gaudi/#{test_file.pathmap('%n')}"
   end
 end
-# vim: syntax=ruby
 
-task :test=> [:"test:gaudi"]
+task :"test:gaudi-c" do
+  require 'coveralls'
+  Coveralls.wear!
+  require 'minitest/autorun'
+  Rake::FileList["#{File.dirname(__FILE__)}/test/gaudi-c/test_*.rb"].each do |test_file|
+    require_relative "test/gaudi-c/#{test_file.pathmap('%n')}"
+  end
+end
+
+task :test=> [:"test:gaudi",:"test:gaudi-c"]
+
+# vim: syntax=ruby
