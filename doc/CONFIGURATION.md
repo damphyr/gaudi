@@ -78,6 +78,7 @@ The standard configuration parameters out-of-the-box are
 
  * base - the root directory of the project. Usually where the rakefile is.
  * out - the build output directory.
+ * gaudi_modules - the comma separated list of modules to require when loading gaudi
 
 **All paths in the configuration can be defined absolute or relative to the configuration file.**
 

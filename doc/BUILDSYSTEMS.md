@@ -26,7 +26,7 @@ The underlying principles for such a system are [described elsewhere](ASPIRATION
 
 The areas of responsibility for such a system can be categorized with labels like "build", "test", "deploy" but this becomes much easier if we color code it and add some pictures:
 
-![Areas of Responsibility](images/buildSystem.png)
+![Areas of Responsibility](/doc/images/buildSystem.png)
 
 How do you create such an omniscient system?
 
@@ -39,4 +39,4 @@ Use the available application for your platform and use gaudi to codify its usag
 
 The only constraint is that the chosen technology offers a command line tool with a reasonable way of signaling errors (i.e. the program's exit code).
 
-[And so it begins](CONFIGURATION.md)
+[And so it begins](WALKTHROUGH.md)
