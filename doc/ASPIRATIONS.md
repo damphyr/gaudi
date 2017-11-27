@@ -24,3 +24,10 @@ Consider the following aphorisms as the theory.
 
  * Artifacts created by the build system are separate from the sources we use to create them
  * No build artifact is commited to the repository. Ever.
+
+ ## Breadcrumbs everywhere
+
+ * At any point in time I am able to exactly reproduce the commands up to that point
+ * I have a record or every command executed by the system
+
+also known as [Ariadne's thread](https://en.wikipedia.org/wiki/Ariadne%27s_thread_(logic))

@@ -1,12 +1,12 @@
-#The Gaudi Coding Style
+# The Gaudi Coding Style
 
-##System configuration
+## System configuration
 
 Gaudi exposes the system configuration in a global variable called $configuration.
 
-We refer to $configuration **only** within tasks. NO gaudi helper module or method with EVER access $configuration directly. The system configuration is always passed to the method as a parameter named system_config.
+We refer to $configuration **only** within tasks. No gaudi helper module or method with EVER access $configuration directly. The system configuration is always passed to the method as a parameter named system_config.
 
-##Method parameters
+## Method parameters
 
 Method parameters are defined from specific to generic and the last two are always system_config,platform (when the method is platform independent, then system_config is the last parameter).
 
@@ -19,7 +19,7 @@ def compile filetask,system_config,platform
 end
 ```
 
-##Helpers & Tasks
+## Helpers & Tasks
 
 The code is organized in modules and each task includes the modules needed
 
@@ -33,11 +33,8 @@ task :deployment do
 end
 ```
 
-##Parametrizing tasks
+## Parametrizing tasks
 
-Rake allows us to create tasks that accept parameters  but in gaudi we chose to use environment variables.
+Rake allows us to create tasks that accept parameters but in gaudi we chose to use environment variables.
 
-This allows us to easily set defaults in development environment installations.
-
-Gaudi offers a mechanism for integration of environment variables in the system configuration (see [CONFIGURATION](CONFIGURATION.md) for details).
-
+This allows us to easily set defaults in development environment installations and has the added benefit of providing reference documentation in one place by adding accessors in Gaudi::Configuration::EnvironmentOptions (see [CONFIGURATION](CONFIGURATION.md) for details)

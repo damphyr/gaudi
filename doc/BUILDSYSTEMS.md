@@ -39,4 +39,4 @@ Use the available application for your platform and use gaudi to codify its usag
 
 The only constraint is that the chosen technology offers a command line tool with a reasonable way of signaling errors (i.e. the program's exit code).
 
-[And so it begins](GETTINGSTARTED.md)
+[And so it begins](CONFIGURATION.md)
