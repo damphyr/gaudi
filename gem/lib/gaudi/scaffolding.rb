@@ -107,7 +107,7 @@ module Gaudi
       platform_config
       lib_config
       api_doc
-      core("gaudi",REPO,version,"lib")
+      core("gaudi",REPO,version,"lib/gaudi.rb lib/gaudi")
     end
 
     def update version
@@ -145,11 +145,7 @@ module Gaudi
       if File.exist?(rakefile)
         puts "Rakefile exists, skipping generation"
       else
-        rakefile_content=<<-EOT
-require_relative 'tools/build/lib/gaudi'
-env_setup(File.dirname(__FILE__))
-require_relative 'tools/build/lib/gaudi/tasks'
-        EOT
+        rakefile_content=File.read(File.join(File.dirname(__FILE__),'templates/rakefile.rb.template'))
         File.open(rakefile, 'wb') {|f| f.write(rakefile_content) }
       end
     end
