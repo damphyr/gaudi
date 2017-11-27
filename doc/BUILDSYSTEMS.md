@@ -26,7 +26,7 @@ The underlying principles for such a system are [described elsewhere](ASPIRATION
 
 The areas of responsibility for such a system can be categorized with labels like "build", "test", "deploy" but this becomes much easier if we color code it and add some pictures:
 
-![Areas of Responsibility](/doc/images/buildSystem.png)
+![Areas of Responsibility](/doc/images/BuildSystem.png)
 
 How do you create such an omniscient system?
 
