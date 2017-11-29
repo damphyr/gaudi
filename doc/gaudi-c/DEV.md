@@ -1,6 +1,6 @@
-#I, Developer!
+# I, Developer!
 
-##Add a new Deployment
+## Add a new Deployment
 
  * Create a subdirectory in src/deployments with the name of the deployment.
  * Add a subdirectory for each platform the Deployment provides executables for.
@@ -17,7 +17,7 @@ Build it with
 rake build:deployment DEPLOYMENT=Dummy
 ```
 
-##Add a new code component
+## Add a new code component
 
 Create a subdirectory in the source directory using the standard Gaudi structure:
 ```
@@ -34,7 +34,7 @@ prefix=Foo
 deps=Bar
 ```
 
-##Add extra compiler options to a code component
+## Add extra compiler options to a code component
 
 Some times we want to compile a component with additional compiler flags. The extra options can be added in the build.cfg file of the code component.
 
@@ -45,7 +45,7 @@ compiler_options= -DFOO
 assembler_options= -whatever
 ```
 
-##Use a code component as a shared library
+## Use a code component as a shared library
 
 Compiling a code component as a shared library is platform specific and might require extra compiler flags.
 For example compiling a shared library with gcc needs the -fpic parameter. This is done in the code component's build.cfg (see previous section).

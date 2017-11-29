@@ -1,59 +1,45 @@
-#Documentation
+# gaudi-c 
 
-You can split the documentation for every development tool in three stages of increasing complexity.
+gaudi-c is a [gaudi module](../MODULES.md) aimed at cross-platform, multi-layered, component-based C/C++ code bases.
 
-In stage I the good developer fairy has magically created the perfect environment and all you have to do is use it.
+Like gaudi, it is the code substrate for a series of conventions, only this time specifically geared towards C (and C++, but primarily C)
 
-In stage II the fairy went on holiday and now you actually have to setup and configure everything before you can actually do some work.
-
-And in stage III you have to build the thing from scratch because the evil manager witch forces you to use it. Smile, at least it's open source <em>evil grin</em>
-
-## Stage I : Use
-
-  * [Object hierarchy](HIERARCHY.md) 
-  * [I, Developer](DEV.md) - on the daily work with Gaudi 
-
-## Stage II: Setup & Configure
-
-  * Notes on [configuring Gaudi](CONFIGURATION.md)
-  * [Conventions](CONVENTIONS.md)
-
-## Stage III: No guts, no glory
- 
-### Quick Start
-
-To create a new project that uses Gaudi do
-
-```bash
-sudo gem install gaudi
-gaudi -s /path/to/project/root
-```
-
-This will create a basic directory structure and Rakefile and pull the current Gaudi version from GitHub
-
- * [Extending](EXTENDING.md) Gaudi
- * [Examples](examples/) 
-
-## Stage IV: Beyond the pain
-
- * [Reasonings](REASONINGS.md) behind the design choices in Gaudi
-
-#Conventions
-
-##Directory structure
+## Directory structure
 
 In order to provide meaningful examples we have to answer the "where do I put this" question and consequently deal with filesystem structure.
 
-Gaudi per default uses a directory structure very closely related to the open source project directory structure:
+Gaudi per default uses a directory structure very closely related to the open source project directory structure, so with gaudi-c we build on it.
 
-project source files are saved under src/, documentation under doc/ etc.
+project source files are saved under src/, documentation under doc/, external libraries under lib/ etc.
 
-Additionally, third party tools are saved under tools/ and the default scaffolding task will copy the Gaudi sources under tools/build/lib.
+Additionally, third party tools are saved under tools/ alongside the scaffolded gaudi setup.
 
-The following image shows the structure created by the gaudi gem:
+The following image shows the structure expected by the gaudi-c gem:
 
 ![directory structure](directory_structure.png)
 
-Following this structure any additions to the build system code should be added under tools/build/lib/custom and Gaudi will include that code automatically.
+## gaudi-c Class Hierarchy
 
-It is important that custom tasks are added as files in custom/tasks, while supporting code is added in custom/helpers. Helpers are required before any task files so that the code is available to all tasks.
+gaudi-c has a simple view on the structure of a code base.
+
+It consists of Deployments which contain Programs for multiple platforms. Each Program consists of multiple Components. This makes for a very simple class hierarchy with exactly three classes.
+
+These classes map a project's directory structure and its source files. 
+
+All other functionality is within modules and in the overwhelming majority all module methods work as functions, meaning no state is actually modified.
+
+This has some interesting side-effects. Actions tend to apply either to Deployments (deploying via capistrano for example), Components or single files. 
+
+For example linting is the same as compiling, the only thing that changes is the command line. 
+
+This is pretty much generalized for most operations performed by a build system: documentation through doxygen/javadoc/rdoc, any kind of static analysis, unit testing (tests for a deployment, a component or - if you need the granularity - each file). 
+
+Other uses emerge as well, e.g. a Deployment is in a 1-1 relationship with a release package providing the content for said package while you only need a little bit of code to gather metadata such as version, timestamps etc.  
+
+## Configuration
+
+gaudi-c introduces several extensions to the gaudi configuration system. There is a dedicated [manual page](CONFIGURATION.md) for them.
+
+## Usage
+
+Adding deployments, programs etc. also has a [dedicated page](DEV.md)
