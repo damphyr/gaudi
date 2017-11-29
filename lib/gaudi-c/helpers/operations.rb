@@ -111,7 +111,7 @@ module Gaudi
       tokens.map do |o| 
         raise GaudiConfigurationError,"Library token #{o} not found in the external libraries configuration" unless config[o]
         lib_path=File.expand_path(File.join(base_dir,config[o]))
-        File.exists?(lib_path) ? lib_path : config[o]
+        File.exist?(lib_path) ? lib_path : config[o]
       end
     end
   end

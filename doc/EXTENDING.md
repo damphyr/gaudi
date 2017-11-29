@@ -1,32 +1,33 @@
-#Extending Gaudi
+# Extending Gaudi
 
-Which is to say, making the thing usable. As it is stated clearly in the README, Gaudi is to be used as a springboard for creating build systems and is not an off-the-shelf solution that will work out of the box. That it will work out of the box if you follow the default conventions is just a nice bonus for the three people that use those conventions.
+Which is to say, making the thing usable.
 
-So this document outlines where you have to replace or add stuff to get the job done.
+## Integrating custom code
 
-Where defaults work and Gaudi would profit from extension we use namespaced modules:
+It is **very strongly** advised to organize you gaudi based code in one or more [gaudi modules](MODULES.md) and to not add anything under lib/gaudi/.
 
-There is a clear definition of the extension point (e.g. Gaudi::PlatformOperations) and the extension will be a module implementing an interface and following a naming convention.
-
-There is one case where if the defaults don't work, you should replace the code and that is the Gaudi::StandardPaths module. This module encapsulates the directory structure for the sources. Consequently, if you like to arrange your files differently you will have to replace it. You will find the Gaudi::StandardPaths module in the custom/helpers/paths.rb file.
-
-##Integrating custom code
-
-The simplest way to get Gaudi code and your custom code together is to put them side by side in a directory. To make it even easier, Gaudi expects a custom/ directory and integrates it in it's load sequence. So you only need to drop the code in the appropriate place:
+Create a directory parallel to tools/build/lib/gaudi and follow the gaudi module structure:
 
 lib/
   |-gaudi/
-  |-custom/
+  |-module/
       |-helpers/
       |-tasks/
-      |-rules/
   |-gaudi.rb
 
 Don't mix tasks and helpers, the load sequence ensures that all code in the helpers/ directory is available before loading any tasks.
 
-For maximum reuse the [module concept](MODULES.md) allows us to reuse custom code.
+To activate you custom code add to the sytem configuration:
 
-##Rakefiles
+```
+gaudi_modules=module
+```
+
+For maximum reuse the [module concept](MODULES.md) allows us to reuse custom code from a git repo.
+
+Also, you probably want to follow the [gaudi style](STYLE.md) so that custom code and core are consistent to the eye.
+
+## Rakefiles
 
 You only need one rakefile at the root of your repository (assuming a standard directory structure) and it looks like the following:
 
@@ -38,9 +39,9 @@ require_relative 'tools/build/lib/gaudi/tasks'
 
 If you use the gaudi gem to scaffold your project then the Rakefile is already there.
 
-##Configuration
+## Configuration
 
-One of gaudi's core goals is to centralize configuration in a readable, diffable and versionable format. Cosequently we need a way to add new parameters to the configuration files.
+One of gaudi's core goals is to centralize configuration in a readable, diffable and versionable format. Consequently we need a way to add new parameters to the configuration files.
 
 This is done using Ruby modules with a naming convention:
 
@@ -55,6 +56,9 @@ module Gaudi::Configuration::SystemModules::MoarConfig
   def moar_list
     @config['moar_list']
   end
+  #An accessor/reader method that will be available from the system configuration object.
+  #
+  #Also a conveniently central place for input validation, syntax checking, default value setting etc.
   def moar_path
     return required_path(@config['moar_path'])
   end
@@ -67,6 +71,12 @@ When in *path_keys* then the value of the parameter is treated as a path and exp
 
 When in *list_keys* then the value of the parameter is assumed to be a comma separated list of values and is parsed into an Array.
 
-*required_path* is a helper method that will raise an error if the path is missing.
+*required_path* is a helper method that will raise an error if the path is missing. Gaudi::Configuration::Helpers contains all methods used for valdation, convenience etc.
 
-The methods are available as methods of the gaudi system configuration instance.
+The methods are available as methods of the gaudi system configuration instance. So within a task you can do 
+
+```
+$configuration.moar_path
+```
+
+to access the configuration value.

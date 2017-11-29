@@ -1,34 +1,8 @@
 require_relative 'operations'
+require_relative 'configuration'
+require_relative 'paths'
 
 module Gaudi
-  #This is the default directory layout:
-  # src/platform
-  #         |-name/     - sources and local headers
-  #             |-inc/  - public headers
-  #             |-test/ - unit tests
-  #
-  #Code can be split in several source directories and by default we will look for the files in
-  #source_directory/common/name and source_directory/platform/name for every source_directory
-  module StandardPaths
-    include Gaudi::PlatformOperations
-    #Returns the path to the file containing the commands for the given target
-    def command_file tgt,system_config,platform
-      ext=""
-      if is_library?(tgt,system_config,platform)
-        ext<<"_#{platform}.library"
-      elsif is_exe?(tgt,system_config,platform)
-        ext<<"_#{platform}.link"
-      else
-          ext<<'.breadcrumb'
-      end
-      return tgt.pathmap("%X#{ext}")
-    end
-    #Gaudi supports code generation under the convention that all generated files
-    #are created in the output directory.
-    def is_generated? filename,system_config
-      /#{system_config.out}/=~File.expand_path(filename)
-    end
-  end
   #A Gaudi::Component is a logical grouping of a set of source and header files that maps to a directory structure.
   #
   #Given a base directory where sources reside, the name of Component is used to map to one or more Component source directories.

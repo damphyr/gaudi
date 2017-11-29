@@ -1,11 +1,11 @@
 module TestHelpers
-  def mock_system_configuration filename,lines
-    fname=File.join(File.dirname(__FILE__),filename)
-    File.stubs(:exists?).with(fname).returns(true)
+  def self.mock_system_configuration filename,lines
+    fname=File.expand_path(File.join(File.dirname(__FILE__),filename))
+    File.stubs(:exist?).with(fname).returns(true)
     File.stubs(:readlines).with(fname).returns(lines)
     fname
   end
-  def directory_fixture
+  def self.directory_fixture
     base=File.dirname(__FILE__)
     mkdir_p("#{base}/tmp/common/FOO/inc",:verbose=>false)
     mkdir_p("#{base}/tmp/mingw/FOO/test/b",:verbose=>false)
@@ -35,13 +35,13 @@ module TestHelpers
     return "#{base}/tmp"
   end
 
-  def platform_config_test_data
+  def self.platform_config_test_data
     ['source_extensions=.c,.cpp','header_extensions=.h','object_extension=.o', 'library_extension=.so','executable_extension=.e',
       'libs=','lib_cfg=libs.yml','compiler_options=-c','assembler_options=-a','library_options=-l','linker_options=-e'
     ]
   end
 
-  def system_config_test_data
+  def self.system_config_test_data
     ['base=.','out=out/','platforms=foo','foo=./foo.cfg',"sources=#{File.dirname(__FILE__)}/tmp/"]
   end
 end

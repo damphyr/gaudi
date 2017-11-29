@@ -4,8 +4,12 @@
 base=../../
 #the build output directory
 out=../../out
+
+## gaudi-c extended options
+##uncomment the options below if you're going to use the gaudi-c module for C/C++ builds
+#gaudi_modules=gaudi-c
 #Comma separated list of directory to search for source files
-sources=../../src/
+#sources=../../src/
 #enumerate the platforms i.e. platforms=gcc,ms,arm
 #platforms= foo
 #add a platform=platform.cfg for each platform pointing to the platform configuration

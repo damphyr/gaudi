@@ -1,3 +1,10 @@
+#0.5.0
+* The scaffolding now only pulls gaudi core
+* Directory structure now reduced to the directories absolutely necessary for gaudi core
+* Templates and examples generated adjusted to the reduced gaudi-core functionality.
+* C/C++ functionality in config files now completely commented out
+* Doc main page for the API reference documentation added
+
 #0.3.1
 * Fixed bug that would delete my gaudi repo for being stupid
 #0.3.0

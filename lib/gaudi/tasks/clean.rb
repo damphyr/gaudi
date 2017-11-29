@@ -6,10 +6,4 @@ namespace :clean do
     end
     puts "#{t.name} done!"
   end
-  desc "Removes the compilation command files"
-  task :breadcrumbs do
-    if $configuration
-      rm_rf(FileList[*$configuration.source_directories.pathmap('%p/**/*.{compile,assemble}')],:verbose=>false)
-    end
-  end
 end

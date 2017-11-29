@@ -1,4 +1,4 @@
-#Reasonings
+# Reasonings
 
 While the parts of Gaudi that are published deal with building C/C++ programs, project specific applications include static code analysis, IDE project generation, documentation generation, test execution, reporting and release management and more or less every task you could automate in a software project.
 

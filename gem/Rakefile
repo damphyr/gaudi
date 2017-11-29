@@ -15,9 +15,9 @@ Hoe.spec "gaudi" do |prj|
   prj.version = Gaudi::Gem::Version::STRING
   prj.summary='Scaffolding and version management for Gaudi'
   prj.urls=["http://github.com/damphyr/gaudi"]
-  prj.description=prj.paragraphs_of('README.txt',1..5).join("\n\n")
+  prj.description=prj.paragraphs_of('README.md',1..5).join("\n\n")
   prj.local_rdoc_dir='doc/rdoc'
-  prj.readme_file="README.txt"
+  prj.readme_file="README.md"
   prj.extra_deps<<["minitar","~>0.6.1"]
   prj.spec_extras={:executables=>["gaudi"],:default_executable=>"gaudi"}
 end
