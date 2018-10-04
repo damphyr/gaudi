@@ -1,3 +1,7 @@
+#1.1.0
+* Added task to create a graph of all available tasks as documentation
+* Fixed an infinite call stack when generating the docs and overriding the invoke method
+
 # 1.0.0
 * Major restructure.
 * Split the C/C++ build functionality off to a separate module. Gaudi core is now just the configuration loader and the build system placement conventions
