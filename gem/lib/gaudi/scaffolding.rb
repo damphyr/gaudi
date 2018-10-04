@@ -115,7 +115,7 @@ module Gaudi
       check_for_git
       puts "Removing old gaudi installation"
       FileUtils.rm_rf(File.join(gaudi_home,"lib/gaudi"))
-      core(version,REPO,"lib/gaudi lib/gaudi.rb")
+      core("gaudi",REPO,version,"lib/gaudi lib/gaudi.rb")
     end
 
     def library lib,source_url,version
