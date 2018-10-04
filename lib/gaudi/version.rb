@@ -6,7 +6,7 @@ module Gaudi
     #Major version
     MAJOR=1
     #Minor version
-    MINOR=0
+    MINOR=1
     #Tiny version
     TINY=0
     #All-in-one
