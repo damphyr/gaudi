@@ -1,3 +1,5 @@
+#0.5.1
+* Fixed core() invocation when doing an update
 #0.5.0
 * The scaffolding now only pulls gaudi core
 * Directory structure now reduced to the directories absolutely necessary for gaudi core
