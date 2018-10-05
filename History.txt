@@ -1,14 +1,14 @@
-#1.1.0
-* Added task to create a graph of all available tasks as documentation
-* Fixed an infinite call stack when generating the docs and overriding the invoke method
+# 1.1.0
+ * Added task to create a graph of all available tasks as documentation (with colors)
+  * Using [Brewer scheme Set 1 of 9-class](http://colorbrewer2.org/#type=qualitative&scheme=Set1&n=9) for colours. Unfortunately no color-blind safe option for 9 classes available
 
 # 1.0.0
-* Major restructure.
-* Split the C/C++ build functionality off to a separate module. Gaudi core is now just the configuration loader and the build system placement conventions
-* Added task timing information to the core by monkey patching task invocation in rake.
-* Dropped support for Ruby 2.0 and 2.1, add 2.4 to the CI
-* Dropped automatic inclusion of custom module.
-* Dropped custom module altogether, folded functionality into gaudi-c
+ * Major restructure.
+ * Split the C/C++ build functionality off to a separate module. Gaudi core is now just the configuration loader and the build system placement conventions
+ * Added task timing information to the core by monkey patching task invocation in rake.
+ * Dropped support for Ruby 2.0 and 2.1, add 2.4 to the CI
+ * Dropped automatic inclusion of custom module.
+ * Dropped custom module altogether, folded functionality into gaudi-c
 
 # 0.12.1
  * Build configuration keys defined as lists (e.g. deps etc.) are now appendable (thanks to [MarkusPalcer](https://github.com/MarkusPalcer))
