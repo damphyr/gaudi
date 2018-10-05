@@ -1,6 +1,6 @@
 # 1.1.0
  * Added task to create a graph of all available tasks as documentation (with colors)
-  * Using [Brewer scheme Set 1 of 9-class](http://colorbrewer2.org/#type=qualitative&scheme=Set1&n=9) for colours. Unfortunately no color-blind safe option for 9 classes available
+  * Using [ColorBrewer Set 1 of 9-class](http://colorbrewer2.org/#type=qualitative&scheme=Set1&n=9) for colours. Unfortunately no color-blind safe option for 9 classes available
 
 # 1.0.0
  * Major restructure.

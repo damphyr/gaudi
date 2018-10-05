@@ -24,7 +24,7 @@ It is meant to provide a consistent command line interface to every task and ope
 
 The underlying principles for such a system are [described elsewhere](ASPIRATIONS.md)
 
-The areas of responsibility for such a system can be categorized with labels like "build", "test", "deploy" but this becomes much easier if we color code it and add some pictures:
+The areas of responsibility for such a system can be categorized with labels like "build", "test", "deploy" but this becomes much easier if we colour code it and add some pictures:
 
 ![Areas of Responsibility](/doc/images/BuildSystem.png)
 

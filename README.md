@@ -20,21 +20,17 @@ Gaudi is meant to be a part of you code repository from the initial commit. To t
 
 Install the gaudi gem:
 
-```
-gem install gaudi
-```
+```gem install gaudi```
 
 Create the project scaffold:
 
-```
-gaudi -s gaudi_project
-```
+```gaudi -s gaudi_project```
+
+This will create a basic project structure and pull the current version of gaudi from the repo. The scaffold also adds the correct files and structure to support features like the [documentaiton tasks](doc/DOCUMENTATION.md)
 
 Add the gaudi-c module:
 
-```
-gaudi -l gaudi-c https://github.com/damphyr/gaudi.git gaudi_project
-```
+```gaudi -l gaudi-c https://github.com/damphyr/gaudi.git gaudi_project```
 
 ## Gaudi?
 
@@ -46,7 +42,7 @@ Gaudi was very much a builder and a craftsman, each of his buildings unique yet 
 
 (The MIT License)
 
-Copyright (c) 2013-2017 Vassilis Rizopoulos
+Copyright (c) 2013-2018 Vassilis Rizopoulos
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
