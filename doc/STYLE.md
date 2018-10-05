@@ -4,7 +4,7 @@
 
 Gaudi exposes the system configuration in a global variable called $configuration.
 
-We refer to $configuration **only** within tasks. No gaudi helper module or method with EVER access $configuration directly. The system configuration is always passed to the method as a parameter named system_config.
+We refer to $configuration **only** within tasks. No gaudi helper module or method should EVER access $configuration directly. The system configuration is always passed to the method as a parameter named system_config.
 
 ## Method parameters
 
