@@ -6,24 +6,24 @@ Let us assume we have a .NET core application, since this is the usage with the 
 
 We start by scaffolding our project:
 
-```
+```bash
 gaudi -s gaudi_project
 ```
 
 We then add a place for our helpers and tasks:
 
-```
+```bash
 mkdir -p tools/build/lib/gaudi_net/helpers
 mkdir -p tools/build/lib/gaudi_net/tasks
 ```
 
 and let gaudi know by editing tools/build/system.cfg and adding:
 
-```
+```bash
 gaudi_modules=gaudi_net
 ```
 
-# Command line is king
+## Command line is king
 
 In this example we're adding a build tool in our build system. We need to figure out where the tool is and how to put together the command line to call it.
 The degree to which this can be abstracted, organized in reusable code modules, validated etc. is entirely up to the individual developer. We're going to keep things really simple to illustrate the points of integration with gaudi.
@@ -34,7 +34,7 @@ We also have our code organized in the usual solution/projects used in .NET
 
 Add tools/build/config/dotnet.cfg with the following content:
 
-```
+```text
 msbuild=dotnet msbuild
 msbuild_options=/nr:false /m 
 msbuild_default_options=/p:StyleCopEnabled=false /p:RunCodeAnalysis=false
@@ -42,7 +42,7 @@ msbuild_default_options=/p:StyleCopEnabled=false /p:RunCodeAnalysis=false
 
 and add it to the system configuration (tools/build/system.cfg) by adding
 
-```
+```text
 import config/msbuild.cfg
 ```
 
@@ -87,4 +87,3 @@ end
 ```
 
 At this point you should start thinking on how your code is layed out in the repository, how you want to structure your build, look into things like automatically generating assembly information (with things like version metadata that tie to the SHA of your code in the repo) and sharing it across projects etc.
-

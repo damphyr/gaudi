@@ -15,7 +15,7 @@ A "gaudi module" has a fixed directory structure:
 
 In the system configuration file add the following:
 
-```
+```text
 gaudi_modules= my_module
 ```
 
@@ -27,7 +27,7 @@ The gaudi gem offers a way to download/update modules from git repositories.
 
 The git repository needs to mirror the structure of gaudi core (a lib/module_name directory)
 
-```
+```bash
 gaudi -l foo https://module.source/foo.git my_project
 ```
 

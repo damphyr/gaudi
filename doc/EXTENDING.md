@@ -19,7 +19,7 @@ Don't mix tasks and helpers, the load sequence ensures that all code in the help
 
 To activate you custom code add to the sytem configuration:
 
-```
+```text
 gaudi_modules=module
 ```
 
@@ -75,7 +75,7 @@ When in *list_keys* then the value of the parameter is assumed to be a comma sep
 
 The methods are available as methods of the gaudi system configuration instance. So within a task you can do 
 
-```
+```ruby
 $configuration.moar_path
 ```
 

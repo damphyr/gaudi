@@ -1,19 +1,28 @@
 # Gaudi - A Builder [http://github.com/damphyr/gaudi](http://github.com/damphyr/gaudi)
 
-## DESCRIPTION:
+## DESCRIPTION
 
 This gem provides setup, scaffolding and maintenance functions for [gaudi](http://github.com/damphyr/gaudi) installations.
 
 ## USAGE
 
-gaudi -s project/root to create a directory structure for a Gaudi based project 
-gaudi -u project/root to update an existing Gaudi installation
-    
-## INSTALL:
+To create a directory structure for a Gaudi based project:
+
+```bash
+gaudi -s project/root  
+```
+
+To update an existing Gaudi installation
+
+```bash
+gaudi -u project/root
+```
+
+## INSTALL
 
 * (sudo) gem install gaudi
 
-## LICENSE:
+## LICENSE
 
 (The MIT License)
 

@@ -10,7 +10,7 @@ Everything starts with the system configuration file. If you didn't mess with th
 
 For the core gaudi functionality the configuration is very simple:
 
-```
+```text
 #the project root directory
 base=../../
 #the build output directory
@@ -65,8 +65,8 @@ rake task FOO=bar
 
 Gaudi supports a set of environment variables as a way for passing options and exposes these as attributes of the system configuration
 
- * GAUDI_CONFIG - points to the configuration file.
- * USER - passes the user name
+* GAUDI_CONFIG - points to the configuration file.
+* USER - passes the user name
 
 Adding methods to Gaudi::Configuration::EnvironmentOptions is the recommended way to expose environment variables to Gaudi. This is pure convention but results in pulling the documentation of environment options together in one rdoc page. It also allows us to have parsing, validation and sanitization of input in one place.
 
@@ -76,9 +76,9 @@ In some cases there are two versions of the reader method for the environment va
 
 The standard configuration parameters out-of-the-box are
 
- * base - the root directory of the project. Usually where the rakefile is.
- * out - the build output directory.
- * gaudi_modules - the comma separated list of modules to require when loading gaudi
+* base - the root directory of the project. Usually where the rakefile is.
+* out - the build output directory.
+* gaudi_modules - the comma separated list of modules to require when loading gaudi
 
 **All paths in the configuration can be defined absolute or relative to the configuration file.**
 

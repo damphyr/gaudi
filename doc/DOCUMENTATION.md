@@ -10,7 +10,6 @@ The `doc:gaudi` task will automatically generate the reference documentation for
 
 It uses doc/BUILDSYSTEM.md as the main page, a file that is created when using the gaudi gem to scaffold a project.
 
-
 ## Graphs
 
 Gaudi is meant to cover all responsibility areas of an extended build system (as [explained elsewhere](BUILDSYSTEMS.md)).
