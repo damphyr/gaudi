@@ -42,7 +42,7 @@ Gaudi was very much a builder and a craftsman, each of his buildings unique yet 
 
 (The MIT License)
 
-Copyright (c) 2013-2018 Vassilis Rizopoulos
+Copyright (c) 2013-2020 Vassilis Rizopoulos
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
