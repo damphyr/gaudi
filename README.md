@@ -6,9 +6,9 @@ gaudi is not a gem, or a library. It is an approach to constructing build system
 
 The main goals for Gaudi are:
 
- * Provide a simple, centralized way for configuring a development environment beginning with the build process
- * Codify a set of conventions for projects targeting multiple platforms.
- * Form the basis for a consistent CLI interface between the developers and the development environment
+* Provide a simple, centralized way for configuring a development environment beginning with the build process
+* Codify a set of conventions for projects targeting multiple platforms.
+* Form the basis for a consistent CLI interface between the developers and the development environment
 
 The approach is layed out in more detail in the [documentation](doc/BUILDSYSTEMS.md)
 
@@ -38,7 +38,7 @@ Well, if you know who [Gaudi](http://en.wikipedia.org/wiki/Antoni_Gaud%C3%AD) wa
 
 Gaudi was very much a builder and a craftsman, each of his buildings unique yet based on his knowledge of the materials and the techniques for working with them.
 
-## LICENSE:
+## LICENSE
 
 (The MIT License)
 
