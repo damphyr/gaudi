@@ -1,25 +1,19 @@
 # -*- ruby -*-
-require_relative 'lib/gaudi/version'
+require_relative "lib/gaudi/version"
 require "rubygems"
 require "hoe"
 
-# Hoe.plugin :compiler
-# Hoe.plugin :gem_prelude_sucks
-# Hoe.plugin :inline
-# Hoe.plugin :racc
-# Hoe.plugin :rcov
-
 Hoe.spec "gaudi" do |prj|
-  developer("Vassilis Rizopoulos", "vassilisrizopoulos@gmail.com")
-  license "MIT"
+  prj.developer("Vassilis Rizopoulos", "vassilisrizopoulos@gmail.com")
+  prj.license "MIT"
   prj.version = Gaudi::Gem::Version::STRING
-  prj.summary='Scaffolding and version management for Gaudi'
-  prj.urls=["http://github.com/damphyr/gaudi"]
-  prj.description=prj.paragraphs_of('README.md',1..5).join("\n\n")
-  prj.local_rdoc_dir='doc/rdoc'
-  prj.readme_file="README.md"
-  prj.extra_deps<<["minitar","~>0.6.1"]
-  prj.spec_extras={:executables=>["gaudi"],:default_executable=>"gaudi"}
+  prj.summary = "Scaffolding and version management for Gaudi"
+  prj.urls = { "home" => "http://github.com/damphyr/gaudi" }
+  prj.description = prj.paragraphs_of("README.md", 1..5).join("\n\n")
+  prj.local_rdoc_dir = "doc/rdoc"
+  prj.readme_file = "README.md"
+  prj.extra_deps << ["minitar", "~>0.9"]
+  prj.spec_extras = { :executables => ["gaudi"] }
 end
 
 # vim: syntax=ruby

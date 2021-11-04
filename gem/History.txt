@@ -1,34 +1,56 @@
-#0.5.1
+# Changelog
+
+## 0.6.0
+
+* Scaffolding now generates only the files necessary for the core gaudi functionality
+* Updated documentation landing page template
+* Update gem dependencies
+
+## 0.5.1
+
 * Fixed core() invocation when doing an update
-#0.5.0
+
+## 0.5.0
+
 * The scaffolding now only pulls gaudi core
 * Directory structure now reduced to the directories absolutely necessary for gaudi core
 * Templates and examples generated adjusted to the reduced gaudi-core functionality.
 * C/C++ functionality in config files now completely commented out
 * Doc main page for the API reference documentation added
 
-#0.3.1
+## 0.3.1
+
 * Fixed bug that would delete my gaudi repo for being stupid
-#0.3.0
+
+## 0.3.0
+
 * Added *deployments* and *common* subdirectories when scaffolding src
 * Added an empty library configuration file and the platform config reference
 * Added the *auto_rules* option in the system configuration
 * Pull Gaudi "libraries" with -l
 
-#0.2.4
+## 0.2.4
+
 * Fix bug when project root contains spaces
 * DRYed the code
-#0.2.3
+
+## 0.2.3
+
 * Check for git presence before removing old install when updating
 * Check for git presence before attempting to create a new project
 * Help message now indicates that https access and git are required
-#0.2.2
+
+## 0.2.2
+
 * Added update functionality
-#0.2.0
+
+## 0.2.0
+
 * Pulls HEAD of gaudi from GitHub in the scaffold
 
-#0.1.0
+## 0.1.0
+
 * Scaffolding code for new projects
-** Directory structure
-** Example system configuration
-** Example platform configuration
+  * Directory structure
+  * Example system configuration
+  * Example platform configuration

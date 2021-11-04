@@ -6,14 +6,4 @@ base=../../
 out=../../out
 
 ## gaudi-c extended options
-##uncomment the options below if you're going to use the gaudi-c module for C/C++ builds
-#gaudi_modules=gaudi-c
-#Comma separated list of directory to search for source files
-#sources=../../src/
-#enumerate the platforms i.e. platforms=gcc,ms,arm
-#platforms= foo
-#add a platform=platform.cfg for each platform pointing to the platform configuration
-#foo=./foo.cfg
-#Instead of specifying build rules manually, uncomment this line
-#and gaudi will create rake rules for objects and executables for each target platform
-#auto_rules=true
+#gaudi_modules=
