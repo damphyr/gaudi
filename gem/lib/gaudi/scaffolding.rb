@@ -11,11 +11,11 @@ module Gaudi
 
   class Gem
     MAIN_CONFIG = "system.cfg".freeze
-    PLATFORM_CONFIG = "foo.cfg".freeze
     REPO = "https://github.com/damphyr/gaudi".freeze
 
     attr_reader :project_root, :gaudi_home
-    #:nodoc:
+
+    # :nodoc:
     def self.options(arguments)
       options = OpenStruct.new
       options.project_root = Dir.pwd
@@ -77,7 +77,7 @@ module Gaudi
       end
       return options
     end
-    #:nodoc:
+    # :nodoc:
     def self.run(args)
       opts = options(args)
       begin
@@ -106,10 +106,8 @@ module Gaudi
       directory_structure
       rakefile
       main_config
-      platform_config
-      lib_config
       api_doc
-      core("gaudi", REPO, version, "lib/gaudi.rb lib/gaudi")
+      core(REPO, version, "lib/gaudi.rb lib/gaudi")
     end
 
     def update(version)
@@ -118,20 +116,19 @@ module Gaudi
       check_for_git
       puts "Removing old gaudi installation"
       FileUtils.rm_rf(File.join(gaudi_home, "lib/gaudi"))
-      core("gaudi", REPO, version, "lib/gaudi lib/gaudi.rb")
+      core(REPO, version, "lib/gaudi lib/gaudi.rb")
     end
 
     def library(lib, source_url, version)
       raise GemError, "#{gaudi_home} is missing! Try creating a new Gaudi project first." unless File.exist?(gaudi_home)
 
-      #check_for_git
       puts "Removing old #{lib} installation"
       FileUtils.rm_rf(File.join(gaudi_home, "lib/#{lib}"))
       puts "Pulling #{version} from #{source_url}"
-      core(lib, source_url, version, "lib/#{lib}")
+      core(source_url, version, "lib/#{lib}")
     end
 
-    #:stopdoc:
+    # :stopdoc:
     def check_for_git
       raise GemError, "Could not find git. Make sure it is in the PATH" unless system("git --version")
     end
@@ -166,28 +163,6 @@ module Gaudi
       end
     end
 
-    def platform_config
-      puts "Generating example platform configuration file"
-      config_file = File.join(project_root, "tools/build/#{PLATFORM_CONFIG}")
-      if File.exist?(config_file)
-        puts "#{PLATFORM_CONFIG} exists, skipping generation"
-      else
-        configuration_content = File.read(File.join(File.dirname(__FILE__), "templates/platform.cfg.template"))
-        File.open(config_file, "wb") { |f| f.write(configuration_content) }
-      end
-    end
-
-    def lib_config
-      puts "Generating example library configuration file"
-      config_file = File.join(project_root, "tools/build/libs.yaml")
-      if File.exist?(config_file)
-        puts "libs.yaml exists, skipping generation"
-      else
-        configuration_content = "---\n"
-        File.open(config_file, "wb") { |f| f.write(configuration_content) }
-      end
-    end
-
     def api_doc
       puts "Generating build system API doc"
       config_file = File.join(project_root, "doc/BUILDSYSTEM.md")
@@ -199,14 +174,12 @@ module Gaudi
       end
     end
 
-    def core(lib, url, version, lib_items)
+    def core(url, version, lib_items)
       Dir.mktmpdir do |tmp|
-        if pull_from_repo(url, tmp)
-          pkg = archive(version, File.join(tmp, "gaudi"), project_root, lib_items)
-          unpack(pkg, gaudi_home)
-        else
-          raise GemError, "Cloning the Gaudi repo failed. Check that git is on the PATH and that #{REPO} is accessible"
-        end
+        raise GemError, "Cloning the Gaudi repo failed. Check that git is on the PATH and that #{REPO} is accessible" unless pull_from_repo(url, tmp)
+
+        pkg = archive(version, File.join(tmp, "gaudi"), project_root, lib_items)
+        unpack(pkg, gaudi_home)
       end
     end
 
@@ -235,6 +208,6 @@ module Gaudi
       FileUtils.rm_rf(File.join(home, "pax_global_header"))
     end
 
-    #:startdoc:
+    # :startdoc:
   end
 end
