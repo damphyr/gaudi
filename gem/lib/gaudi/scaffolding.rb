@@ -194,7 +194,7 @@ module Gaudi
       Dir.chdir(clone_path) do |d|
         puts "Packing #{version} gaudi version in #{pkg}"
         cmdline = "git archive --format=tar -o \"#{pkg}\" #{version} #{lib_items}"
-        system(cmdline)
+        raise GemError, "Failed to extract library from git" unless system(cmdline)
       end
       return pkg
     end
