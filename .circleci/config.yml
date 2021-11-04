@@ -22,7 +22,7 @@ jobs:
       - ruby/bundle-install
       - run:
           name: Run tests
-          command: bunlde exec rake
+          command: bundle exec rake
   r3-0-2:
     docker:
       - image: circleci/ruby:3.0.2
