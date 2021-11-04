@@ -1,0 +1,10 @@
+source "http://rubygems.org"
+
+gem "minitar", "~>0.9", :require => false
+
+group :development do
+  gem "hoe", "~>3.23", :require => false
+  gem "minitest", "~>5.14", :require => false
+  gem "mocha", "~>1.13", :require => false
+  gem "rake", "~>13.0", :require => false
+end

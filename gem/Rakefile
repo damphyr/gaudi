@@ -12,7 +12,7 @@ Hoe.spec "gaudi" do |prj|
   prj.description = prj.paragraphs_of("README.md", 1..5).join("\n\n")
   prj.local_rdoc_dir = "doc/rdoc"
   prj.readme_file = "README.md"
-  prj.extra_deps << ["minitar", "~>0.6.1"]
+  prj.extra_deps << ["minitar", "~>0.9"]
   prj.spec_extras = { :executables => ["gaudi"] }
 end
 
