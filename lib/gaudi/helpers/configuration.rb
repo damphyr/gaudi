@@ -12,11 +12,9 @@ module Gaudi
     if ENV["GAUDI_CONFIG"]
       ENV["GAUDI_CONFIG"] = File.expand_path(ENV["GAUDI_CONFIG"])
     else
-      if File.exist?(DEFAULT_CONFIGURATION_FILE)
-        ENV["GAUDI_CONFIG"] = File.expand_path(DEFAULT_CONFIGURATION_FILE)
-      else
-        raise "No configuration file (GAUDI_CONFIG is initially empty and #{DEFAULT_CONFIGURATION_FILE} is missing)"
-      end
+      raise "No configuration file (GAUDI_CONFIG is initially empty and #{DEFAULT_CONFIGURATION_FILE} is missing)" unless File.exist?(DEFAULT_CONFIGURATION_FILE)
+
+      ENV["GAUDI_CONFIG"] = File.expand_path(DEFAULT_CONFIGURATION_FILE)
     end
     # Load the system configuration
     puts "Reading main configuration from \n\t#{ENV["GAUDI_CONFIG"]}"
@@ -24,19 +22,17 @@ module Gaudi
     return system_config
   end
 
+  # Methods/classes for handling parsing, extending and switching Gaudi configuration
   module Configuration
+    # Methods to facilitate handling configuration entries
     module Helpers
       # Raises GaudiConfigurationError
       def required_path(fname)
-        if fname && !fname.empty?
-          if File.exist?(fname)
-            return File.expand_path(fname)
-          else
-            raise GaudiConfigurationError, "Missing required file #{fname}"
-          end
-        else
-          raise GaudiConfigurationError, "Empty value for required path"
-        end
+        raise GaudiConfigurationError, "Empty value for required path" unless fname && !fname.empty?
+
+        raise GaudiConfigurationError, "Missing required file #{fname}" unless File.exist?(fname)
+
+        return File.expand_path(fname)
       end
     end
 
@@ -47,24 +43,25 @@ module Gaudi
     # This makes for some interesting usage when you don't want to have multiple calls
     # with a different GAUDI_CONFIG parameter
     def self.switch_configuration(configuration_file)
-      if block_given?
-        current_configuration = ENV["GAUDI_CONFIG"]
-        if File.expand_path(configuration_file) != File.expand_path(current_configuration)
-          begin
-            puts "Switching configuration to #{configuration_file}"
-            $configuration = nil
-            ENV["GAUDI_CONFIG"] = configuration_file
-            $configuration = Gaudi::Configuration::SystemConfiguration.load([ENV["GAUDI_CONFIG"]])
-            yield
-          ensure
-            puts "Switching configuration back to #{current_configuration}"
-            $configuration = nil
-            ENV["GAUDI_CONFIG"] = current_configuration
-            $configuration = Gaudi::Configuration::SystemConfiguration.load([ENV["GAUDI_CONFIG"]])
-          end
-        end
+      return unless block_given?
+
+      current_configuration = ENV["GAUDI_CONFIG"]
+      return unless File.expand_path(configuration_file) != File.expand_path(current_configuration)
+
+      begin
+        puts "Switching configuration to #{configuration_file}"
+        $configuration = nil
+        ENV["GAUDI_CONFIG"] = configuration_file
+        $configuration = Gaudi::Configuration::SystemConfiguration.load([ENV["GAUDI_CONFIG"]])
+        yield
+      ensure
+        puts "Switching configuration back to #{current_configuration}"
+        $configuration = nil
+        ENV["GAUDI_CONFIG"] = current_configuration
+        $configuration = Gaudi::Configuration::SystemConfiguration.load([ENV["GAUDI_CONFIG"]])
       end
     end
+
     # Class to load the configuration from a key=value textfile with a few additions.
     #
     # Configuration classes derived from Loader override the Loader#keys method to specify characteristics for the keys.
@@ -90,11 +87,9 @@ module Gaudi
             cfg = klass.new(cfg_file)
           end
         end
-        if cfg
-          return cfg
-        else
-          raise GaudiConfigurationError, "No #{klass.to_s} configuration files in '#{configuration_files}'"
-        end
+        raise GaudiConfigurationError, "No #{klass.to_s} configuration files in '#{configuration_files}'" unless cfg
+
+        return cfg
       end
 
       # Returns all the configuration files processed (e.g. those read with import and the platform configuration files)
@@ -127,42 +122,38 @@ module Gaudi
 
       # Merges the parameters from cfg_file into this instance
       def merge(cfg_file)
-        begin
-          cfg = read_configuration(cfg_file)
-          list_keys, path_keys = *keys
-          cfg.keys.each do |k|
-            if @config.keys.include?(k) && list_keys.include?(k)
-              @config[k] += cfg[k]
-            else
-              # last one wins
-              @config[k] = cfg[k]
-            end
+        cfg = read_configuration(cfg_file)
+        list_keys, = *keys
+        cfg.each_key do |k|
+          if @config.keys.include?(k) && list_keys.include?(k)
+            @config[k] += cfg[k]
+          else
+            # last one wins
+            @config[k] = cfg[k]
           end
-          @configuration_files << cfg_file
-        rescue
         end
+        @configuration_files << cfg_file
       end
 
       # Reads a configuration file and returns a hash with the
       # configuration as key-value pairs
       def read_configuration(filename)
-        if File.exist?(filename)
-          lines = File.readlines(filename)
-          cfg_dir = File.dirname(filename)
-          begin
-            cfg = parse_content(lines, cfg_dir, *keys)
-          rescue GaudiConfigurationError
-            raise GaudiConfigurationError, "In #{filename} - #{$!.message}"
-          end
-        else
-          raise GaudiConfigurationError, "Cannot load configuration.'#{filename}' not found"
+        raise GaudiConfigurationError, "Cannot load configuration.'#{filename}' not found" unless File.exist?(filename)
+
+        lines = File.readlines(filename)
+        cfg_dir = File.dirname(filename)
+        begin
+          cfg = parse_content(lines, cfg_dir, *keys)
+        rescue GaudiConfigurationError
+          raise GaudiConfigurationError, "In #{filename} - #{$!.message}"
         end
+
         return cfg
       end
 
       private
 
-      #:stopdoc:
+      # :stopdoc:
       def parse_content(lines, cfg_dir, list_keys, path_keys)
         cfg = {}
         lines.each do |l|
@@ -182,19 +173,19 @@ module Gaudi
             else
               raise GaudiConfigurationError, "Syntax error: '#{l}'"
             end
-          end # unless
-        end # lines.each
+          end
+        end
         return cfg
       end
 
       # Appends data to a key that is defined as list key
       def handle_key_append(key, value, cfg_dir, list_keys, path_keys, cfg)
-        thisValue = handle_key(key, value, cfg_dir, list_keys, path_keys, cfg)
+        this_value = handle_key(key, value, cfg_dir, list_keys, path_keys, cfg)
         cfg[key] = [] unless cfg.has_key?(key)
 
         begin
-          cfg[key].concat(thisValue).uniq!
-        rescue
+          cfg[key].concat(this_value).uniq!
+        rescue NoMethodError
         end
       end
 
@@ -252,7 +243,7 @@ module Gaudi
         return list_keys, path_keys
       end
 
-      #:startdoc:
+      # :startdoc:
     end
 
     # The central configuration for the system
@@ -283,7 +274,7 @@ module Gaudi
 
       private
 
-      #:stopdoc:
+      # :stopdoc:
       # makes sure we require the helpers from any modules defined in the configuration
       # before we start reading the configuration to ensure that extension modules work correctly
       def load_gaudi_modules(main_config_file)
@@ -303,7 +294,7 @@ module Gaudi
         end
       end
 
-      #:startdoc:
+      # :startdoc:
     end
 
     # Adding modules in this module allows SystemConfiguration to extend it's functionality
@@ -316,7 +307,7 @@ module Gaudi
     module SystemModules
       # The absolute basics for configuration
       module BaseConfiguration
-        #:stopdoc:
+        # :stopdoc:
         def self.list_keys
           ["gaudi_modules"]
         end
