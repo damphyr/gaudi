@@ -1,13 +1,16 @@
 # A List of Whishes
 
-"In theory, there is no difference between theory and praxis. In praxis, there is"
+"In theory, there is no difference between theory and praxis. In praxis, there
+is"
 
-Consider the following aphorisms as the theory.
+Consider the following aphorisms as the theory the design of gaudi is based
+upon.
 
 ## Just the Repository
 
 * I will be able to recreate my software with just the repository
-* I will be able to recreate my software development environment with just the repository
+* I will be able to recreate my software development environment with just the
+  repository
 * I will be able to run my software with just the repository
 * I will be able to test my software with just the repository
 
@@ -22,12 +25,14 @@ Consider the following aphorisms as the theory.
 
 ## Out of Source Builds
 
-* Artifacts created by the build system are separate from the sources we use to create them
-* No build artifact is commited to the repository. Ever.
+* Artifacts created by the build system are separate from the sources we use to
+  create them
+* No build artifact is committed to the repository. Ever.
 
 ## Breadcrumbs everywhere
 
-* At any point in time I am able to exactly reproduce the commands up to that point
-* I have a record or every command executed by the system
+* At any point in time I am able to exactly reproduce the commands up to that
+  point
+* I have a record of every command executed by the system
 
 also known as [Ariadne's thread](https://en.wikipedia.org/wiki/Ariadne%27s_thread_(logic))
