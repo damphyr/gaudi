@@ -10,7 +10,8 @@ implementation as well as the utilization of gaudi.
   systems
 * [gaudi Configuration](CONFIGURATION.md) - how gaudi and and the build system
   built with it can be configured
-* [gaudi Documentation Features](DOCUMENTATION.md)
+* [gaudi Documentation Features](DOCUMENTATION.md) - documentation facilities of
+  gaudi in support of large build systems
 * [Extending gaudi](EXTENDING.md)
 * [gaudi modules](MODULES.md)
 * [Reasonings](REASONINGS.md)
