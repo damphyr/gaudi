@@ -17,5 +17,6 @@ implementation as well as the utilization of gaudi.
   and reusable extension of gaudi managed build systems with
   common functionality
 * [Reasonings](REASONINGS.md)
-* [The gaudi Coding Style](STYLE.md)
+* [The gaudi Coding Style](STYLE.md) - generic coding conventions for projects
+  based on gaudi
 * [gaudi Walkthrough](WALKTHROUGH.md)
