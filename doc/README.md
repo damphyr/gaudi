@@ -12,7 +12,8 @@ implementation as well as the utilization of gaudi.
   built with it can be configured
 * [gaudi Documentation Features](DOCUMENTATION.md) - documentation facilities of
   gaudi in support of large build systems
-* [Extending gaudi](EXTENDING.md)
+* [Extending gaudi](EXTENDING.md) - how to build and extend the functionality of
+  a build system based on gaudi
 * [gaudi modules](MODULES.md) - the concept of gaudi modules for a standardized
   and reusable extension of gaudi managed build systems with
   common functionality
