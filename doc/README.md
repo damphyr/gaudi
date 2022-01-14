@@ -17,7 +17,7 @@ implementation as well as the utilization of gaudi.
 * [gaudi modules](MODULES.md) - the concept of gaudi modules for a standardized
   and reusable extension of gaudi managed build systems with
   common functionality
-* [Reasonings](REASONINGS.md)
+* [Reasonings](REASONINGS.md) - rationale of the abstination from packaging gaudi as a gem
 * [The gaudi Coding Style](STYLE.md) - generic coding conventions for projects
   based on gaudi
 * [gaudi Walkthrough](WALKTHROUGH.md)
