@@ -20,4 +20,5 @@ implementation as well as the utilization of gaudi.
 * [Reasonings](REASONINGS.md) - rationale of the abstination from packaging gaudi as a gem
 * [The gaudi Coding Style](STYLE.md) - generic coding conventions for projects
   based on gaudi
-* [gaudi Walkthrough](WALKTHROUGH.md)
+* [gaudi Walkthrough](WALKTHROUGH.md) - a minimal walkthrough on the creation of
+  a gaudi module
