@@ -109,3 +109,7 @@ $configuration.new_path_option
 ```
 
 can be called to access the configuration value.
+
+---
+
+Back to the [README contents](README.md)

@@ -36,3 +36,7 @@ upon.
 * I have a record of every command executed by the system
 
 also known as [Ariadne's thread](https://en.wikipedia.org/wiki/Ariadne%27s_thread_(logic))
+
+---
+
+Back to the [README contents](README.md)

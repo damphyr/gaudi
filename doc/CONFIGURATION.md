@@ -115,3 +115,7 @@ mixups.
 
 <hr/>
 <sup>1</sup> For given values of typical that might differ from everybody else's
+
+---
+
+Back to the [README contents](README.md)

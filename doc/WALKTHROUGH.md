@@ -127,3 +127,7 @@ which configuration options, modules, classes and tasks should make up each of
 them. An example of such functionality could be automatic code generation (e.g.
 version metadata derived from a commit SHA). On an even higher level a possible
 sharing of the code across multiple projects could be considered too.
+
+---
+
+Back to the [README contents](README.md)

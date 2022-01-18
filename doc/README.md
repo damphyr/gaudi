@@ -22,3 +22,7 @@ implementation as well as the utilization of gaudi.
   based on gaudi
 * [gaudi Walkthrough](WALKTHROUGH.md) - a minimal walkthrough on the creation of
   a gaudi module
+
+---
+
+Back to the [root README](../README.md)

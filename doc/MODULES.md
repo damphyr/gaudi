@@ -44,3 +44,7 @@ gaudi -l foo https://module.source/foo.git my_project
 
 So reusable generic code can be kept in a separate repository and be shared
 between projects.
+
+---
+
+Back to the [README contents](README.md)

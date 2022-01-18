@@ -36,3 +36,7 @@ process (rather ironic for a tool whose goal is to automate stuff).
 
 The [extending gaudi](EXTENDING.md) section can be checked for code that adds
 functionality past the core compilation and build stages.
+
+---
+
+Back to the [README contents](README.md)

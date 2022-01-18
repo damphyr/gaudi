@@ -46,3 +46,7 @@ scheme.
 
 The colour pallete used is
 [Brewer scheme Set 1 of 9-class](http://colourbrewer2.org/#type=qualitative&scheme=Set1&n=9).
+
+---
+
+Back to the [README contents](README.md)

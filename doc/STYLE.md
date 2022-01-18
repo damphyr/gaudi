@@ -54,3 +54,7 @@ This allows to easily set defaults in development environment installations and
 has the added benefit of providing reference documentation in one place by
 adding accessors in `Gaudi::Configuration::EnvironmentOptions` (see
 [CONFIGURATION](CONFIGURATION.md) for details).
+
+---
+
+Back to the [README contents](README.md)

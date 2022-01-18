@@ -56,3 +56,7 @@ exit code).
 
 A [walkthrough](WALKTHROUGH.md) on setting up and utilizing gaudi based build
 system is available within this repository too.
+
+---
+
+Back to the [README contents](README.md)
