@@ -1,6 +1,8 @@
 require_relative "errors"
 
 module Gaudi
+  ##
+  # Module encapsulating helper methods being utilized in various places
   module Utilities
     # Requires all files defined in the list printing out errors
     # but without interrupting on error

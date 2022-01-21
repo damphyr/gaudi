@@ -1,9 +1,21 @@
-# General Gaudi error
+##
+# Base exception type of Gaudi
 #
-# If at any point there is a different exception type in the code then it's going to be a bug
+# This exception is the base of the exception hierarchy of Gaudi. If Gaudi code
+# raises neither this exception nor an exception derived from this one, then
+# it's a bug.
 class GaudiError < RuntimeError
 end
 
-# Raised whenever an error is encountered while handling configuration files
+##
+# Exception which is being raised if an error occurs during configuration
+# handling
+#
+# This exception can be caused by a variety of circumstances, some exemplary
+# ones being:
+# * a mandatory configuration option being missing
+# * an invalid configuration option being encountered
+# * an imported configuration file being missing
+# * syntax errors in configuration files
 class GaudiConfigurationError < GaudiError
 end

@@ -1,29 +1,57 @@
+require_relative "errors"
+
 module Gaudi
-  # Helper methods to enable handling of environment variables
+  ##
+  # Module of helper methods to enhance the handling of environment variables
   module EnvironmentHelpers
-    # Will raise an exception if env_var is not defined
+    ##
+    # Query the value of the environment variable +env_var+ and raise a
+    # GaudiError if it does not exist
+    #
+    # Returns the value of the environment variable +env_var+
     def mandatory(env_var)
       ENV[env_var] || raise(GaudiError, "Environment variable '#{env_var}' not defined.\nValue mandatory for the current task.")
     end
   end
 
   module Configuration
-    # Encapsulates the environment variables used to adjust the builder's configuration
+    ##
+    # Module encapsulating environment variables which are being used to adjust
+    # the Gaudi builder's configuration
     #
-    # Is mixed in with SystemConfiguration
+    # This module is being mixed in with SystemConfiguration.
     module EnvironmentOptions
       include EnvironmentHelpers
-      # Returns the value of GAUDI_CONFIG used to find the system configuration file
+
+      ##
+      # Query the value of the +GAUDI_CONFIG+ environment variable used to find
+      # the system configuration file
+      #
+      # A GaudiError is being raised if this environment variable doesn't exist.
+      #
+      # Returns the value of the environment variable +GAUDI_CONFIG+
       def gaudi_config
         mandatory("GAUDI_CONFIG")
       end
 
-      # Defines the user name to work with, raises GaudiConfigurationError if not defined
+      ##
+      # Query the value of the +USER+ environment variable used to find the user
+      # name to work with
+      #
+      # A GaudiError is being raised if this environment variable doesn't exist.
+      #
+      # Returns the value of the environment variable +USER+
       def user!
         mandatory("USER")
       end
 
-      # Returns the user name to work with, raises no exception whatsoever
+      ##
+      # Query the value of the +USER+ environment variable used to find the user
+      # name to work with
+      #
+      # If the +USER+ environment variable does not exist nil is being returned.
+      #
+      # Returns the value of the environment variable +USER+ or nil
       def user
         return ENV["USER"]
       end
