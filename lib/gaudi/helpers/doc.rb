@@ -55,6 +55,8 @@ module Gaudi
         c2 << node(node_name)
       when "pkg"
         c9 << node(node_name)
+      when "publish"
+        c9 << node(node_name)
       when "doc"
         c7 << node(node_name)
       when "deploy"
