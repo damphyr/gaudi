@@ -9,3 +9,4 @@ gem/pkg
 .DS_Store
 
 .coverage
+.rake_tasks
