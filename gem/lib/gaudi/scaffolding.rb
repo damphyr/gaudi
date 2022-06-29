@@ -2,7 +2,6 @@ require "ostruct"
 require "optparse"
 require "fileutils"
 require "tmpdir"
-require "rubygems"
 require "minitar"
 
 module Gaudi
@@ -107,7 +106,7 @@ module Gaudi
       rakefile
       main_config
       api_doc
-      core(REPO, version, "lib/gaudi.rb lib/gaudi")
+      core(REPO, version, ["lib/gaudi.rb lib/gaudi"])
     end
 
     def update(version)
@@ -116,7 +115,7 @@ module Gaudi
       check_for_git
       puts "Removing old gaudi installation"
       FileUtils.rm_rf(File.join(gaudi_home, "lib/gaudi"))
-      core(REPO, version, "lib/gaudi lib/gaudi.rb")
+      core(REPO, version, ["lib/gaudi lib/gaudi.rb"])
     end
 
     def library(lib, source_url, version)
@@ -125,7 +124,7 @@ module Gaudi
       puts "Removing old #{lib} installation"
       FileUtils.rm_rf(File.join(gaudi_home, "lib/#{lib}"))
       puts "Pulling #{version} from #{source_url}"
-      core(source_url, version, "lib/#{lib}")
+      core(source_url, version, ["lib/#{lib}", "tools/build/lib/#{lib}"])
     end
 
     # :stopdoc:
@@ -178,8 +177,14 @@ module Gaudi
       Dir.mktmpdir do |tmp|
         raise GemError, "Cloning the Gaudi repo failed. Check that git is on the PATH and that #{REPO} is accessible" unless pull_from_repo(url, tmp)
 
-        pkg = archive(version, File.join(tmp, "gaudi"), project_root, lib_items)
-        unpack(pkg, gaudi_home)
+        lib_items.each do |items|
+          unpack_target = gaudi_home
+          unpack_target = File.expand_path(File.join(gaudi_home, "../..")) if /tools\/build/ =~ items
+          pkg = archive(version, File.join(tmp, "gaudi"), project_root, items)
+          unpack(pkg, unpack_target)
+        rescue GemError
+          next
+        end
       end
     end
 

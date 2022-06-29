@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.0
+
+* A module can now be pulled from a standard gaudi installation as well as a repo with a lib/ subdirectory
+
 ## 0.6.0
 
 * Scaffolding now generates only the files necessary for the core gaudi functionality
