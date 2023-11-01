@@ -1,6 +1,7 @@
 require_relative "../version"
 require_relative "errors"
 require_relative "environment"
+
 require "pathname"
 require "yaml"
 
@@ -22,11 +23,18 @@ module Gaudi
     return system_config
   end
 
-  # Methods/classes for handling parsing, extending and switching Gaudi configuration
+  ##
+  # Module of methods and classes for handling the parsing, extensions and
+  # switching of Gaudi configuration
   module Configuration
-    # Methods to facilitate handling configuration entries
+    ##
+    # Module of methods facilitating the handling of configuration entries
     module Helpers
-      # Raises GaudiConfigurationError
+      ##
+      # Check if the file +fname+ exists and return its absolute path
+      #
+      # A GaudiConfigurationError is raised if +fname+ is invalid or does not
+      # point to an existing file.
       def required_path(fname)
         raise GaudiConfigurationError, "Empty value for required path" unless fname && !fname.empty?
 
@@ -77,7 +85,15 @@ module Gaudi
     # setenv GAUDI=brilliant builder
     class Loader
       include Helpers
-      # Goes through a list of configuration files and returns the resulting merged configuration
+
+      ##
+      # Iterate through a list of configuration files +configuration_files+ and
+      # return the resulting configuration as a new instance of class +klass+
+      #
+      # In case of errors upon parsing the given configurations or instantiating
+      # the new +klass+ instance a GaudiConfigurationError is to be raised.
+      #
+      # The class +klass+ should generally be a derivative of Loader.
       def self.load(configuration_files, klass)
         cfg = nil
         configuration_files.each do |cfg_file|
@@ -95,8 +111,12 @@ module Gaudi
       # Returns all the configuration files processed (e.g. those read with import and the platform configuration files)
       # The main file (the one used in initialize) is always first in the collection
       attr_reader :configuration_files
+      ##
+      # A hash of the configuration files' key-value pairs
       attr_reader :config
 
+      ##
+      # Initialize a new instance by loading the configuration from +filename+
       def initialize(filename)
         @configuration_files = [File.expand_path(filename)]
         @config = read_configuration(File.expand_path(filename))
@@ -116,6 +136,9 @@ module Gaudi
         return [], []
       end
 
+      ##
+      # Print informative string about the version of the underlying Gaudi and
+      # the main configuration file
       def to_s
         "Gaudi #{Gaudi::Version::STRING} with #{configuration_files.first}"
       end
@@ -135,8 +158,11 @@ module Gaudi
         @configuration_files << cfg_file
       end
 
-      # Reads a configuration file and returns a hash with the
-      # configuration as key-value pairs
+      ##
+      # Read a configuration file +filename+ and returns its contents as a hash
+      #
+      # Returns a hash of the configuration file's interpreted contents as
+      # key-value pairs
       def read_configuration(filename)
         raise GaudiConfigurationError, "Cannot load configuration.'#{filename}' not found" unless File.exist?(filename)
 
@@ -153,7 +179,19 @@ module Gaudi
 
       private
 
-      # :stopdoc:
+      ##
+      # Parse the contents of a configuration file and return its interpreted
+      # key-value combinations as a hash
+      #
+      # * +lines+ - the entire content of the configuration file as its
+      #   individual lines
+      # * +cfg_dir+ - the path of the directory the configuration file resides
+      #   in
+      # * +list_keys+ - a list of all keys which represent comma-separated lists
+      #   of values
+      # * +path_keys+ - a list of all keys representing paths
+      #
+      # Returns the interpreted contents of the configuration file as a hash
       def parse_content(lines, cfg_dir, list_keys, path_keys)
         cfg = {}
         lines.each do |l|
@@ -178,7 +216,14 @@ module Gaudi
         return cfg
       end
 
-      # Appends data to a key that is defined as list key
+      ##
+      # Append +value+ to a +key+ that is defined as a key representing
+      # comma-separated lists
+      #
+      # For a detailed explanation of the arguments see #handle_key.
+      #
+      # Returns the combination of +value+ and potentially already existing
+      # elements of +key+ as an array
       def handle_key_append(key, value, cfg_dir, list_keys, path_keys, cfg)
         this_value = handle_key(key, value, cfg_dir, list_keys, path_keys, cfg)
         cfg[key] = [] unless cfg.has_key?(key)
@@ -189,10 +234,26 @@ module Gaudi
         end
       end
 
-      # checks a key against the set of path or list keys and returns the value
-      # in the format we want to have.
+      ##
+      # Interpret a +value+ of a certain +key+ according to further information
       #
-      # This means keys in list_keys come back as an Array, keys in path_keys come back as full paths
+      # * +key+ - the key of the value which is to be interpreted
+      # * +value+ - the value which is to be interpreted
+      # * +cfg_dir+ - the directory the configuration file of +key+ is
+      #   contained in
+      # * +list_keys+ - a list of all keys which represent comma-separated lists
+      #   of values
+      # * +path_keys+ - a list of all keys representing paths
+      # * +cfg+ - a hash of all configuration key-value combinations parsed so
+      #   far
+      #
+      # The +value+ of a +key+ that is found in +list_keys+ is being returned as
+      # an array, while a +value+ of a +key+ in +path_keys+ is returned as
+      # absolute path. If +key+ belongs to both categories its +value+ is being
+      # treated accordingly.
+      #
+      # Returns the +value+ optionally being transformed according to the
+      # additionally provided information
       def handle_key(key, value, cfg_dir, list_keys, path_keys, cfg)
         final_value = value
         # replace %{symbol} with values from already existing config values
@@ -209,6 +270,13 @@ module Gaudi
         return final_value
       end
 
+      ##
+      # Read a configuration file +path+ which may reside in +cfg_dir+
+      #
+      # If +path+ is an absolute path, then +cfg_dir+ is being ignored.
+      # Otherwise +path+ is prefixed with +cfg_dir+.
+      #
+      # Returns a hash with the configuration file's read and parsed contents
       def import_config(path, cfg_dir)
         path = absolute_path(path.strip, cfg_dir)
         raise GaudiConfigurationError, "Cannot find #{path} to import" unless File.exist?(path)
@@ -217,6 +285,16 @@ module Gaudi
         read_configuration(path)
       end
 
+      ##
+      # Check if a +path+ is absolute and prepend it with +cfg_dir+ otherwise
+      #
+      # If +path+ is an absolute path already it's being returned unmodified. If
+      # it does not represent an absolute path it's being prefixed with
+      # +cfg_dir+ and then being converted to an absolute path.
+      #
+      # Any double quotes are being removed from the passed +path+.
+      #
+      # Returns the absolute and conditionally prefixed equivalent of the path
       def absolute_path(path, cfg_dir)
         if Pathname.new(path.gsub("\"", "")).absolute?
           path
@@ -225,13 +303,24 @@ module Gaudi
         end
       end
 
+      ##
+      # Create or update an environment variable +envvar+ with the value +value+
+      #
+      # Returns the +value+ that got set
       def environment_variable(envvar, value)
         ENV[envvar] = value
       end
 
+      ##
+      # Iterate over all classes and sub-modules within +module_const+ and
+      # accumulate all keys representing lists and all keys representing paths
+      #
+      # Returns an array containing an array of all keys representing
+      # comma-separated lists and an array of all keys representing paths
       def load_key_modules(module_const)
         list_keys = []
         path_keys = []
+
         configuration_modules = module_const.constants
         # include all the modules you find in the namespace
         configuration_modules.each do |mod|
@@ -240,10 +329,9 @@ module Gaudi
           list_keys += klass.list_keys
           path_keys += klass.path_keys
         end
+
         return list_keys, path_keys
       end
-
-      # :startdoc:
     end
 
     # The central configuration for the system
@@ -251,11 +339,29 @@ module Gaudi
     # The available functionality is extended through SystemModules modules
     class SystemConfiguration < Loader
       include EnvironmentOptions
+
+      ##
+      # Iterate through a list of configuration files +configuration_files+ and
+      # return the resulting configuration as a new SystemConfiguration instance
+      #
+      # In case of errors upon parsing the given configurations or instantiating
+      # the new instance a GaudiConfigurationError is to be raised.
+      #
+      # Returns a new SystemConfiguration instance
       def self.load(configuration_files)
         super(configuration_files, self)
       end
 
-      attr_accessor :config_base, :workspace, :timestamp
+      ##
+      # The main configuration file (by which the further ones were imported)
+      attr_accessor :config_base
+      ##
+      # The current time at the completion of the instance's initialization
+      attr_accessor :timestamp
+      ##
+      # The path of the current working directory of the process at the time of
+      # the instance's initialization
+      attr_accessor :workspace
 
       def initialize(filename)
         load_gaudi_modules(File.expand_path(filename))
@@ -274,7 +380,6 @@ module Gaudi
 
       private
 
-      # :stopdoc:
       # makes sure we require the helpers from any modules defined in the configuration
       # before we start reading the configuration to ensure that extension modules work correctly
       def load_gaudi_modules(main_config_file)
@@ -293,8 +398,6 @@ module Gaudi
           mass_require(Rake::FileList["#{base_directory}/tools/build/lib/#{gm}/rules/*.rb"])
         end
       end
-
-      # :startdoc:
     end
 
     # Adding modules in this module allows SystemConfiguration to extend it's functionality
