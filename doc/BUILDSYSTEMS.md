@@ -1,42 +1,62 @@
 # Builders, Systems and Management
 
-gaudi is the code substrate supporting a very specific approach to building software systems. 
+gaudi is a code substrate supporting a very specific approach to building
+software systems.
 
-We call it a Builder. It is there to help you create a Build System.
+The developers of gaudi call it a _Builder_. It is there to aid the creation of
+a _Build System_.
 
-We also make a point in distinguishing between Build Systems and Build *Management* Systems:
+Its developers also make a point in distinguishing between _Build Systems_ and
+_Build **Management** Systems_:
 
-A **build system** performs transformations in sequence according to a predetermined dependency chain to create artifacts. A subset of this is the compilation of sources to binaries.
+A **build system** performs transformations in sequence according to a
+predetermined dependency chain to create artifacts. A subset of this can be the
+compilation of source files to binaries.
 
-A **build management system** coordinates build system(s)
+A **build management system** coordinates build system(s).
 
-Using less hairy language:  
+Expressing it in less hairy language: the _makefile_ is the build system, _make_
+is the builder and [Jenkins](https://www.jenkins.io) is the build management
+system.
 
-The makefile is the build system, make is the builder and Jenkins is the build management system.
-
-In our case, gaudi is the builder's tools and rake is the builder.
+In the case of gaudi, gaudi is the builder's tools and rake is the builder.
 
 ## One System to Build Them All
 
-The build system you are meant to create with gaudi goes far beyond the traditional "compile and link" constructs we're used too.
+A build system meant to be created with gaudi goes far beyond the traditional
+"compile and link" constructs the term "build system" usually refers to.
 
-It is meant to provide a consistent command line interface to every task and operation required in the development of your software with the express focus on making automated use easier.
+gaudi is meant to provide a consistent commandline interface to every task and
+operation required in the development of a complex software project with the
+express focus on making automated use easier.
 
-The underlying principles for such a system are [described elsewhere](ASPIRATIONS.md)
+The underlying principles for such a system are described by a set of
+[aphorisms](ASPIRATIONS.md).
 
-The areas of responsibility for such a system can be categorized with labels like "build", "test", "deploy" but this becomes much easier if we colour code it and add some pictures:
+The areas of responsibility for such a system can be categorized with labels
+like "build", "test" and "deploy" but this becomes much easier if these are
+colour coded and added to a picture:
 
 ![Areas of Responsibility](/doc/images/BuildSystem.png)
 
-How do you create such an omniscient system?
+How can such an omniscient system be created?
 
-## Standing on the shoulders of giants
+## Standing on The Shoulders of Giants
 
-Basically do not try to implement everything from scratch. 
+The basic principle is to try not to implement everything from scratch.
 
-Do you want to use asciidoc for documentation? 
-Use the available application for your platform and use gaudi to codify its usage in your project. 
+Shall [AsciiDoc](https://asciidoc.org) be used for documentation? 
+The available application for the needed platform can be used and integrated
+into the gaudi based buildsystem to codify its usage in the project.
 
-The only constraint is that the chosen technology offers a command line tool with a reasonable way of signaling errors (i.e. the program's exit code).
+The only constraint for technologies or toolchains that shall be integrated into
+a gaudi based build system is that the chosen technology or toolchain offers a
+commandline tool with a reasonable way of signaling errors (i.e. the program's
+exit code).
 
-[And so it begins](WALKTHROUGH.md)
+A [walkthrough](WALKTHROUGH.md) on setting up and utilizing gaudi based build
+system is available within this repository too.
+
+---
+
+Back to the [README contents](README.md)
