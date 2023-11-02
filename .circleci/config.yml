@@ -16,10 +16,7 @@ jobs:
     executor: ruby/default
     steps:
       - checkout
-      - run:
-          name: Which bundler?
-          command: bundle -v
-      - ruby/bundle-install
+      - rubyinstall-deps
       - run:
           name: Run tests
           command: bundle exec rake
@@ -29,10 +26,7 @@ jobs:
     executor: ruby/default
     steps:
       - checkout
-      - run:
-          name: Which bundler?
-          command: bundle -v
-      - ruby/bundle-install
+      - ruby/install-deps
       - run:
           name: Run tests
           command: bundle exec rake
