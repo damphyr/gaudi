@@ -16,9 +16,8 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Update gem
-          command: sudo gem update --system
-      - ruby/install-deps
+          name: Bundle
+          command: bundle install
       - run:
           name: Run tests
           command: bundle exec rake
@@ -28,9 +27,8 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Update gem
-          command: sudo gem update --system
-      - ruby/install-deps
+          name: Bundle
+          command: bundle install
       - run:
           name: Run tests
           command: bundle exec rake
