@@ -19,7 +19,7 @@ class TestTaskGenerators < Minitest::Test
   end
 
   def system_configuration_mock
-    system_config = mock()
+    system_config = mock
     system_config.stubs(:source_directories).returns(FileList[File.join(__dir__, "tmp")])
     system_config.stubs(:out).returns("out")
     system_config.stubs(:to_path).returns("system.cfg")
@@ -52,24 +52,24 @@ class TestTaskGenerators < Minitest::Test
   end
 end
 
-class TestRuleGenerators < MiniTest::Test
+class TestRuleGenerators < Minitest::Test
   include TestHelpers
   include Rake::DSL
   include Gaudi::Tasks::Build
   include Gaudi::Rules::Build
 
   def one_rule_mock
-    platform_config = mock()
+    platform_config = mock
     platform_config.expects(:extensions).returns([".o", ".a", ".elf"])
-    system_config = mock()
+    system_config = mock
     system_config.expects(:platform_config).returns(platform_config)
     system_config
   end
 
   def all_rules_mock
-    platform_config = mock()
+    platform_config = mock
     platform_config.expects(:extensions).returns([".o", ".a", ".elf"]).times(4)
-    system_config = mock()
+    system_config = mock
     system_config.expects(:platform_config).returns(platform_config).times(4)
     system_config.stubs(:platforms).returns(["foo", "bar"])
     system_config
