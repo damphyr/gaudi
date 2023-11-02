@@ -13,7 +13,6 @@ jobs:
   r2-7-8:
     docker:
       - image: cimg/ruby:2.7.8
-    executor: ruby/default
     steps:
       - checkout
       - ruby/install-deps
@@ -23,7 +22,6 @@ jobs:
   r3-2-2:
     docker:
       - image: cimg/ruby:3.2.2
-    executor: ruby/default
     steps:
       - checkout
       - ruby/install-deps
