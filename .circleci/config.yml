@@ -16,7 +16,7 @@ jobs:
     executor: ruby/default
     steps:
       - checkout
-      - rubyinstall-deps
+      - ruby/install-deps
       - run:
           name: Run tests
           command: bundle exec rake
