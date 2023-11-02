@@ -1,2 +1,2 @@
-service_name: travis-ci
+service_name: coveralls-ruby
 repo_token: h9uw1k278IIK6TNgJNkZ8zlzQlLpLFkWL
