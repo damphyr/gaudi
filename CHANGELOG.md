@@ -1,5 +1,9 @@
 # gaudi Changelog
 
+## 1.1.2
+
+* The last Windows remnant: Fixed a bug in the rdoc generation where a capital letter was used in the path
+
 ## 1.1.1
 
 * Fixed a bug in determining the namespace when generating the graph

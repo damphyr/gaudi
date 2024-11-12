@@ -10,3 +10,4 @@ gem/pkg
 
 .coverage
 .rake_tasks
+.ruby-version
