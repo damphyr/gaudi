@@ -22,7 +22,7 @@ module Gaudi
       options.scaffold = false
       options.update = false
       options.library = false
-      options.version = "HEAD"
+      options.revision = "HEAD"
 
       opt_parser = OptionParser.new do |opts|
         opts.banner = "Usage: gaudi [options]"
@@ -59,6 +59,9 @@ module Gaudi
         opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
           options.verbose = v
         end
+        opts.on("-r", "--revision REVISION", "Revision of source repository to use") do |rev|
+          options.revision = rev
+        end
         opts.on_tail("-h", "--help", "Show this message") do
           puts opts
           exit
@@ -81,11 +84,11 @@ module Gaudi
       opts = options(args)
       begin
         if opts.scaffold
-          Gaudi::Gem.new(opts.project_root).project(opts.version)
+          Gaudi::Gem.new(opts.project_root).project(opts.revision)
         elsif opts.update
-          Gaudi::Gem.new(opts.project_root).update(opts.version)
+          Gaudi::Gem.new(opts.project_root).update(opts.revision)
         elsif opts.library
-          Gaudi::Gem.new(opts.project_root).library(opts.lib, opts.url, opts.version)
+          Gaudi::Gem.new(opts.project_root).library(opts.lib, opts.url, opts.revision)
         end
       rescue Gaudi::GemError
         puts $!.message

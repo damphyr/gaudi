@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.0
+
+* Allow for specifying the revision to pull when scaffolding of pulling a gaudi module
+
 ## 0.7.0
 
 * A module can now be pulled from a standard gaudi installation as well as a repo with a lib/ subdirectory
