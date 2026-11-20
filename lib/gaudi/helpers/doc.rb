@@ -12,18 +12,18 @@ module Gaudi
         rotate
         colorscheme(:set1, 9)
         node_attribs << filled
-        task_graph_details()
+        task_graph_details
         mkdir_p(File.join(system_config.out, "graphs"), :verbose => false)
         save File.join(system_config.out, "graphs", "gaudi"), "png"
       end
     end
 
-    #:stopdoc:
+    # :stopdoc:
     # Iterate over all tasks building nodes, edges and an index of namespace->task name (where namespace only goes one level deep)
     # Use the index to cluster and color the nodes
     def task_graph_details
       grouped_by_namespace = {}
-      no_filetasks = Rake::Task.tasks.select { |rt| rt.class == Rake::Task }
+      no_filetasks = Rake::Task.tasks.select { |rt| rt.instance_of?(Rake::Task) }
       no_filetasks.each do |rt|
         name_parts = rt.name.split(":").reverse
         name_space = ""
@@ -66,6 +66,6 @@ module Gaudi
       end
     end
 
-    #:startdoc:
+    # :startdoc:
   end
 end

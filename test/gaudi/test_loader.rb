@@ -53,6 +53,6 @@ class TestLoader < Minitest::Test
   def test_environment
     config = mock_system_configuration("system.cfg", ["setenv GAUDI = brilliant builder"])
     Gaudi::Configuration::Loader.new(config)
-    assert_equal("brilliant builder", ENV["GAUDI"])
+    assert_equal("brilliant builder", ENV.fetch("GAUDI", nil))
   end
 end

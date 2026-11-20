@@ -16,7 +16,7 @@ module Gaudi
     MINOR = 1
     ##
     # The tiny version of Gaudi
-    TINY = 2
+    TINY = 3
 
     ##
     # The complete version of Gaudi as a string

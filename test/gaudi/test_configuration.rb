@@ -18,7 +18,7 @@ class TestSystemConfiguration < Minitest::Test
   def test_basic_configuration
     config = mock_system_configuration("system.cfg", ["base=.", "out=out/"])
     cfg = Gaudi::Configuration::SystemConfiguration.new(config)
-    assert_equal(File.expand_path(File.dirname(__FILE__)), cfg.base_dir)
+    assert_equal(__dir__, cfg.base_dir)
     assert_equal(File.expand_path(File.join(File.dirname(__FILE__), "out")), cfg.out_dir)
     assert_equal(cfg.gaudi_modules, [], "Module list includes stuff")
   end
@@ -26,6 +26,6 @@ class TestSystemConfiguration < Minitest::Test
   def test_load
     config = mock_system_configuration("system.cfg", ["base=.", "out=out/"])
     cfg = Gaudi::Configuration::SystemConfiguration.load([config])
-    assert_equal(File.expand_path(File.dirname(__FILE__)), cfg.base)
+    assert_equal(__dir__, cfg.base)
   end
 end

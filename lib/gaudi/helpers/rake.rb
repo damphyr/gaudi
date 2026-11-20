@@ -1,4 +1,4 @@
-#:stopdoc:
+# :stopdoc:
 require "rake"
 
 module Rake
@@ -7,15 +7,15 @@ module Rake
   end
 
   class Task
-    alias_method :_original_invoke, :invoke
+    alias _original_invoke invoke
 
-    def invoke(*args)
-      enhance() {
+    def invoke(*)
+      enhance do
         puts "Total execution time #{Time.now - Rake.application.start_time}" if Rake.application.start_time
-      }
-      _original_invoke(*args)
+      end
+      _original_invoke(*)
     end
   end
 end
 
-#:startdoc:
+# :startdoc:
