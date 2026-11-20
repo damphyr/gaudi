@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.1
+
+* Maintenance release (2026-11-20)
+* Updated gem dependencies (minitar ~>1.2)
+* Lint cleanup of the scaffolding code
+
 ## 0.8.0
 
 * Allow for specifying the revision to pull when scaffolding of pulling a gaudi module
