@@ -5,6 +5,7 @@ module TestHelpers
     File.stubs(:readlines).with(fname).returns(lines)
     fname
   end
+
   def self.directory_fixture
     base = File.dirname(__FILE__)
     mkdir_p("#{base}/tmp/common/FOO/inc", :verbose => false)
@@ -22,16 +23,16 @@ module TestHelpers
     touch("#{base}/tmp/common/FOO/inc/pub.h", :verbose => false)
     mkdir_p("#{base}/tmp/common/BAR", :verbose => false)
     touch("#{base}/tmp/common/BAR/bar.c", :verbose => false)
-    File.open("#{base}/tmp/common/BAR/build.cfg", "wb") { |f| f.write(["prefix=BAR"].join("\n")) }
-    File.open("#{base}/tmp/common/FOO/build.cfg", "wb") { |f| f.write(["prefix=FOO", "deps=BAR", "incs= ./inc", "libs= foo.lib,bar.lib"].join("\n")) }
+    File.binwrite("#{base}/tmp/common/BAR/build.cfg", ["prefix=BAR"].join("\n"))
+    File.binwrite("#{base}/tmp/common/FOO/build.cfg", ["prefix=FOO", "deps=BAR", "incs= ./inc", "libs= foo.lib,bar.lib"].join("\n"))
     mkdir_p("#{base}/tmp/deployments/FOO/foo", :verbose => false)
-    File.open("#{base}/tmp/deployments/FOO/foo/Pinky.cfg", "wb") { |f| f.write(["prefix=Pinky", "deps=FOO"].join("\n")) }
+    File.binwrite("#{base}/tmp/deployments/FOO/foo/Pinky.cfg", ["prefix=Pinky", "deps=FOO"].join("\n"))
     mkdir_p("#{base}/tmp/deployments/BAR/foo", :verbose => false)
-    File.open("#{base}/tmp/deployments/BAR/foo/Pinky.cfg", "wb") { |f| f.write(["prefix=Pinky", "deps=FOO"].join("\n")) }
-    File.open("#{base}/tmp/deployments/BAR/foo/Brain.cfg", "wb") { |f| f.write(["prefix=Pinky", "deps=FOO"].join("\n")) }
+    File.binwrite("#{base}/tmp/deployments/BAR/foo/Pinky.cfg", ["prefix=Pinky", "deps=FOO"].join("\n"))
+    File.binwrite("#{base}/tmp/deployments/BAR/foo/Brain.cfg", ["prefix=Pinky", "deps=FOO"].join("\n"))
     touch("#{base}/tmp/libs.yml", :verbose => false)
-    File.open("#{base}/tmp/brain.cfg", "wb") { |f| f.write(system_config_test_data.join("\n")) }
-    File.open("#{base}/tmp/foo.cfg", "wb") { |f| f.write(platform_config_test_data.join("\n")) }
+    File.binwrite("#{base}/tmp/brain.cfg", system_config_test_data.join("\n"))
+    File.binwrite("#{base}/tmp/foo.cfg", platform_config_test_data.join("\n"))
     return "#{base}/tmp"
   end
 

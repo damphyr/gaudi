@@ -49,7 +49,7 @@ class TestSystemConfiguration < Minitest::Test
     platform_cfg = File.join(File.dirname(config), "foo.cfg")
     File.expects(:exist?).with(platform_cfg).returns(true)
     File.expects(:readlines).with(platform_cfg).returns(TestHelpers.platform_config_test_data + [
-      "libs=foo", "lib_cfg=libs.yml",
+      "libs=foo", "lib_cfg=libs.yml"
     ])
     lib_yml = File.join(File.dirname(config), "libs.yml")
     File.expects(:exist?).with(lib_yml).returns(true)

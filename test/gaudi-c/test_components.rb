@@ -8,7 +8,7 @@ class TestComponent < Minitest::Test
 
   def setup
     @src_dir = TestHelpers.directory_fixture
-    @system_config = mock()
+    @system_config = mock
     @system_config.expects(:source_directories).returns([src_dir])
     @system_config.stubs(:header_extensions).returns(".h")
   end
@@ -45,7 +45,7 @@ class TestDeployment < Minitest::Test
 
   def setup
     @src_dir = TestHelpers.directory_fixture
-    @system_config = mock()
+    @system_config = mock
     @system_config.stubs(:source_directories).returns(Rake::FileList[src_dir])
     @system_config.stubs(:header_extensions).returns(".h")
     @system_config.stubs(:source_extensions).returns(".c,.cpp,.asm")

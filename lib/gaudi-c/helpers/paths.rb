@@ -12,10 +12,11 @@ module Gaudi
   # source_directory/common/name and source_directory/platform/name for every source_directory
   module StandardPaths
     include Gaudi::PlatformOperations
+
     # Determine which directories correspond to the given name
     #
     # This method maps the repository directory structure to the component names
-    def determine_directories(name, source_directories, system_config, platform)
+    def determine_directories(name, source_directories, _system_config, platform)
       paths = source_directories.map { |source_dir| Rake::FileList["#{source_dir}/{#{platform},common}/#{name}"].existing }.inject(&:+)
       raise GaudiError, "Cannot find source directories for '#{name}' in #{source_directories.join(",")}" if paths.empty?
 
@@ -48,14 +49,14 @@ module Gaudi
 
     # Returns the path to the library file corresponding to the component
     def library(component, system_config)
-      _, ext_lib, ext_exe = *system_config.extensions(component.platform)
+      _, ext_lib, = *system_config.extensions(component.platform)
       File.join(system_config.out, component.platform, component.name, "#{component.name}#{ext_lib}")
     end
 
     # Returns the path to the object output file corresponding to src
     def object_file(src, component, system_config)
-      ext_obj, _, _ = *system_config.extensions(component.platform)
-      src.pathmap("#{system_config.out}/#{component.platform}/#{component.parent ? component.parent.name : ""}/#{component.name}/%n#{ext_obj}")
+      ext_obj, = *system_config.extensions(component.platform)
+      src.pathmap("#{system_config.out}/#{component.platform}/#{component.parent&.name}/#{component.name}/%n#{ext_obj}")
     end
 
     # Returns the path to the unit test binary corresponding to the component

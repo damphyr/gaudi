@@ -1,5 +1,6 @@
-if $configuration.auto_rules? 
+if $configuration.auto_rules?
   include Gaudi::Rules::Build
+
   all_rules($configuration)
 end
 
@@ -7,8 +8,9 @@ namespace :build do
   desc "Builds the deployment specified with DEPLOYMENT.\n rake build:deployment DEPLOYMENT=Foo"
   task :deployment do
     include Gaudi::Tasks::Build
-    deployment=Gaudi::Deployment.new($configuration.deployment,$configuration)
-    t=deployment_task(deployment,$configuration)
+
+    deployment = Gaudi::Deployment.new($configuration.deployment, $configuration)
+    t = deployment_task(deployment, $configuration)
     Rake::Task[t].invoke
   end
 end
