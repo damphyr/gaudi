@@ -79,6 +79,7 @@ module Gaudi
       end
       return options
     end
+
     # :nodoc:
     def self.run(args)
       opts = options(args)
@@ -150,7 +151,7 @@ module Gaudi
         puts "Rakefile exists, skipping generation"
       else
         rakefile_content = File.read(File.join(File.dirname(__FILE__), "templates/rakefile.rb.template"))
-        File.open(rakefile, "wb") { |f| f.write(rakefile_content) }
+        File.binwrite(rakefile, rakefile_content)
       end
     end
 
@@ -161,7 +162,7 @@ module Gaudi
         puts "#{MAIN_CONFIG} exists, skipping generation"
       else
         configuration_content = File.read(File.join(File.dirname(__FILE__), "templates/main.cfg.template"))
-        File.open(config_file, "wb") { |f| f.write(configuration_content) }
+        File.binwrite(config_file, configuration_content)
       end
     end
 
@@ -172,7 +173,7 @@ module Gaudi
         puts "BUILDSYSTEM.md exists, skipping generation"
       else
         configuration_content = File.read(File.join(File.dirname(__FILE__), "templates/doc.md.template"))
-        File.open(config_file, "wb") { |f| f.write(configuration_content) }
+        File.binwrite(config_file, configuration_content)
       end
     end
 
@@ -182,7 +183,7 @@ module Gaudi
 
         lib_items.each do |items|
           unpack_target = gaudi_home
-          unpack_target = File.expand_path(File.join(gaudi_home, "../..")) if /tools\/build/ =~ items
+          unpack_target = File.expand_path(File.join(gaudi_home, "../..")) if %r{tools/build} =~ items
           pkg = archive(version, File.join(tmp, "gaudi"), project_root, items)
           unpack(pkg, unpack_target)
         rescue GemError
@@ -199,7 +200,7 @@ module Gaudi
 
     def archive(version, clone_path, prj_root, lib_items)
       pkg = File.expand_path(File.join(prj_root, "gaudipkg.tar"))
-      Dir.chdir(clone_path) do |d|
+      Dir.chdir(clone_path) do |_d|
         puts "Packing #{version} gaudi version in #{pkg}"
         cmdline = "git archive --format=tar -o \"#{pkg}\" #{version} #{lib_items}"
         raise GemError, "Failed to extract library from git" unless system(cmdline)
@@ -209,7 +210,7 @@ module Gaudi
 
     def unpack(pkg, home)
       puts "Unpacking in #{home}"
-      Dir.chdir(home) do |d|
+      Dir.chdir(home) do |_d|
         Minitar.unpack(pkg, home)
       end
       FileUtils.rm_rf(pkg)
