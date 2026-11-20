@@ -22,7 +22,7 @@ module Gaudi
             cluster program.name do
               label program.name
               program.dependencies.each do |dependency|
-                dependency.dependencies.each { |dep| edge "#{dependency.name}", dep.name }
+                dependency.dependencies.each { |dep| edge dependency.name.to_s, dep.name }
               end
             end
           end

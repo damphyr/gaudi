@@ -11,6 +11,7 @@ module Gaudi
   # and the directory is exposed by Gaudi for use in include statements.
   class Component
     include StandardPaths
+
     attr_reader :identifier, :platform, :configuration, :name, :directories, :test_directories, :config_files
     # This is set to the name of the program or library containing the component when building a deployment. Default is empty
     attr_accessor :parent
@@ -116,12 +117,12 @@ module Gaudi
 
     # All components upon which this Program depends on
     def dependencies
-      deps = configuration.dependencies.map { |dep| program_dependency(dep) }
+      configuration.dependencies.map { |dep| program_dependency(dep) }
     end
 
     # All shared library components this Program depends on
     def shared_dependencies
-      deps = configuration.shared_dependencies.map { |dep| program_dependency(dep) }
+      configuration.shared_dependencies.map { |dep| program_dependency(dep) }
     end
 
     private
@@ -172,10 +173,8 @@ module Gaudi
 
     def validate
       platforms.each do |platform|
-        program_names = programs(platform).map { |program| program.name }
-        if program_names.uniq.size < program_names.size
-          raise GaudiError, "No duplicate program names allowed on the same platform. Found duplicates on platform #{platform}"
-        end
+        program_names = programs(platform).map(&:name)
+        raise GaudiError, "No duplicate program names allowed on the same platform. Found duplicates on platform #{platform}" if program_names.uniq.size < program_names.size
       end
     end
 

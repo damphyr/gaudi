@@ -13,6 +13,7 @@ module Gaudi
         file task_name
       end
     end
+
     # Methods to calculate dependencies for the various task types
     module TaskDependencies
       # Returns the general dependencies for a Component task
@@ -41,6 +42,7 @@ module Gaudi
       include StandardPaths
       include TaskDependencies
       include ToolOperations
+
       # Returns a task for building a Deployment
       #
       #  t=deployment_task(deployment,system_config)
@@ -143,8 +145,9 @@ module Gaudi
         _, _, exe = platform_config.extensions
         # we configure them with dots which messes the regexp up
         ext = exe.gsub(".", "")
-        rule(/#{platform}\/.*\.#{ext}$/) do |t|
+        rule(%r{#{platform}/.*\.#{ext}$}) do |t|
           include Gaudi::ArtifactAdapters::Build
+
           build(t, system_config, platform)
         end
       end
@@ -152,11 +155,12 @@ module Gaudi
       # Creates a rake rule for object files of the given platform
       def object_rule(system_config, platform)
         platform_config = system_config.platform_config(platform)
-        obj, _, _ = platform_config.extensions
+        obj, = platform_config.extensions
         # we configure them with dots which messes the regexp up
         ext = obj.gsub(".", "")
-        rule(/#{platform}\/.*\.#{ext}$/) do |t|
+        rule(%r{#{platform}/.*\.#{ext}$}) do |t|
           include Gaudi::ArtifactAdapters::Build
+
           compile(t, system_config, platform)
         end
       end

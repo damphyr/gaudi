@@ -6,19 +6,19 @@ module Gaudi
     # Switches platform configuration replacing platform with the contents of the file
     # for the given block
     def self.switch_platform_configuration(configuration_file, system_config, platform)
-      if block_given?
-        begin
-          puts "Switching platform configuration for #{platform} to #{configuration_file}"
-          current_config = system_config.platform_config(platform)
-          new_cfg_data = system_config.read_configuration(File.expand_path(configuration_file))
-          system_config.set_platform_config(PlatformConfiguration.new(platform, new_cfg_data), platform)
-          yield
-        rescue
-          raise
-        ensure
-          puts "Switching back platform configuration for #{platform}"
-          system_config.set_platform_config(current_config, platform)
-        end
+      return unless block_given?
+
+      begin
+        puts "Switching platform configuration for #{platform} to #{configuration_file}"
+        current_config = system_config.platform_config(platform)
+        new_cfg_data = system_config.read_configuration(File.expand_path(configuration_file))
+        system_config.set_platform_config(PlatformConfiguration.new(platform, new_cfg_data), platform)
+        yield
+      rescue StandardError
+        raise
+      ensure
+        puts "Switching back platform configuration for #{platform}"
+        system_config.set_platform_config(current_config, platform)
       end
     end
 
@@ -26,6 +26,7 @@ module Gaudi
       # Platform configuration methods that provide more control over the raw Hash platform data
       module PlatformConfiguration
         include ConfigurationOperations
+
         # :stopdoc:
         def self.list_keys
           ["platforms", "sources"]
@@ -61,11 +62,9 @@ module Gaudi
 
         # Returns the file extensions for the given platform
         def extensions(platform)
-          if @config["platform_data"].keys.include?(platform)
-            return @config["platform_data"][platform].extensions
-          else
-            raise GaudiConfigurationError, "Unknown platform #{platform}"
-          end
+          return @config["platform_data"][platform].extensions if @config["platform_data"].keys.include?(platform)
+
+          raise GaudiConfigurationError, "Unknown platform #{platform}"
         end
 
         # Return the auto_rules flag.
@@ -75,7 +74,7 @@ module Gaudi
           @config.fetch("auto_rules", false)
         end
 
-        alias_method :source_directories, :sources
+        alias source_directories sources
         # :startdoc:
         # Source file extensions
         def source_extensions(platform)
@@ -102,8 +101,8 @@ module Gaudi
         # If the file exists under trunk/lib the entry is the full path to the file
         # otherwise the entry from external_lib_cfg is returned as is (which works for system libraries i.e. winmm.lib, winole.lib etc.)
         def external_libraries(platform)
-          external_lib_tokens = platform_config(platform).fetch("libs", "").split(",").map { |el| el.strip }
-          return interpret_library_tokens(external_lib_tokens, external_libraries_config(platform), self.config_base)
+          external_lib_tokens = platform_config(platform).fetch("libs", "").split(",").map(&:strip)
+          return interpret_library_tokens(external_lib_tokens, external_libraries_config(platform), config_base)
         end
 
         # Returns an array with paths to the external libraries in use for unit tests as defined in the platform configuration
@@ -113,8 +112,8 @@ module Gaudi
         # If the file exists under trunk/lib the entry is the full path to the file
         # otherwise the entry from external_lib_cfg is returned as is (which works for system libraries i.e. winmm.lib, libsqlite3 etc.)
         def unit_test_libraries(platform)
-          external_lib_tokens = platform_config(platform).fetch("unit_test_libs", "").split(",").map { |el| el.strip }
-          return interpret_library_tokens(external_lib_tokens, external_libraries_config(platform), self.config_base)
+          external_lib_tokens = platform_config(platform).fetch("unit_test_libs", "").split(",").map(&:strip)
+          return interpret_library_tokens(external_lib_tokens, external_libraries_config(platform), config_base)
         end
 
         # Loads and returns the external libraries configuration
@@ -128,11 +127,9 @@ module Gaudi
           external_lib_cfg = absolute_path(lib_config, config_base)
           raise GaudiConfigurationError, "No external library configuration for platform #{platform}" unless external_lib_cfg
 
-          if File.exist?(external_lib_cfg)
-            return YAML.load(File.read(external_lib_cfg))
-          else
-            raise GaudiConfigurationError, "Cannot find external library configuration #{external_lib_cfg} for platform #{platform}"
-          end
+          return YAML.load(File.read(external_lib_cfg)) if File.exist?(external_lib_cfg) # rubocop:disable Style/YAMLFileRead
+
+          raise GaudiConfigurationError, "Cannot find external library configuration #{external_lib_cfg} for platform #{platform}"
         end
 
         # A list of files to be copied together with every program
@@ -182,8 +179,8 @@ module Gaudi
           return @config.fetch("incs", Rake::FileList.new)
         end
 
-        alias_method :incs, :external_includes
-        alias_method :deps, :dependencies
+        alias incs external_includes
+        alias deps dependencies
       end
 
       # Configuration directives for programs.
@@ -227,7 +224,7 @@ module Gaudi
           return @config.fetch("shared_deps", Rake::FileList.new)
         end
 
-        alias_method :libs, :external_libraries
+        alias libs external_libraries
       end
     end
 
@@ -235,6 +232,7 @@ module Gaudi
     # to the configuration file that describe the dependencies to the rest of the system.
     class BuildConfiguration < Loader
       attr_writer :configuration_files, :config
+
       # I guess this is what you call a Factory Method?
       def self.load(configuration_files)
         cfg = nil
@@ -267,11 +265,11 @@ module Gaudi
     end
 
     class SystemConfiguration < Loader
-      alias_method :_original_init, :initialize
+      alias _original_init initialize
 
       def initialize(filename)
         _original_init(filename)
-        load_platform_configurations()
+        load_platform_configurations
       end
 
       # :stopdoc:
@@ -280,7 +278,7 @@ module Gaudi
         @config["platforms"] ||= []
         platforms.each do |platform_name|
           path = @config[platform_name]
-          path = File.expand_path(File.join(@config_base, path)) if !Pathname.new(path).absolute?
+          path = File.expand_path(File.join(@config_base, path)) unless Pathname.new(path).absolute?
 
           pdata = read_configuration(path)
           @configuration_files << path
@@ -303,23 +301,24 @@ module Gaudi
       #        perform build actions with extended platform options
       #  end
       def self.extend(component, system_config)
-        if block_given?
-          begin
-            current_config = system_config.platform_config(component.platform)
-            # extend the platform configuration with the component configuration settings
-            new_cfg = current_config.dup
-            system_config.source_extensions(component.platform).split(",").map { |ext| "compiler_options_#{ext.strip}" } + ["compiler_options", "assembler_options", "library_options", "linker_options"].each do |key|
-              new_cfg[key] = "#{current_config[key]} #{component.configuration.option(key)}"
-            end
-            system_config.set_platform_config(new_cfg, component.platform)
-            yield
-          rescue
-            raise
-          ensure
-            system_config.set_platform_config(current_config, component.platform)
+        raise GaudiError, "PlatformConfiguration.extend requires a block" unless block_given?
+
+        begin
+          current_config = system_config.platform_config(component.platform)
+          # extend the platform configuration with the component configuration settings
+          new_cfg = current_config.dup
+          system_config.source_extensions(component.platform).split(",").map do |ext|
+            "compiler_options_#{ext.strip}"
           end
-        else
-          raise GaudiError, "PlatformConfiguration.extend requires a block"
+          ["compiler_options", "assembler_options", "library_options", "linker_options"].each do |key|
+            new_cfg[key] = "#{current_config[key]} #{component.configuration.option(key)}"
+          end
+          system_config.set_platform_config(new_cfg, component.platform)
+          yield
+        rescue StandardError
+          raise
+        ensure
+          system_config.set_platform_config(current_config, component.platform)
         end
       end
 
@@ -340,11 +339,11 @@ module Gaudi
 
       def validate
         ["source_extensions", "header_extensions", "object_extension", "library_extension", "executable_extension"].each do |key|
-          raise GaudiConfigurationError, "Define #{key} for platform #{name}" unless self.keys.include?(key)
+          raise GaudiConfigurationError, "Define #{key} for platform #{name}" unless keys.include?(key)
         end
-        unless self.keys.include?("source_directories")
-          self["source_directories"] = "common,#{name}"
-        end
+        return if keys.include?("source_directories")
+
+        self["source_directories"] = "common,#{name}"
       end
     end
   end
