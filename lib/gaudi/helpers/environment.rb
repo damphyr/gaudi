@@ -53,7 +53,7 @@ module Gaudi
       #
       # Returns the value of the environment variable +USER+ or nil
       def user
-        return ENV["USER"]
+        return ENV.fetch("USER", nil)
       end
     end
   end

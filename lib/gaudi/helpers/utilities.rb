@@ -8,13 +8,11 @@ module Gaudi
     # but without interrupting on error
     def mass_require(filelist)
       filelist.each do |helper|
-        begin
-          require helper
-        rescue LoadError
-          puts "Could not load #{helper} : #{$!.message}"
-        rescue
-          puts "Could not load #{helper} : #{$!.message}"
-        end
+        require helper
+      rescue LoadError
+        puts "Could not load #{helper} : #{$!.message}"
+      rescue StandardError
+        puts "Could not load #{helper} : #{$!.message}"
       end
     end
 
@@ -28,7 +26,7 @@ module Gaudi
     # Writes a file making sure the directory is created
     def write_file(filename, content)
       mkdir_p(File.dirname(filename), :verbose => false)
-      File.open(filename, "wb") { |f| f.write(content) }
+      File.binwrite(filename, content)
     end
   end
 end

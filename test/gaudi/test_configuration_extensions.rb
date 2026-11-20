@@ -6,6 +6,7 @@ module Gaudi::Configuration::SystemModules::TestLists
   def self.list_keys
     ["platforms", "sources"]
   end
+
   def self.path_keys
     ["sources"]
   end

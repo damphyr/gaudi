@@ -18,7 +18,7 @@ module Gaudi::Utilities
     # Tell rake not to truncate it's task output
     Rake.application.terminal_columns = 999
     unless $configuration
-      system_config = Gaudi.configuration()
+      system_config = Gaudi.configuration
       system_config.workspace = File.expand_path(work_dir)
       Rake.application.start_time = Time.now if Rake.application.respond_to?(:start_time=)
       $configuration = system_config

@@ -16,7 +16,7 @@ class TestUtilities < Minitest::Test
     Gaudi::Configuration::SystemConfiguration.stubs(:load).returns([])
     ENV["GAUDI_CONFIG"] = "./bar.cfg"
     Gaudi::Configuration.switch_configuration("./foo.cfg") do
-      assert_equal("./foo.cfg", ENV["GAUDI_CONFIG"])
+      assert_equal("./foo.cfg", ENV.fetch("GAUDI_CONFIG", nil))
     end
   end
 end

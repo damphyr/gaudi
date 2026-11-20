@@ -18,8 +18,8 @@ module Gaudi
       ENV["GAUDI_CONFIG"] = File.expand_path(DEFAULT_CONFIGURATION_FILE)
     end
     # Load the system configuration
-    puts "Reading main configuration from \n\t#{ENV["GAUDI_CONFIG"]}"
-    system_config = Configuration::SystemConfiguration.new(ENV["GAUDI_CONFIG"])
+    puts "Reading main configuration from \n\t#{ENV.fetch("GAUDI_CONFIG", nil)}"
+    system_config = Configuration::SystemConfiguration.new(ENV.fetch("GAUDI_CONFIG", nil))
     return system_config
   end
 
@@ -53,20 +53,20 @@ module Gaudi
     def self.switch_configuration(configuration_file)
       return unless block_given?
 
-      current_configuration = ENV["GAUDI_CONFIG"]
+      current_configuration = ENV.fetch("GAUDI_CONFIG", nil)
       return unless File.expand_path(configuration_file) != File.expand_path(current_configuration)
 
       begin
         puts "Switching configuration to #{configuration_file}"
         $configuration = nil
         ENV["GAUDI_CONFIG"] = configuration_file
-        $configuration = Gaudi::Configuration::SystemConfiguration.load([ENV["GAUDI_CONFIG"]])
+        $configuration = Gaudi::Configuration::SystemConfiguration.load([ENV.fetch("GAUDI_CONFIG", nil)])
         yield
       ensure
         puts "Switching configuration back to #{current_configuration}"
         $configuration = nil
         ENV["GAUDI_CONFIG"] = current_configuration
-        $configuration = Gaudi::Configuration::SystemConfiguration.load([ENV["GAUDI_CONFIG"]])
+        $configuration = Gaudi::Configuration::SystemConfiguration.load([ENV.fetch("GAUDI_CONFIG", nil)])
       end
     end
 
@@ -103,7 +103,7 @@ module Gaudi
             cfg = klass.new(cfg_file)
           end
         end
-        raise GaudiConfigurationError, "No #{klass.to_s} configuration files in '#{configuration_files}'" unless cfg
+        raise GaudiConfigurationError, "No #{klass} configuration files in '#{configuration_files}'" unless cfg
 
         return cfg
       end
@@ -226,7 +226,7 @@ module Gaudi
       # elements of +key+ as an array
       def handle_key_append(key, value, cfg_dir, list_keys, path_keys, cfg)
         this_value = handle_key(key, value, cfg_dir, list_keys, path_keys, cfg)
-        cfg[key] = [] unless cfg.has_key?(key)
+        cfg[key] = [] unless cfg.key?(key)
 
         begin
           cfg[key].concat(this_value).uniq!
@@ -257,10 +257,10 @@ module Gaudi
       def handle_key(key, value, cfg_dir, list_keys, path_keys, cfg)
         final_value = value
         # replace %{symbol} with values from already existing config values
-        final_value = final_value % Hash[cfg.map { |k, v| [k.to_sym, v] }] if final_value.include? "%{"
+        final_value %= cfg.to_h { |k, v| [k.to_sym, v] } if final_value.include? "%{"
 
         if list_keys.include?(key) && path_keys.include?(key)
-          final_value = Rake::FileList[*(value.gsub(/\s*,\s*/, ",").split(",").uniq.map { |d| absolute_path(d.strip, cfg_dir) })]
+          final_value = Rake::FileList[*value.gsub(/\s*,\s*/, ",").split(",").uniq.map { |d| absolute_path(d.strip, cfg_dir) }]
         elsif list_keys.include?(key)
           # here we want to handle a comma separated list of entries
           final_value = value.gsub(/\s*,\s*/, ",").split(",").uniq
@@ -326,6 +326,7 @@ module Gaudi
         configuration_modules.each do |mod|
           klass = module_const.const_get(mod)
           extend klass
+
           list_keys += klass.list_keys
           path_keys += klass.path_keys
         end
@@ -365,7 +366,7 @@ module Gaudi
 
       def initialize(filename)
         load_gaudi_modules(File.expand_path(filename))
-        super(filename)
+        super
         @config_base = File.dirname(configuration_files.first)
         raise GaudiConfigurationError, "Setting 'base' must be defined" unless base
         raise GaudiConfigurationError, "Setting 'out' must be defined" unless out
@@ -437,8 +438,8 @@ module Gaudi
           return @config["gaudi_modules"]
         end
 
-        alias_method :base_dir, :base
-        alias_method :out_dir, :out
+        alias base_dir base
+        alias out_dir out
       end
     end
   end

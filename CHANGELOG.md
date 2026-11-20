@@ -1,5 +1,12 @@
 # gaudi Changelog
 
+## 1.1.3
+
+* Maintenance release (2026-11-20)
+* Updated gem dependencies (highline ~>3.1, minitar ~>1.2, hoe ~>4.7, minitest ~>6.0)
+* Updated CI to Ruby 3.3, 3.4 and 4.0 and the CircleCI orb
+* Added rubocop and cleaned up the code base with the updated rules
+
 ## 1.1.2
 
 * The last Windows remnant: Fixed a bug in the rdoc generation where a capital letter was used in the path
